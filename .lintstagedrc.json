@@ -1,6 +1,3 @@
 {
-  "*.ts": [
-    "npx eslint . --fix",
-    "git add"
-  ]
+  "*.ts": ["npx eslint . --fix", "npx prettier . --write"]
 }

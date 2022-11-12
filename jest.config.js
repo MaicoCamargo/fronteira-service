@@ -3,14 +3,13 @@
  * https://jestjs.io/docs/configuration
  */
 module.exports = {
-  roots: ['<rootDir>/src'],
+  roots: ["<rootDir>/src"],
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**.*ts'],
-  coverageDirectory: 'coverage',
-  coverageProvider: 'v8',
-  testEnvironment: 'node',
+  collectCoverageFrom: ["<rootDir>/src/**.*ts"],
+  coverageDirectory: "coverage",
+  coverageProvider: "v8",
+  testEnvironment: "node",
   transform: {
-    '.+\\.ts$': 'ts-jest'
-  }
-
-}
+    ".+\\.ts$": "ts-jest",
+  },
+};
