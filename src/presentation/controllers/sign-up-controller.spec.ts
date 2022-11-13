@@ -30,7 +30,7 @@ const makeFakeHttpRequest = (name?: string, email?: string): HttpRequest => ({
   body: { name, email },
 });
 
-describe("SignUpController", function () {
+describe("SignUpController", () => {
   test("Deve retornar 400 se 'name' não for enviado", () => {
     const { sut } = makeSut();
     const response = sut.handle(makeFakeHttpRequest());
@@ -53,5 +53,13 @@ describe("SignUpController", function () {
     );
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual(new InvalidParamError("email"));
+  });
+
+  test("Deve chamar o EmailValidator com valores corretos", () => {
+    const { sut, emailValidatorStub } = makeSut();
+    const spyIsValid = jest.spyOn(emailValidatorStub, "isValid");
+    const request = makeFakeHttpRequest("any_name", "email@email.com");
+    sut.handle(request);
+    expect(spyIsValid).toHaveBeenCalledWith(request.body.email);
   });
 });
