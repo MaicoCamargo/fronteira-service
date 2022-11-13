@@ -45,4 +45,15 @@ describe("DbAddAccount Use case", function () {
     sut.add(makeFakeDbAddAccountModel());
     expect(spySave).toHaveBeenCalledWith(makeFakeDbAddAccountModel());
   });
+
+  test("Deve 'throw' se AddAccountRepository 'throw'", async () => {
+    const { sut, addAccountRepositoryStub } = makeSut();
+    jest
+      .spyOn(addAccountRepositoryStub, "save")
+      .mockImplementationOnce(async () => {
+        return new Promise((resolve, reject) => reject(new Error()));
+      });
+    const promise = sut.add(makeFakeDbAddAccountModel());
+    await expect(promise).rejects.toThrow();
+  });
 });
