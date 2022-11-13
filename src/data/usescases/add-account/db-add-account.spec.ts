@@ -56,4 +56,10 @@ describe("DbAddAccount Use case", function () {
     const promise = sut.add(makeFakeDbAddAccountModel());
     await expect(promise).rejects.toThrow();
   });
+
+  test("Deve retornar a nova conta em caso de sucesso", async () => {
+    const { sut } = makeSut();
+    const account = await sut.add(makeFakeDbAddAccountModel());
+    await expect(account).toEqual(makeFakeDbAccountModel());
+  });
 });
