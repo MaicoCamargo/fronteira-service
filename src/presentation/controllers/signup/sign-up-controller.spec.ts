@@ -12,16 +12,17 @@ import {
   AccountModel,
 } from "./signup-protocols";
 
+const makeFakeAccountModel = () => ({
+  id: "valid_id",
+  name: "valid_name",
+  email: "valid_email",
+  password: "valid_password",
+});
+
 const makeAddAccount = (): AddAccount => {
   class AddAccountStub implements AddAccount {
     add(account: AddAccountModel): AccountModel {
-      const fakeAccount = {
-        id: "valid_id",
-        name: "valid_name",
-        email: "valid_email",
-        password: "valid_password",
-      };
-      return fakeAccount;
+      return makeFakeAccountModel();
     }
   }
   return new AddAccountStub();
@@ -107,5 +108,30 @@ describe("SignUpController", () => {
     const spyAddAccount = jest.spyOn(addAccountStub, "add");
     sut.handle(request);
     expect(spyAddAccount).toHaveBeenCalledWith(request.body);
+  });
+
+  test("Deve retornar 500 se AddAccount throws", async () => {
+    const { sut, addAccountStub } = makeSut();
+    jest.spyOn(addAccountStub, "add").mockImplementationOnce(() => {
+      throw new Error();
+    });
+    const request = makeFakeHttpRequest("any_name", "email@email.com");
+    const response = sut.handle(request);
+    expect(response.statusCode).toBe(500);
+    expect(response.body).toEqual(new ServerError());
+  });
+
+  test("Deve retornar 200 em caso de sucesso", async () => {
+    const { sut } = makeSut();
+    const newAccount = makeFakeAccountModel();
+
+    const request = makeFakeHttpRequest(newAccount.name, newAccount.email);
+    const response = sut.handle(request);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body.name).toEqual(newAccount.name);
+    expect(response.body.password).toEqual(newAccount.password);
+    expect(response.body.email).toEqual(newAccount.email);
+    expect(response.body.id).toEqual(newAccount.id);
   });
 });
