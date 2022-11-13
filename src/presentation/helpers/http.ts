@@ -1,4 +1,4 @@
-import { HttpResponse } from "../protocols/http/http-response";
+import { HttpResponse } from "../protocols";
 import { ServerError } from "../errors";
 
 /**
