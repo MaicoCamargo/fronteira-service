@@ -1,5 +1,5 @@
 import { HttpResponse } from "../protocols/http/http-response";
-import { ServerError } from "../errors/server-error";
+import { ServerError } from "../errors";
 
 /**
  * It returns an object with a statusCode of 400 and a body of the error
