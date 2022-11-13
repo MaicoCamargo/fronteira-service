@@ -17,8 +17,7 @@ export class DbAddAccount implements AddAccount {
     this.addAccountRepository = addAccountRepository;
   }
 
-  async add(account: DbAddAccountModel): Promise<DbAccountModel> {
-    await this.addAccountRepository.save(account);
-    return await Promise.resolve(undefined);
+  async add(accountData: DbAddAccountModel): Promise<DbAccountModel> {
+    return await this.addAccountRepository.save(accountData);
   }
 }
