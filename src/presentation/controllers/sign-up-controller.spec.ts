@@ -1,11 +1,23 @@
 import { SignUpController } from "./sign-up-controller";
 import { MissingParamError, InvalidParamError, ServerError } from "../errors";
 import { HttpRequest, EmailValidator } from "../protocols";
+import { AddAccount, AddAccountModel } from "../../domain/usecases/add-account";
+import { AccountModel } from "../../domain/models/account-model";
 
-interface SutTypes {
-  sut: SignUpController;
-  emailValidatorStub: EmailValidator;
-}
+const makeAddAccount = (): AddAccount => {
+  class AddAccountStub implements AddAccount {
+    add(account: AddAccountModel): AccountModel {
+      const fakeAccount = {
+        id: "valid_id",
+        name: "valid_name",
+        email: "valid_email",
+        password: "valid_password",
+      };
+      return fakeAccount;
+    }
+  }
+  return new AddAccountStub();
+};
 
 const makeEmailValidator = (): any => {
   class EmailValidatorSub implements EmailValidator {
@@ -16,12 +28,20 @@ const makeEmailValidator = (): any => {
   return new EmailValidatorSub();
 };
 
+interface SutTypes {
+  sut: SignUpController;
+  emailValidatorStub: EmailValidator;
+  addAccountStub: AddAccount;
+}
+
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator();
-  const sut = new SignUpController(emailValidatorStub);
+  const addAccountStub = makeAddAccount();
+  const sut = new SignUpController(emailValidatorStub, addAccountStub);
   return {
     sut,
     emailValidatorStub,
+    addAccountStub,
   };
 };
 
@@ -71,5 +91,13 @@ describe("SignUpController", () => {
     const response = sut.handle(request);
     expect(response.statusCode).toBe(500);
     expect(response.body).toEqual(new ServerError());
+  });
+
+  test("Deve chamar AddAccount com valores corretos", () => {
+    const { sut, addAccountStub } = makeSut();
+    const request = makeFakeHttpRequest("any_name", "any_email@email.com");
+    const spyAddAccount = jest.spyOn(addAccountStub, "add");
+    sut.handle(request);
+    expect(spyAddAccount).toHaveBeenCalledWith(request.body);
   });
 });
