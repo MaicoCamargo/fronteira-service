@@ -12,7 +12,5 @@ module.exports = {
   transform: {
     ".+\\.ts$": "ts-jest",
   },
-  presets:[
-    '@shelf/jest-mongodb'
-  ]
+  preset: '@shelf/jest-mongodb'
 };
