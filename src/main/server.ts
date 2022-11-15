@@ -1,4 +1,5 @@
-import express from "express";
+import app from "./config/app";
 
-const app = express();
-app.listen(5050, () => console.log("i am running...listen in port 5050"));
+app.listen(5050, () =>
+  console.log("i am running...listen on http://127.0.0.1:5050")
+);
