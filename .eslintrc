@@ -5,6 +5,7 @@
   },
   "ignorePatterns": ["src/**/*.spec.ts"],
   "rules": {
-    "@typescript-eslint/strict-boolean-expressions": 0
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "@typescript-eslint/no-misused-promises": "off"
   }
 }
