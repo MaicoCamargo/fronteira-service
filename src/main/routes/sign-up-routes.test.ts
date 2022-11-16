@@ -8,7 +8,7 @@ describe("SignUp Routes", () => {
   });
 
   beforeEach(async () => {
-    const collection = MongoHelper.getCollection("accounts");
+    const collection = await MongoHelper.getCollection("accounts");
     await collection.deleteMany({});
   });
 
@@ -19,7 +19,7 @@ describe("SignUp Routes", () => {
   test("Deve retornar uma conta em caso de sucesso", async () => {
     await request(app)
       .post("/service/sign-up")
-      .send({ name: "Maico", email1: "email@email.com", password: "123" })
+      .send({ name: "Maico", email: "email@email.com", password: "123" })
       .expect(200);
   });
 });
