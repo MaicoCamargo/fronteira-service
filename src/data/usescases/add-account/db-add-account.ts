@@ -1,23 +1,19 @@
-import {
-  AddAccount,
-  AddAccountRepository,
-  DbAccountModel,
-} from "./db-add-account-protocols";
+import { AddAccount, AddAccountRepository, DbAccountModel } from './db-add-account-protocols';
 
 export interface DbAddAccountModel {
-  name: string;
-  email: string;
-  password: string;
+    name: string;
+    email: string;
+    password: string;
 }
 
 export class DbAddAccount implements AddAccount {
-  private readonly addAccountRepository: AddAccountRepository;
+    private readonly addAccountRepository: AddAccountRepository;
 
-  constructor(addAccountRepository: AddAccountRepository) {
-    this.addAccountRepository = addAccountRepository;
-  }
+    constructor(addAccountRepository: AddAccountRepository) {
+        this.addAccountRepository = addAccountRepository;
+    }
 
-  async add(accountData: DbAddAccountModel): Promise<DbAccountModel> {
-    return await this.addAccountRepository.save(accountData);
-  }
+    async add(accountData: DbAddAccountModel): Promise<DbAccountModel> {
+        return await this.addAccountRepository.save(accountData);
+    }
 }

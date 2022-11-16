@@ -1,5 +1,5 @@
-import { HttpResponse } from "../protocols";
-import { ServerError } from "../errors";
+import { HttpResponse } from '../protocols';
+import { ServerError } from '../errors';
 
 /**
  * It returns an object with a statusCode of 400 and a body of the error
@@ -7,7 +7,7 @@ import { ServerError } from "../errors";
  * @returns An object with two properties: statusCode and body.
  */
 export const badRequest = (error: Error): HttpResponse => {
-  return { statusCode: 400, body: error };
+    return { statusCode: 400, body: error };
 };
 
 /**
@@ -15,7 +15,7 @@ export const badRequest = (error: Error): HttpResponse => {
  * @returns An object with two properties: statusCode and body.
  */
 export const serverError = (): HttpResponse => {
-  return { statusCode: 500, body: new ServerError() };
+    return { statusCode: 500, body: new ServerError() };
 };
 
 /**
@@ -24,5 +24,5 @@ export const serverError = (): HttpResponse => {
  * @returns An object with two properties: statusCode and body.
  */
 export const ok = (data: any): HttpResponse => {
-  return { statusCode: 200, body: data };
+    return { statusCode: 200, body: data };
 };
