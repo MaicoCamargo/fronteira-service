@@ -1,15 +1,19 @@
 import { LogControllerDecorator } from './log';
 import { Controller, HttpRequest, HttpResponse } from '../../presentation/protocols';
 
-const makeFakeRequest = (): HttpRequest => ({
+const makeFakeHttpRequest = (): HttpRequest => ({
     body: { name: 'any_name', email: 'any_email@email.com', password: '123' }
+});
+
+const makeFakeHttpResponse = (): HttpResponse => ({
+    body: { name: 'any_name', email: 'any_email@email.com', password: '123' },
+    statusCode: 200
 });
 
 const makeController = () => {
     class ControllerStub implements Controller {
-        handle(httpRequest: HttpRequest): Promise<HttpResponse> {
-            const httpResponse: HttpResponse = { body: { any: 'any' }, statusCode: 200 };
-            return Promise.resolve(httpResponse);
+        async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+            return makeFakeHttpResponse();
         }
     }
     return new ControllerStub();
@@ -29,7 +33,8 @@ describe('Log Decorator', function () {
     test('Deve chamar o controller.handle()', async () => {
         const { sut, controllerStub } = makeSut();
         const handleSpy = jest.spyOn(controllerStub, 'handle');
-        await sut.handle(makeFakeRequest());
-        expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest());
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(handleSpy).toHaveBeenCalledWith(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(makeFakeHttpResponse());
     });
 });
