@@ -87,7 +87,7 @@ describe('SignUpController', () => {
         const request = makeFakeHttpRequest('any_name', 'email@email.com');
         const response = await sut.handle(request);
         expect(response.statusCode).toBe(500);
-        expect(response.body).toEqual(new ServerError(''));
+        expect(response.body).toEqual(new ServerError(null));
     });
 
     test('Deve chamar AddAccount com valores corretos', () => {
@@ -106,7 +106,7 @@ describe('SignUpController', () => {
         const request = makeFakeHttpRequest('any_name', 'email@email.com');
         const response = await sut.handle(request);
         expect(response.statusCode).toBe(500);
-        expect(response.body).toEqual(new ServerError(''));
+        expect(response.body).toEqual(new ServerError(null));
     });
 
     test('Deve retornar 200 em caso de sucesso', async () => {
