@@ -14,8 +14,8 @@ export const badRequest = (error: Error): HttpResponse => {
  * It returns an object with a statusCode of 500 and a body of a new ServerError object
  * @returns An object with two properties: statusCode and body.
  */
-export const serverError = (): HttpResponse => {
-    return { statusCode: 500, body: new ServerError() };
+export const serverError = (error: Error): HttpResponse => {
+    return { statusCode: 500, body: new ServerError(error.stack) };
 };
 
 /**
