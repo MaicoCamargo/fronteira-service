@@ -1,0 +1,3 @@
+{
+    "*.ts": ["eslint 'src/**' --fix", "prettier 'src/**' --write", "npm run test:staged"]
+}
