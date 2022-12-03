@@ -1,0 +1,26 @@
+import { knex } from 'knex';
+import { ENV } from '../../../../main/config/env';
+
+let connection;
+if (ENV.NODE_ENV === 'test') {
+    connection = {
+        host: ENV.DB_POSTGRES.HOST,
+        port: ENV.DB_POSTGRES.PORT,
+        user: ENV.DB_POSTGRES.USER,
+        password: ENV.DB_POSTGRES.PASSWORD,
+        database: 'fronteira_test'
+    };
+} else {
+    connection = {
+        host: ENV.DB_POSTGRES.HOST,
+        port: ENV.DB_POSTGRES.PORT,
+        user: ENV.DB_POSTGRES.USER,
+        password: ENV.DB_POSTGRES.PASSWORD,
+        database: ENV.DB_POSTGRES.DATABASE
+    };
+}
+
+export const knexInstance = knex({
+    client: 'pg',
+    connection
+});
