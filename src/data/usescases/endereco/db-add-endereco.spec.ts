@@ -17,12 +17,12 @@ const makeFakeEndereco = (): EnderecoModel => ({
     numero: 'any_numero',
     cep: 'any_cep',
     cidade: 'any_cidade',
-    id: 1
+    id_endereco: 1
 });
 
 const makeAddEnderecoRepository = (): AddEnderecoRepository => {
     class AddEnderecoRepositoryStub implements AddEnderecoRepository {
-        add(endereco: AddEnderecoParams): Promise<EnderecoModel> {
+        save(endereco: AddEnderecoParams): Promise<EnderecoModel> {
             return Promise.resolve(makeFakeEndereco());
         }
     }
@@ -46,7 +46,7 @@ export const throwError = (): never => {
 describe('DBAddEndereco UseCase', () => {
     test('Deve chamar o AddEnderecoRepository com valores corretos', async () => {
         const { sut, addEnderecoRepositoryStub } = makeSut();
-        const spy = jest.spyOn(addEnderecoRepositoryStub, 'add');
+        const spy = jest.spyOn(addEnderecoRepositoryStub, 'save');
         await sut.add(makeFakeAddEnderecoParams());
         expect(spy).toHaveBeenCalledWith(makeFakeAddEnderecoParams());
     });
@@ -59,7 +59,7 @@ describe('DBAddEndereco UseCase', () => {
 
     test('Deve jogar a excessão se o AddEnderecoRepository retornar uma excessão', async () => {
         const { sut, addEnderecoRepositoryStub } = makeSut();
-        jest.spyOn(addEnderecoRepositoryStub, 'add').mockImplementationOnce(throwError);
+        jest.spyOn(addEnderecoRepositoryStub, 'save').mockImplementationOnce(throwError);
         const promise = sut.add(makeFakeAddEnderecoParams());
         await expect(promise).rejects.toThrow();
     });

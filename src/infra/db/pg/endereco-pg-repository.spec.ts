@@ -1,7 +1,8 @@
-import { EnderecoMysqlRepository } from './endereco-mysql-repository';
+import { EnderecoPgRepository } from './endereco-pg-repository';
 import { knexInstance } from './helpers/knex-helper';
-
-const makeFakeAddEndereco = (): any => ({
+import { AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
+// fixme duplicar os models do domain no data
+const makeFakeAddEndereco = (): AddEnderecoParams => ({
     rua: 'any_rua',
     complemento: 'any_complemento',
     numero: 'any_numero',
@@ -9,7 +10,7 @@ const makeFakeAddEndereco = (): any => ({
     cidade: 'any_cidade'
 });
 const makeSut = () => {
-    return new EnderecoMysqlRepository();
+    return new EnderecoPgRepository();
 };
 describe('Endereço Mysql Repository', function () {
     afterAll(async () => {

@@ -2,5 +2,5 @@ import { AddEnderecoParams } from '../../../../domain/usecases/cliente/add-ender
 import { EnderecoModel } from '../../../../domain/models/endereco-model';
 
 export interface AddEnderecoRepository {
-    add: (endereco: AddEnderecoParams) => Promise<EnderecoModel>;
+    save: (endereco: AddEnderecoParams) => Promise<EnderecoModel>;
 }
