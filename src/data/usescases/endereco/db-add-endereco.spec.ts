@@ -38,6 +38,11 @@ const makeSut = (): SutTypes => {
     return { sut, addEnderecoRepositoryStub };
 };
 
+// never -> usar quando uma funcão retornar throws
+export const throwError = (): never => {
+    throw new Error();
+};
+
 describe('DBAddEndereco UseCase', () => {
     test('Deve chamar o AddEnderecoRepository com valores corretos', async () => {
         const { sut, addEnderecoRepositoryStub } = makeSut();
@@ -50,5 +55,12 @@ describe('DBAddEndereco UseCase', () => {
         const { sut } = makeSut();
         const endereco = await sut.add(makeFakeAddEnderecoParams());
         expect(endereco).toEqual(makeFakeEndereco());
+    });
+
+    test('Deve jogar a excessão se o AddEnderecoRepository retornar uma excessão', async () => {
+        const { sut, addEnderecoRepositoryStub } = makeSut();
+        jest.spyOn(addEnderecoRepositoryStub, 'add').mockImplementationOnce(throwError);
+        const promise = sut.add(makeFakeAddEnderecoParams());
+        await expect(promise).rejects.toThrow();
     });
 });
