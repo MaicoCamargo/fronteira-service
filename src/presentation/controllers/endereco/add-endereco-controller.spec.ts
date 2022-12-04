@@ -2,7 +2,7 @@ import { AddEnderecoController } from './add-endereco-controller';
 import { AddEndereco, AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { HttpRequest } from '../../protocols';
-import { badRequest, serverError } from '../../helpers/http';
+import { badRequest, created, serverError } from '../../helpers/http';
 
 const makeFakeHttpRequest = (): HttpRequest => ({
     body: makeFakeAddEnderecoParams()
@@ -55,5 +55,11 @@ describe('AddEnderecoController', () => {
         jest.spyOn(addEnderecoStub, 'add').mockReturnValueOnce(Promise.reject(new Error()));
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
+    });
+
+    test('Deve retornar 201 em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(created(makeFakeEndereco()));
     });
 });
