@@ -45,4 +45,10 @@ describe('DBAddEndereco UseCase', () => {
         await sut.add(makeFakeAddEnderecoParams());
         expect(spy).toHaveBeenCalledWith(makeFakeAddEnderecoParams());
     });
+
+    test('Deve retornar o endereco em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const endereco = await sut.add(makeFakeAddEnderecoParams());
+        expect(endereco).toEqual(makeFakeEndereco());
+    });
 });
