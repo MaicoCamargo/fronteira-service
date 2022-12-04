@@ -1,7 +1,7 @@
 import { LogControllerDecorator } from './log';
 import { Controller, HttpRequest, HttpResponse } from '../../presentation/protocols';
 import { serverError } from '../../presentation/helpers/http';
-import { LogErrorRepository } from '../../data/protocols/log-error-repository';
+import { LogErrorRepository } from '../../data/protocols/db/log/log-error-repository';
 
 const makeFakeHttpRequest = (): HttpRequest => ({
     body: { name: 'any_name', email: 'any_email@email.com', password: '123' }
