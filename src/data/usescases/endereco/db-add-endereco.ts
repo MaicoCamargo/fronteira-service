@@ -6,7 +6,6 @@ export class DbAddEndereco implements AddEndereco {
     constructor(private readonly addEnderecoRepository: AddEnderecoRepository) {}
 
     async add(params: AddEnderecoParams): Promise<EnderecoModel> {
-        await this.addEnderecoRepository.add(params);
-        return await Promise.resolve(undefined);
+        return await this.addEnderecoRepository.add(params);
     }
 }
