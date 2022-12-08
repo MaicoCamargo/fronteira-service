@@ -1,5 +1,5 @@
 import { DbAddEndereco } from './db-add-endereco';
-import { AddEnderecoRepository } from '../../protocols/db/cliente/add-endereco-repository';
+import { AddEnderecoRepository } from '../../protocols/db/endereco/add-endereco-repository';
 import { AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 

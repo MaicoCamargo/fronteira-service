@@ -1,6 +1,6 @@
 import { AddEndereco, AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
-import { AddEnderecoRepository } from '../../protocols/db/cliente/add-endereco-repository';
+import { AddEnderecoRepository } from '../../protocols/db/endereco/add-endereco-repository';
 
 export class DbAddEndereco implements AddEndereco {
     constructor(private readonly addEnderecoRepository: AddEnderecoRepository) {}
