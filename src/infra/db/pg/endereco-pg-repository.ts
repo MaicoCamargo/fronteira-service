@@ -1,6 +1,6 @@
 import { knexInstance } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
-import { AddEnderecoRepository } from '../../../data/protocols/db/cliente/add-endereco-repository';
+import { AddEnderecoRepository } from '../../../data/protocols/db/endereco/add-endereco-repository';
 import { AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 
