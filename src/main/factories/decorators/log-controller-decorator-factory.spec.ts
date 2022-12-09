@@ -47,7 +47,7 @@ const makeFakeHttpRequest = (): HttpRequest => ({
 const makeFakeEndereco = (): EnderecoModel => ({
     cep: 'any_cep',
     cidade: 'any_cidade',
-    id_endereco: 1,
+    id: 1,
     numero: 'any_numero',
     complemento: 'any_complemento',
     rua: 'any_rua'

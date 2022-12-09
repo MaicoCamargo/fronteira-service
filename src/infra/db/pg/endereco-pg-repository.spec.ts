@@ -1,8 +1,8 @@
 import { EnderecoPgRepository } from './endereco-pg-repository';
 import { knexInstance } from './helpers/knex-helper';
-import { AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
+import { DbAddEnderecoParams } from '../../../data/protocols/db/endereco/add-endereco-repository';
 // fixme duplicar os models do domain no data
-const makeFakeAddEndereco = (): AddEnderecoParams => ({
+const makeFakeAddEndereco = (): DbAddEnderecoParams => ({
     rua: 'any_rua',
     complemento: 'any_complemento',
     numero: 'any_numero',

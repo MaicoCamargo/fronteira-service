@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols';
-import { AddEndereco } from '../../../domain/usecases/cliente/add-endereco';
+import { AddEndereco } from '../../../domain/usecases/endereco/add-endereco';
 import { created, serverError } from '../../helpers/http';
 
 export class AddEnderecoController implements Controller {

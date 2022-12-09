@@ -1,8 +1,17 @@
 import { DbAddEndereco } from './db-add-endereco';
-import { AddEnderecoRepository } from '../../protocols/db/endereco/add-endereco-repository';
-import { AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
+import { AddEnderecoRepository, DbAddEnderecoParams } from '../../protocols/db/endereco/add-endereco-repository';
+import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
+import { DbEnderecoModel } from '../../models/db-endereco-model';
 
+const makeFakeEnderecoModel = (): EnderecoModel => ({
+    rua: 'any_rua',
+    complemento: 'any_complemento',
+    numero: 'any_numero',
+    cep: 'any_cep',
+    cidade: 'any_cidade',
+    id: 1
+});
 const makeFakeAddEnderecoParams = (): AddEnderecoParams => ({
     rua: 'any_rua',
     complemento: 'any_complemento',
@@ -11,7 +20,7 @@ const makeFakeAddEnderecoParams = (): AddEnderecoParams => ({
     cidade: 'any_cidade'
 });
 
-const makeFakeEndereco = (): EnderecoModel => ({
+const makeFakeDbEnderecoModel = (): DbEnderecoModel => ({
     rua: 'any_rua',
     complemento: 'any_complemento',
     numero: 'any_numero',
@@ -22,8 +31,8 @@ const makeFakeEndereco = (): EnderecoModel => ({
 
 const makeAddEnderecoRepository = (): AddEnderecoRepository => {
     class AddEnderecoRepositoryStub implements AddEnderecoRepository {
-        save(endereco: AddEnderecoParams): Promise<EnderecoModel> {
-            return Promise.resolve(makeFakeEndereco());
+        save(endereco: DbAddEnderecoParams): Promise<DbEnderecoModel> {
+            return Promise.resolve(makeFakeDbEnderecoModel());
         }
     }
     return new AddEnderecoRepositoryStub();
@@ -54,7 +63,7 @@ describe('DBAddEndereco UseCase', () => {
     test('Deve retornar o endereco em caso de sucesso', async () => {
         const { sut } = makeSut();
         const endereco = await sut.add(makeFakeAddEnderecoParams());
-        expect(endereco).toEqual(makeFakeEndereco());
+        expect(endereco).toEqual(makeFakeEnderecoModel());
     });
 
     test('Deve jogar a excessão se o AddEnderecoRepository retornar uma excessão', async () => {

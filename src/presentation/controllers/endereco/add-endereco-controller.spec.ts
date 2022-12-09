@@ -1,5 +1,5 @@
 import { AddEnderecoController } from './add-endereco-controller';
-import { AddEndereco, AddEnderecoParams } from '../../../domain/usecases/cliente/add-endereco';
+import { AddEndereco, AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { HttpRequest } from '../../protocols';
 import { badRequest, created, serverError } from '../../helpers/http';
@@ -21,7 +21,7 @@ const makeFakeEndereco = (): EnderecoModel => ({
     numero: 'any_numero',
     cep: 'any_cep',
     cidade: 'any_cidade',
-    id_endereco: 1
+    id: 1
 });
 const makeAddEndereco = (): AddEndereco => {
     class AddEnderecoStub implements AddEndereco {

@@ -1,6 +1,13 @@
-import { AddEnderecoParams } from '../../../../domain/usecases/cliente/add-endereco';
-import { EnderecoModel } from '../../../../domain/models/endereco-model';
+import { DbEnderecoModel } from '../../../models/db-endereco-model';
+
+export interface DbAddEnderecoParams {
+    complemento: string;
+    numero: string;
+    rua: string;
+    cidade: string;
+    cep: string;
+}
 
 export interface AddEnderecoRepository {
-    save: (endereco: AddEnderecoParams) => Promise<EnderecoModel>;
+    save: (endereco: DbAddEnderecoParams) => Promise<DbEnderecoModel>;
 }
