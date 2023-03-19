@@ -3,6 +3,7 @@ import { AddEnderecoRepository, DbAddEnderecoParams } from '../../protocols/db/e
 import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
+import { throwError } from '../../../domain/helper/test-helper';
 
 const makeFakeEnderecoModel = (): EnderecoModel => ({
     rua: 'any_rua',
@@ -45,11 +46,6 @@ const makeSut = (): SutTypes => {
     const addEnderecoRepositoryStub = makeAddEnderecoRepository();
     const sut = new DbAddEndereco(addEnderecoRepositoryStub);
     return { sut, addEnderecoRepositoryStub };
-};
-
-// never -> usar quando uma funcão retornar throws
-export const throwError = (): never => {
-    throw new Error();
 };
 
 describe('DBAddEndereco UseCase', () => {
