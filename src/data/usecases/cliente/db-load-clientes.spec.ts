@@ -2,6 +2,28 @@ import { DbLoadClientes } from './db-load-clientes';
 import { LoadClientesRepository } from '../../protocols/db/cliente/load-clientes-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { throwError } from '../../../domain/helper/test-helper';
+import { ClienteModel } from '../../../domain/models/cliente-model';
+
+const makeFakeLoadClienteModel = (): ClienteModel[] => [
+    {
+        id: 1,
+        cpf: 'any_cpf',
+        carro: 'any_carro',
+        nome: 'any_nome',
+        endereco: 'any_endereco',
+        lastUpdated: new Date('2022-01-01'),
+        telefone: 'any_telefone'
+    },
+    {
+        id: 2,
+        cpf: 'outher_cpf',
+        carro: 'outher_carro',
+        nome: 'outher_nome',
+        endereco: 'outher_endereco',
+        lastUpdated: new Date('2022-01-01'),
+        telefone: 'outher_telefone'
+    }
+];
 
 const makeFakeDbClienteModel = (): DbClienteModel[] => [
     {
@@ -43,7 +65,11 @@ const makeSut = (): SutTypes => {
     return { sut, loadClientesRepositoryStub };
 };
 describe('DbLoadCliente Use Case', () => {
-    test('Deve retornar todos os clientes em caso de sucesso', () => {});
+    test('Deve retornar todos os clientes em caso de sucesso', async () => {
+        const { sut, loadClientesRepositoryStub } = makeSut();
+        const clientes = await sut.load();
+        expect(clientes).toEqual(makeFakeLoadClienteModel());
+    });
 
     test('Deve "throws" se LoadCliente throws', async () => {
         const { sut, loadClientesRepositoryStub } = makeSut();
