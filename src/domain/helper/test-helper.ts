@@ -1,4 +1,4 @@
-// never -> usar quando uma funcão retornar throws
+// never -> usar quando uma função retornar throws
 export const throwError = (): never => {
     throw new Error();
 };

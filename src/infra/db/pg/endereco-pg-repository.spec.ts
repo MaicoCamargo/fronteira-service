@@ -12,7 +12,7 @@ const makeFakeAddEndereco = (): DbAddEnderecoParams => ({
 const makeSut = () => {
     return new EnderecoPgRepository();
 };
-describe('Endereço Mysql Repository', function () {
+describe('Endereço Postgres Repository', function () {
     afterAll(async () => {
         await knexInstance('endereco').del();
         await knexInstance.destroy();
