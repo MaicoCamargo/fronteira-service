@@ -8,13 +8,13 @@ export class DbLoadClientes implements LoadClientes {
     async load(): Promise<ClienteModel[]> {
         const clientes = await this.loadClientesRepository.load();
         return clientes.map((row) => ({
-            id: row.cliente_id,
+            id: row.id_cliente,
             cpf: row.cpf,
             carro: row.carro,
             nome: row.nome,
             endereco: row.endereco,
             telefone: row.telefone,
-            lastUpdated: row.lastUpdated
+            lastUpdated: row.last_updated
         }));
     }
 }
