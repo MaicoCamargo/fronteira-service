@@ -10,6 +10,7 @@ module.exports = {
         '!<rootDir>/src/main/**',
         '!<rootDir>/src/**/*-protocols.ts',
         '!<rootDir>/src/**/*-model.ts',
+        '!<rootDir>/src/domain/usecases/**/*.ts',
         '!**/protocols/**'
     ],
     coverageDirectory: 'coverage',
