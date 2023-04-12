@@ -16,33 +16,33 @@ const makeFakeLoadClienteModel = (): ClienteModel[] => [
     },
     {
         id: 2,
-        cpf: 'outher_cpf',
-        carro: 'outher_carro',
-        nome: 'outher_nome',
-        endereco: 'outher_endereco',
+        cpf: 'other_cpf',
+        carro: 'other_carro',
+        nome: 'other_nome',
+        endereco: 'other_endereco',
         lastUpdated: new Date('2022-01-01'),
-        telefone: 'outher_telefone'
+        telefone: 'other_telefone'
     }
 ];
 
 const makeFakeDbClienteModel = (): DbClienteModel[] => [
     {
-        cliente_id: 1,
+        id_cliente: 1,
         cpf: 'any_cpf',
         carro: 'any_carro',
         nome: 'any_nome',
         endereco: 'any_endereco',
-        lastUpdated: new Date('2022-01-01'),
+        last_updated: new Date('2022-01-01'),
         telefone: 'any_telefone'
     },
     {
-        cliente_id: 2,
-        cpf: 'outher_cpf',
-        carro: 'outher_carro',
-        nome: 'outher_nome',
-        endereco: 'outher_endereco',
-        lastUpdated: new Date('2022-01-01'),
-        telefone: 'outher_telefone'
+        id_cliente: 2,
+        cpf: 'other_cpf',
+        carro: 'other_carro',
+        nome: 'other_nome',
+        endereco: 'other_endereco',
+        last_updated: new Date('2022-01-01'),
+        telefone: 'other_telefone'
     }
 ];
 
@@ -66,7 +66,7 @@ const makeSut = (): SutTypes => {
 };
 describe('DbLoadCliente Use Case', () => {
     test('Deve retornar todos os clientes em caso de sucesso', async () => {
-        const { sut, loadClientesRepositoryStub } = makeSut();
+        const { sut } = makeSut();
         const clientes = await sut.load();
         expect(clientes).toEqual(makeFakeLoadClienteModel());
     });

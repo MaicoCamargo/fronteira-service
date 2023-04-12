@@ -31,21 +31,21 @@ describe('Cliente Postgres Repository', () => {
             const clientes = await sut.load();
             expect(clientes).toBeTruthy();
             expect(clientes.length).toEqual(createdClientes.length);
-            expect(clientes[0].cliente_id).toEqual(createdClientes[0].cliente_id);
+            expect(clientes[0].id_cliente).toEqual(createdClientes[0].id_cliente);
             expect(clientes[0].cpf).toEqual(createdClientes[0].cpf);
             expect(clientes[0].carro).toEqual(createdClientes[0].carro);
             expect(clientes[0].nome).toEqual(createdClientes[0].nome);
             expect(clientes[0].endereco).toEqual(createdClientes[0].endereco);
             expect(clientes[0].telefone).toEqual(createdClientes[0].telefone);
-            expect(clientes[0].lastUpdated).toEqual(createdClientes[0].lastUpdated);
+            expect(clientes[0].last_updated).toEqual(createdClientes[0].last_updated);
 
-            expect(clientes[1].cliente_id).toEqual(createdClientes[1].cliente_id);
+            expect(clientes[1].id_cliente).toEqual(createdClientes[1].id_cliente);
             expect(clientes[1].cpf).toEqual(createdClientes[1].cpf);
             expect(clientes[1].carro).toEqual(createdClientes[1].carro);
             expect(clientes[1].nome).toEqual(createdClientes[1].nome);
             expect(clientes[1].endereco).toEqual(createdClientes[1].endereco);
             expect(clientes[1].telefone).toEqual(createdClientes[1].telefone);
-            expect(clientes[1].lastUpdated).toEqual(createdClientes[1].lastUpdated);
+            expect(clientes[1].last_updated).toEqual(createdClientes[1].last_updated);
         });
     });
 });
