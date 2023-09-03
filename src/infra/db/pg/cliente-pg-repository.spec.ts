@@ -3,6 +3,7 @@ import { DbClienteModel } from '../../../data/models/db-cliente-model';
 import { ClientePgRepository } from './cliente-pg-repository';
 import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
 import { mapper } from './helpers/mapper';
+import { DbCarroModel } from '../../../data/models/db-carro-model';
 
 const makeSut = () => {
     return new ClientePgRepository();
@@ -50,8 +51,7 @@ describe('Cliente Postgres Repository', () => {
     });
 });
 
-const makePgClienteCreate = async (carro: any, endereco: DbEnderecoModel): Promise<DbClienteModel> => {
-    // fixme add carro db model
+const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoModel): Promise<DbClienteModel> => {
     const randomStr = (Math.random() + 1).toString(36).substring(7);
 
     return mapper(
@@ -68,9 +68,8 @@ const makePgClienteCreate = async (carro: any, endereco: DbEnderecoModel): Promi
             .returning('*')
     );
 };
-const makePgCarroCreate = async (): Promise<any> => {
-    // fixme add carro db model
-    return mapper(
+const makePgCarroCreate = async (): Promise<DbCarroModel> => {
+    const result = mapper(
         await knexInstance('carro')
             .insert({
                 ano: 2023,
@@ -81,8 +80,15 @@ const makePgCarroCreate = async (): Promise<any> => {
             })
             .returning('*')
     );
+    return {
+        id_carro: result.id_carro,
+        ano: result.ano,
+        cor: result.cor,
+        quilometragem: result.kilometragem,
+        modelo: result.modelo,
+        placa: result.placa
+    };
 };
-
 const makePgEnderecoCreate = async (): Promise<DbEnderecoModel> => {
     return mapper(
         await knexInstance('endereco')
