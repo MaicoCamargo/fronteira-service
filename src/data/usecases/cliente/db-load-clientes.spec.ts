@@ -8,18 +8,18 @@ const makeFakeLoadClienteModel = (): ClienteModel[] => [
     {
         id: 1,
         cpf: 'any_cpf',
-        carro: 'any_carro',
+        carro: 1,
         nome: 'any_nome',
-        endereco: 'any_endereco',
+        endereco: 1,
         lastUpdated: new Date('2022-01-01'),
         telefone: 'any_telefone'
     },
     {
         id: 2,
         cpf: 'other_cpf',
-        carro: 'other_carro',
+        carro: 2,
         nome: 'other_nome',
-        endereco: 'other_endereco',
+        endereco: 2,
         lastUpdated: new Date('2022-01-01'),
         telefone: 'other_telefone'
     }
@@ -29,18 +29,18 @@ const makeFakeDbClienteModel = (): DbClienteModel[] => [
     {
         id_cliente: 1,
         cpf: 'any_cpf',
-        carro: 'any_carro',
+        carro_id: 1,
         nome: 'any_nome',
-        endereco: 'any_endereco',
+        endereco_id: 1,
         last_updated: new Date('2022-01-01'),
         telefone: 'any_telefone'
     },
     {
         id_cliente: 2,
         cpf: 'other_cpf',
-        carro: 'other_carro',
+        carro_id: 2,
         nome: 'other_nome',
-        endereco: 'other_endereco',
+        endereco_id: 2,
         last_updated: new Date('2022-01-01'),
         telefone: 'other_telefone'
     }
