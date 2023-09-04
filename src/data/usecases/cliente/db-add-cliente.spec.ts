@@ -1,5 +1,6 @@
 import { AddClienteParams, AddClienteRepository } from '../../protocols/db/cliente/add-cliente-repository';
 import { DbAddCliente } from './db-add-cliente';
+import { throwError } from '../../../domain/helper/test-helper';
 
 const mockFakeClienteParams = (): AddClienteParams => ({
     cpf: 'any_cpf',
@@ -47,5 +48,12 @@ describe('DbAddCliente Use Case', () => {
         const addSpy = jest.spyOn(sut, 'add');
         sut.add(mockFakeClienteParams());
         expect(addSpy).toHaveBeenCalledWith(mockFakeClienteParams());
+    });
+
+    test('deve lançar exceção se AddClienteRepository lançar exceção', async () => {
+        const { sut, addClienteRepositoryStub } = makeSut();
+        jest.spyOn(addClienteRepositoryStub, 'add').mockImplementationOnce(throwError);
+        const promise = sut.add(mockFakeClienteParams());
+        await expect(promise).rejects.toThrow();
     });
 });
