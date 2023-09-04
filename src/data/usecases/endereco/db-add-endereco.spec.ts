@@ -1,5 +1,5 @@
 import { DbAddEndereco } from './db-add-endereco';
-import { AddEnderecoRepository, DbAddEnderecoParams } from '../../protocols/db/endereco/add-endereco-repository';
+import { AddEnderecoRepository, DbAddEnderecoModel } from '../../protocols/db/endereco/add-endereco-repository';
 import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
@@ -32,7 +32,7 @@ const makeFakeDbEnderecoModel = (): DbEnderecoModel => ({
 
 const makeAddEnderecoRepository = (): AddEnderecoRepository => {
     class AddEnderecoRepositoryStub implements AddEnderecoRepository {
-        save(endereco: DbAddEnderecoParams): Promise<DbEnderecoModel> {
+        save(endereco: DbAddEnderecoModel): Promise<DbEnderecoModel> {
             return Promise.resolve(makeFakeDbEnderecoModel());
         }
     }
