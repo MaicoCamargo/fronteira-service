@@ -56,4 +56,16 @@ describe('DbAddCliente Use Case', () => {
         const promise = sut.add(mockFakeClienteParams());
         await expect(promise).rejects.toThrow();
     });
+
+    test('deve salvar um novo cliente e retornar em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const cliente = await sut.add(mockFakeClienteParams());
+        expect(cliente.id_cliente).toBeTruthy();
+        expect(cliente.last_updated).toBeTruthy();
+        expect(cliente.cpf).toBe(mockFakeClienteParams().cpf);
+        expect(cliente.nome).toBe(mockFakeClienteParams().nome);
+        expect(cliente.telefone).toBe(mockFakeClienteParams().telefone);
+        expect(cliente.endereco_id).toBe(mockFakeClienteParams().endereco_id);
+        expect(cliente.carro_id).toBe(mockFakeClienteParams().carro_id);
+    });
 });
