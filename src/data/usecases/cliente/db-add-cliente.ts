@@ -16,7 +16,15 @@ export class DbAddCliente implements AddCliente {
             endereco_id: params.endereco,
             last_updated: new Date()
         };
-        await this.addClienteRepository.save(model);
-        return await Promise.resolve(undefined);
+        const cliente = await this.addClienteRepository.save(model);
+        return {
+            id: cliente.id_cliente,
+            carro: cliente.carro_id,
+            endereco: cliente.endereco_id,
+            lastUpdated: cliente.last_updated,
+            cpf: cliente.cpf,
+            nome: cliente.nome,
+            telefone: cliente.telefone
+        };
     }
 }
