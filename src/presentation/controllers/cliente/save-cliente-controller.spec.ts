@@ -2,7 +2,7 @@ import { HttpRequest } from '../../protocols';
 import { AddCliente, AddClienteParams } from '../../../domain/usecases/cliente/add-cliente';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { SaveClienteController } from './save-cliente-controller';
-import { created } from '../../helpers/http';
+import { created, serverError } from '../../helpers/http';
 
 interface SutTypes {
     sut: SaveClienteController;
@@ -58,5 +58,12 @@ describe('SaveClienteController', () => {
         const { sut } = makeSut();
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(created(makeFakeClienteModel()));
+    });
+
+    test('Deve retornar 500 se AddCliente falhar', async () => {
+        const { sut, addClienteStub } = makeSut();
+        jest.spyOn(addClienteStub, 'add').mockReturnValueOnce(Promise.reject(new Error()));
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(serverError(new Error()));
     });
 });
