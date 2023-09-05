@@ -8,6 +8,6 @@ export interface DbAddEnderecoModel {
     cep: string;
 }
 
-export interface AddEnderecoRepository {
+export interface SaveEnderecoRepository {
     save: (endereco: DbAddEnderecoModel) => Promise<DbEnderecoModel>;
 }

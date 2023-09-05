@@ -1,6 +1,6 @@
 import { EnderecoPgRepository } from './endereco-pg-repository';
 import { knexInstance } from './helpers/knex-helper';
-import { DbAddEnderecoModel } from '../../../data/protocols/db/endereco/add-endereco-repository';
+import { DbAddEnderecoModel } from '../../../data/protocols/db/endereco/save-endereco-repository';
 
 const makeFakeAddEndereco = (): DbAddEnderecoModel => ({
     rua: 'any_rua',

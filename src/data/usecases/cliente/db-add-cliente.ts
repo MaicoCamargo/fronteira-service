@@ -1,9 +1,9 @@
-import { AddClienteModel, AddClienteRepository } from '../../protocols/db/cliente/add-cliente-repository';
+import { AddClienteModel, SaveClienteRepository } from '../../protocols/db/cliente/save-cliente-repository';
 import { AddCliente, AddClienteParams } from '../../../domain/usecases/cliente/add-cliente';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 
 export class DbAddCliente implements AddCliente {
-    constructor(private readonly addClienteRepository: AddClienteRepository) {
+    constructor(private readonly addClienteRepository: SaveClienteRepository) {
         this.addClienteRepository = addClienteRepository;
     }
 

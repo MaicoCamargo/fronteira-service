@@ -1,4 +1,4 @@
-import { AddClienteModel, AddClienteRepository } from '../../protocols/db/cliente/add-cliente-repository';
+import { AddClienteModel, SaveClienteRepository } from '../../protocols/db/cliente/save-cliente-repository';
 import { DbAddCliente } from './db-add-cliente';
 import { throwError } from '../../../domain/helper/test-helper';
 import { DbClienteModel } from '../../models/db-cliente-model';
@@ -27,26 +27,26 @@ const mockFakeDbClienteModel = (): DbClienteModel => ({
     ...mockFakeAddClienteModel()
 });
 
-const makeAddClienteRepository = (): AddClienteRepository => {
-    class AddClienteRepositoryStub implements AddClienteRepository {
+const makeSaveClienteRepository = (): SaveClienteRepository => {
+    class SaveClienteRepositoryStub implements SaveClienteRepository {
         async save(cliente: AddClienteModel): Promise<DbClienteModel> {
             return Promise.resolve(mockFakeDbClienteModel());
         }
     }
 
-    return new AddClienteRepositoryStub();
+    return new SaveClienteRepositoryStub();
 };
 
 interface SutTypes {
     sut: DbAddCliente;
-    addClienteRepositoryStub: AddClienteRepository;
+    saveClienteRepositoryStub: SaveClienteRepository;
 }
 const makeSut = (): SutTypes => {
-    const addClienteRepositoryStub = makeAddClienteRepository();
-    const sut = new DbAddCliente(addClienteRepositoryStub);
+    const saveClienteRepositoryStub = makeSaveClienteRepository();
+    const sut = new DbAddCliente(saveClienteRepositoryStub);
     return {
         sut,
-        addClienteRepositoryStub
+        saveClienteRepositoryStub
     };
 };
 
@@ -59,17 +59,17 @@ describe('DbAddCliente Use Case', () => {
         mockDateAdapter.reset();
     });
 
-    test('deve chamar AddClienteRepository com valores corretos', () => {
-        const { sut, addClienteRepositoryStub } = makeSut();
+    test('deve chamar SaveClienteRepository com valores corretos', () => {
+        const { sut, saveClienteRepositoryStub } = makeSut();
 
-        const addSpy = jest.spyOn(addClienteRepositoryStub, 'save');
+        const saveSpy = jest.spyOn(saveClienteRepositoryStub, 'save');
         sut.add(mockFakeClienteParams());
-        expect(addSpy).toHaveBeenCalledWith(mockFakeAddClienteModel());
+        expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteModel());
     });
 
-    test('deve lançar exceção se AddClienteRepository lançar exceção', async () => {
-        const { sut, addClienteRepositoryStub } = makeSut();
-        jest.spyOn(addClienteRepositoryStub, 'save').mockImplementationOnce(throwError);
+    test('deve lançar exceção se SaveClienteRepository lançar exceção', async () => {
+        const { sut, saveClienteRepositoryStub } = makeSut();
+        jest.spyOn(saveClienteRepositoryStub, 'save').mockImplementationOnce(throwError);
         const promise = sut.add(mockFakeClienteParams());
         await expect(promise).rejects.toThrow();
     });
