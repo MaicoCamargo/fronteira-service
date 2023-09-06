@@ -17,6 +17,13 @@ describe('DbDeleteCliente Usecase', () => {
         const promise = sut.delete(1);
         await expect(promise).rejects.toThrow();
     });
+
+    test('Deve remover o cliente em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const id = 1;
+        const cliente = await sut.delete(id);
+        expect(cliente).toBeUndefined();
+    });
 });
 
 interface SutTypes {
