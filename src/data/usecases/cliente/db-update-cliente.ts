@@ -5,13 +5,21 @@ import { UpdateClienteRepository } from '../../protocols/db/cliente/update-clien
 export class DbUpdateCliente implements UpdateCliente {
     constructor(private readonly updateClienteRepository: UpdateClienteRepository) {}
 
-    async update(cliente: UpdateClienteParams): Promise<ClienteModel> {
-        await this.updateClienteRepository.update({
-            id: cliente.id,
-            nome: cliente.nome,
-            cpf: cliente.cpf,
-            telefone: cliente.telefone
+    async update(model: UpdateClienteParams): Promise<ClienteModel> {
+        const updated = await this.updateClienteRepository.update({
+            id: model.id,
+            nome: model.nome,
+            cpf: model.cpf,
+            telefone: model.telefone
         });
-        return await Promise.resolve(undefined);
+        return {
+            id: updated.id_cliente,
+            cpf: updated.cpf,
+            lastUpdated: updated.last_updated,
+            carro: updated.carro_id,
+            endereco: updated.endereco_id,
+            telefone: updated.telefone,
+            nome: updated.nome
+        };
     }
 }
