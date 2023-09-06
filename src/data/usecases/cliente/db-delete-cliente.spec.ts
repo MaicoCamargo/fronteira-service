@@ -1,5 +1,6 @@
 import { DeleteClienteRepository } from '../../protocols/db/cliente/delete-cliente-repository';
 import { DbDeleteCliente } from './db-delete-cliente';
+import { throwError } from '../../../domain/helper/test-helper';
 
 describe('DbDeleteCliente Usecase', () => {
     test('Deve chamar DeleteClienteRepository com valores corretos', async () => {
@@ -8,6 +9,13 @@ describe('DbDeleteCliente Usecase', () => {
         const id = 1;
         await sut.delete(id);
         expect(deleteSpy).toHaveBeenCalledWith(id);
+    });
+
+    test('Deve lançar exceção se DeleteClienteRepository lançar exceção', async () => {
+        const { sut, deleteClienteRepositoryStub } = makeSut();
+        jest.spyOn(deleteClienteRepositoryStub, 'delete').mockImplementationOnce(throwError);
+        const promise = sut.delete(1);
+        await expect(promise).rejects.toThrow();
     });
 });
 
