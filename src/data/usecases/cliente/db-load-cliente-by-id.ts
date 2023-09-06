@@ -7,6 +7,7 @@ export class DbLoadClienteById implements LoadClienteById {
 
     async loadById(id: number): Promise<ClienteModel> {
         const cliente = await this.loadClienteByIdRepository.loadById(id);
+        if (!cliente) return null;
         return {
             id: cliente.id_cliente,
             nome: cliente.nome,
