@@ -3,8 +3,9 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
 import { LoadClienteByIdController } from './load-cliente-by-id-controller';
 import { HttpRequest } from '../../protocols';
-import { ok, serverError } from '../../helpers/http';
+import { badRequest, ok, serverError } from '../../helpers/http';
 import { throwError } from '../../../domain/helper/test-helper';
+import { MissingParamError } from '../../errors';
 
 describe('LoadClienteByIdController', () => {
     test('Deve chamar LoadClienteById com valores corretos', () => {
@@ -25,6 +26,12 @@ describe('LoadClienteByIdController', () => {
         jest.spyOn(loadClienteByIdStub, 'loadById').mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
+    });
+
+    test('Deve retornar 400 se o id não for fonecido', async () => {
+        const { sut } = makeSut();
+        const httpResponse = await sut.handle({ params: {} });
+        expect(httpResponse).toEqual(badRequest(new MissingParamError('id é obrigatório')));
     });
 });
 
