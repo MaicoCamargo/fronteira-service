@@ -30,3 +30,7 @@ export const ok = (data: any): HttpResponse => {
 export const created = (data: any): HttpResponse => {
     return { statusCode: 201, body: data };
 };
+
+export const noContent = (): HttpResponse => {
+    return { statusCode: 204, body: null };
+};
