@@ -1,6 +1,6 @@
 import { LoadClienteByIdRepository } from '../../protocols/db/cliente/load-cliente-by-id-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
-import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
+import { mockFakeClienteModel, mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { DbLoadClienteById } from './db-load-cliente-by-id';
 
 const makeLoadClienteByIdRepositoryStub = () => {
@@ -41,5 +41,12 @@ describe('DbLoadClienteById', () => {
         const id = 1;
         const cliente = await sut.loadById(id);
         expect(cliente).toBeNull();
+    });
+
+    test('Deve retornar um cliente se LoadClienteByIdRepository retornar um cliente', async () => {
+        const { sut } = makeSut();
+        const id = 1;
+        const cliente = await sut.loadById(id);
+        expect(cliente).toEqual(mockFakeClienteModel());
     });
 });
