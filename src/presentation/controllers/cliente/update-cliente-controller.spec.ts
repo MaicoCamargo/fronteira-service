@@ -3,7 +3,8 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
 import { UpdateClienteController } from './update-cliente-controller';
 import { throwError } from '../../../domain/helper/test-helper';
-import { serverError } from '../../helpers/http';
+import { ok, serverError } from '../../helpers/http';
+import { mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
 
 describe('UpdateClienteController', () => {
     test('Deve chamar UpdateCliente com valores corretos', () => {
@@ -17,6 +18,12 @@ describe('UpdateClienteController', () => {
         jest.spyOn(updateClienteStub, 'update').mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
+    });
+
+    test('Deve retornar 200 em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(ok(mockFakeClienteModel()));
     });
 });
 
@@ -37,22 +44,12 @@ const makeSut = (): SutTypes => {
 const makeUpdateCliente = (): UpdateCliente => {
     class UpdateClienteStub implements UpdateCliente {
         update(cliente: UpdateClienteParams): Promise<ClienteModel> {
-            return Promise.resolve(makeFakeUpdatedClienteModel());
+            return Promise.resolve(mockFakeClienteModel());
         }
     }
 
     return new UpdateClienteStub();
 };
-
-const makeFakeUpdatedClienteModel = (): ClienteModel => ({
-    telefone: 'any_telefone',
-    nome: 'updated_nome',
-    lastUpdated: new Date(),
-    cpf: 'any_cpf',
-    endereco: 1,
-    carro: 1,
-    id: 1
-});
 
 const makeFakeHttpRequest = (): HttpRequest => ({
     body: {
