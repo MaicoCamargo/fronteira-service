@@ -5,12 +5,12 @@ import app from '../config/app';
 
 const makeFakeRequest = (): HttpRequest => ({});
 
-describe('GET /cliente', () => {
+describe('GET /clientes', () => {
     afterAll(async () => {
         await knexInstance('cliente').del();
         await knexInstance.destroy();
     });
     test('Deve retornar 200 em caso de sucesso', async () => {
-        await request(app).get('/service/cliente').send(makeFakeRequest().body).expect(200);
+        await request(app).get('/service/clientes').send(makeFakeRequest().body).expect(200);
     });
 });
