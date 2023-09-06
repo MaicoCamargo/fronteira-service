@@ -3,7 +3,8 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
 import { LoadClienteByIdController } from './load-cliente-by-id-controller';
 import { HttpRequest } from '../../protocols';
-import { ok } from '../../helpers/http';
+import { ok, serverError } from '../../helpers/http';
+import { throwError } from '../../../domain/helper/test-helper';
 
 describe('LoadClienteByIdController', () => {
     test('Deve chamar LoadClienteById com valores corretos', () => {
@@ -17,6 +18,13 @@ describe('LoadClienteByIdController', () => {
         const { sut } = makeSut();
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(ok(mockFakeClienteModel()));
+    });
+
+    test('Deve retornar 500 se LoadClienteById throws', async () => {
+        const { sut, loadClienteByIdStub } = makeSut();
+        jest.spyOn(loadClienteByIdStub, 'loadById').mockImplementationOnce(throwError);
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(serverError(new Error()));
     });
 });
 
