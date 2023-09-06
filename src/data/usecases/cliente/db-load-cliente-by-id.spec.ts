@@ -34,4 +34,12 @@ describe('DbLoadClienteById', () => {
         await sut.loadById(id);
         expect(loadByIdSpy).toBeCalledWith(id);
     });
+
+    test('Deve retornar null se LoadClienteByIdRepository retornar null', async () => {
+        const { sut, loadClienteByIdRepositoryStub } = makeSut();
+        jest.spyOn(loadClienteByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(null));
+        const id = 1;
+        const cliente = await sut.loadById(id);
+        expect(cliente).toBeNull();
+    });
 });
