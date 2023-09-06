@@ -1,19 +1,41 @@
 import { UpdateClienteRepository } from '../../protocols/db/cliente/update-cliente-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { DbUpdateCliente } from './db-update-cliente';
-import { mockFakeDbClienteModel, mockFakeUpdateClienteParams } from '../../../../tests/mock/mock-cliente';
+import { mockFakeUpdateClienteParams } from '../../../../tests/mock/mock-cliente';
+import { ClienteModel } from '../../../domain/models/cliente-model';
 
 interface SutTypes {
     sut: DbUpdateCliente;
     updateClienteRepositoryStub: UpdateClienteRepository;
 }
 
+const makeUpdatedDbClienteModel = (): DbClienteModel => ({
+    id_cliente: 1,
+    nome: 'updated_nome',
+    cpf: 'any_cpf',
+    telefone: 'updated_telefone',
+    carro_id: 1,
+    endereco_id: 1,
+    last_updated: new Date('2021-02-28 00:00:00')
+});
+
+const makeUpdatedClienteModel = (): ClienteModel => ({
+    id: 1,
+    nome: 'updated_nome',
+    cpf: 'any_cpf',
+    telefone: 'updated_telefone',
+    carro: 1,
+    endereco: 1,
+    lastUpdated: new Date('2021-02-28 00:00:00')
+});
+
 const makeUpdateClienteRepository = (): UpdateClienteRepository => {
     class UpdateClienteRepositoryStub implements UpdateClienteRepository {
         async update(): Promise<DbClienteModel> {
-            return mockFakeDbClienteModel();
+            return makeUpdatedDbClienteModel();
         }
     }
+
     return new UpdateClienteRepositoryStub();
 };
 
@@ -39,5 +61,11 @@ describe('DbUpdateCliente Usecase', () => {
         jest.spyOn(updateClienteRepositoryStub, 'update').mockReturnValueOnce(Promise.reject(new Error()));
         const promise = sut.update(mockFakeUpdateClienteParams());
         await expect(promise).rejects.toThrow();
+    });
+
+    test('Deve retornar um cliente atualizado em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const cliente = await sut.update(mockFakeUpdateClienteParams());
+        expect(cliente).toEqual(makeUpdatedClienteModel());
     });
 });
