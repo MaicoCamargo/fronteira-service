@@ -3,6 +3,7 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
 import { LoadClienteByIdController } from './load-cliente-by-id-controller';
 import { HttpRequest } from '../../protocols';
+import { ok } from '../../helpers/http';
 
 describe('LoadClienteByIdController', () => {
     test('Deve chamar LoadClienteById com valores corretos', () => {
@@ -10,6 +11,12 @@ describe('LoadClienteByIdController', () => {
         const loadByIdSpy = jest.spyOn(loadClienteByIdStub, 'loadById');
         sut.handle(makeFakeHttpRequest());
         expect(loadByIdSpy).toHaveBeenCalledWith(makeFakeHttpRequest().params.id);
+    });
+
+    test('Deve retornar 200 em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(ok(mockFakeClienteModel()));
     });
 });
 
