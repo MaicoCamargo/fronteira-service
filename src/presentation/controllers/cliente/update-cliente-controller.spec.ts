@@ -2,6 +2,8 @@ import { UpdateCliente, UpdateClienteParams } from '../../../domain/usecases/cli
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
 import { UpdateClienteController } from './update-cliente-controller';
+import { throwError } from '../../../domain/helper/test-helper';
+import { serverError } from '../../helpers/http';
 
 describe('UpdateClienteController', () => {
     test('Deve chamar UpdateCliente com valores corretos', () => {
@@ -9,6 +11,12 @@ describe('UpdateClienteController', () => {
         const updateSpy = jest.spyOn(updateClienteStub, 'update');
         sut.handle(makeFakeHttpRequest());
         expect(updateSpy).toHaveBeenCalledWith(makeFakeHttpRequest().body);
+    });
+    test('Deve retornar 500 se UpdateCliente throws', async () => {
+        const { sut, updateClienteStub } = makeSut();
+        jest.spyOn(updateClienteStub, 'update').mockImplementationOnce(throwError);
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(serverError(new Error()));
     });
 });
 
