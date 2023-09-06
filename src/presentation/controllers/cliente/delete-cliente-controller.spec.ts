@@ -1,6 +1,8 @@
 import { DeleteCliente } from '../../../domain/usecases/cliente/delete-cliente';
 import { HttpRequest } from '../../protocols';
 import { DeleteClienteController } from './delete-cliente-controller';
+import { throwError } from '../../../domain/helper/test-helper';
+import { serverError } from '../../helpers/http';
 
 describe('DeleteClienteController', () => {
     test('deve chamar DeleteCliente com valores corretos', () => {
@@ -8,6 +10,13 @@ describe('DeleteClienteController', () => {
         const deleteSpy = jest.spyOn(deleteClienteStub, 'delete');
         sut.handle(makeFakeHttpRequest());
         expect(deleteSpy).toHaveBeenCalledWith(makeFakeHttpRequest().params.id);
+    });
+
+    test('Deve retornar 500 se LoadClienteById throws', async () => {
+        const { sut, deleteClienteStub } = makeSut();
+        jest.spyOn(deleteClienteStub, 'delete').mockImplementationOnce(throwError);
+        const httpResponse = await sut.handle(makeFakeHttpRequest());
+        expect(httpResponse).toEqual(serverError(new Error()));
     });
 });
 
