@@ -1,7 +1,8 @@
 import { AddCarroModel } from '../../src/data/protocols/db/carro/save-carro-repository';
 import { DbCarroModel } from '../../src/data/models/db-carro-model';
+import { CarroModel } from '../../src/domain/models/carro-model';
 
-export const mockFakeCarroModel = (): AddCarroModel => ({
+export const mockFakeAddCarroModel = (): AddCarroModel => ({
     cor: 'any_cor',
     ano: 2020,
     modelo: 'any_modelo',
@@ -16,4 +17,13 @@ export const mockFakeDbCarroModel = (): DbCarroModel => ({
     placa: 'any_placa',
     quilometragem: 0,
     id_carro: 1
+});
+
+export const mockFakeCarroModel = (): CarroModel => ({
+    cor: 'any_cor',
+    ano: 2020,
+    modelo: 'any_modelo',
+    placa: 'any_placa',
+    quilometragem: 0,
+    id: 1
 });

@@ -6,7 +6,14 @@ export class DbAddCarro implements AddCarro {
     constructor(private readonly saveCarroRepository: SaveCarroRepository) {}
 
     async add(params: AddCarroParams): Promise<CarroModel> {
-        await this.saveCarroRepository.save(params);
-        return await Promise.resolve(undefined);
+        const carro = await this.saveCarroRepository.save(params);
+        return {
+            id: carro.id_carro,
+            ano: carro.ano,
+            cor: carro.cor,
+            quilometragem: carro.quilometragem,
+            modelo: carro.modelo,
+            placa: carro.placa
+        };
     }
 }
