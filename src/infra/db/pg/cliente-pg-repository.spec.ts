@@ -109,6 +109,16 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente.last_updated).toBeTruthy();
         });
     });
+
+    describe('delete()', () => {
+        test('Deve deletar um cliente pelo id', async () => {
+            const model = await makePgClienteCreate(await makePgCarroCreate(), await makePgEnderecoCreate());
+            const sut = makeSut();
+            await sut.delete(model.id_cliente);
+            const cliente = await sut.loadById(model.id_cliente);
+            expect(cliente).toBeNull();
+        });
+    });
 });
 
 const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoModel): Promise<DbClienteModel> => {
