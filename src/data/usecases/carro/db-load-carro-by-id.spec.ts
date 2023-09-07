@@ -1,8 +1,9 @@
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
-import { mockFakeCarroModel } from '../../../../tests/mock/mock-carro';
+import { mockFakeCarroModel, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbLoadCarroById } from './db-load-carro-by-id';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { DbCarroModel } from '../../models/db-carro-model';
 
 describe('DbLoadCarroById Usecase', () => {
     test('Deve chamar LoadCarroByIdRepository com valores corretos', async () => {
@@ -18,6 +19,12 @@ describe('DbLoadCarroById Usecase', () => {
         jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockImplementationOnce(throwError);
         const promise = sut.loadById(1);
         await expect(promise).rejects.toThrow();
+    });
+
+    test('Deve retornar um carro se LoadCarroByIdRepository retornar um carro', async () => {
+        const { sut } = makeSut();
+        const carro = await sut.loadById(1);
+        expect(carro).toEqual(mockFakeCarroModel());
     });
 });
 
@@ -37,8 +44,8 @@ const makeSut = (): SutTypes => {
 
 const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
-        loadById(id: number): Promise<CarroModel> {
-            return Promise.resolve(mockFakeCarroModel());
+        loadById(id: number): Promise<DbCarroModel> {
+            return Promise.resolve(mockFakeDbCarroModel());
         }
     }
     return new LoadCarroByIdRepositoryStub();
