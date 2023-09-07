@@ -81,6 +81,12 @@ describe('Cliente Postgres Repository', () => {
             const cliente = await sut.loadById(model.id_cliente);
             expect(cliente).toEqual(model);
         });
+
+        test('Deve retornar null caso não encontre o cliente', async () => {
+            const sut = makeSut();
+            const cliente = await sut.loadById(999);
+            expect(cliente).toBeNull();
+        });
     });
 });
 
