@@ -1,5 +1,5 @@
-import { CarroModel } from '../../../../domain/models/carro-model';
+import { DbCarroModel } from '../../../models/db-carro-model';
 
 export interface LoadCarroByIdRepository {
-    loadById: (id: number) => Promise<CarroModel>;
+    loadById: (id: number) => Promise<DbCarroModel>;
 }

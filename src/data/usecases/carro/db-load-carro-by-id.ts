@@ -6,7 +6,14 @@ export class DbLoadCarroById implements LoadCarroById {
     constructor(private readonly loadCarroByIdRepository: LoadCarroByIdRepository) {}
 
     async loadById(id: number): Promise<CarroModel> {
-        await this.loadCarroByIdRepository.loadById(id);
-        return await Promise.resolve(undefined);
+        const carro = await this.loadCarroByIdRepository.loadById(id);
+        return {
+            id: carro.id_carro,
+            modelo: carro.modelo,
+            placa: carro.placa,
+            ano: carro.ano,
+            cor: carro.cor,
+            quilometragem: carro.kilometragem
+        };
     }
 }
