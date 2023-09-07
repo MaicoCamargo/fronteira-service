@@ -1,7 +1,7 @@
 import { DeleteCliente } from '../../../domain/usecases/cliente/delete-cliente';
 import { HttpRequest } from '../../protocols';
 import { DeleteClienteController } from './delete-cliente-controller';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 import { noContent, serverError } from '../../helpers/http';
 
 describe('DeleteClienteController', () => {

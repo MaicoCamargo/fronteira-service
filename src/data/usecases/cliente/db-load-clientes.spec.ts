@@ -1,7 +1,7 @@
 import { DbLoadClientes } from './db-load-clientes';
 import { LoadClientesRepository } from '../../protocols/db/cliente/load-clientes-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 
 const makeFakeLoadClienteModel = (): ClienteModel[] => [

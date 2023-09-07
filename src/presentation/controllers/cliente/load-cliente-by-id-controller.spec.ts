@@ -4,7 +4,7 @@ import { mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
 import { LoadClienteByIdController } from './load-cliente-by-id-controller';
 import { HttpRequest } from '../../protocols';
 import { badRequest, ok, serverError } from '../../helpers/http';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 import { MissingParamError } from '../../errors';
 
 describe('LoadClienteByIdController', () => {

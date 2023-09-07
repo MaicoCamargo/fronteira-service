@@ -1,6 +1,6 @@
 import { AddClienteModel, SaveClienteRepository } from '../../protocols/db/cliente/save-cliente-repository';
 import { DbAddCliente } from './db-add-cliente';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { AddClienteParams } from '../../../domain/usecases/cliente/add-cliente';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';

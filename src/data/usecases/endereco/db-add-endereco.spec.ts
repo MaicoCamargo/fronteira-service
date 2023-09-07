@@ -3,7 +3,7 @@ import { SaveEnderecoRepository, DbAddEnderecoModel } from '../../protocols/db/e
 import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 const makeFakeEnderecoModel = (): EnderecoModel => ({
     rua: 'any_rua',

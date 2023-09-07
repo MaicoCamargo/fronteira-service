@@ -1,6 +1,6 @@
 import { DeleteClienteRepository } from '../../protocols/db/cliente/delete-cliente-repository';
 import { DbDeleteCliente } from './db-delete-cliente';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbDeleteCliente Usecase', () => {
     test('Deve chamar DeleteClienteRepository com valores corretos', async () => {
