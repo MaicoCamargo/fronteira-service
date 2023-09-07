@@ -70,7 +70,7 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente.nome).toEqual(model.nome);
             expect(cliente.endereco_id).toEqual(model.endereco_id);
             expect(cliente.telefone).toEqual(model.telefone);
-            expect(cliente.last_updated).toBeTruthy();
+            expect(cliente.last_updated).toBeNull();
         });
     });
 

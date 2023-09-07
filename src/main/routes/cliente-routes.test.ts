@@ -60,7 +60,28 @@ describe('/clientes', () => {
             await request(app).put('/service/clientes').send(makeFakeRequest(httpRequest).body).expect(200);
         });
     });
+
+    describe('DELETE', () => {
+        test('Deve retornar 204 em caso de sucesso', async () => {
+            const clientePgRepository = new ClientePgRepository();
+            const dbClienteModel: AddClienteModel = {
+                nome: 'any_nome',
+                cpf: 'any_cpf',
+                last_updated: new Date(),
+                carro_id: (await makeCreateCarro()).id,
+                endereco_id: (await makeCreateEndereco()).id_endereco,
+                telefone: 'any_telefone'
+            };
+            const created = await clientePgRepository.save(dbClienteModel);
+            const httpRequest: HttpRequest = { params: { id: created.id_cliente } };
+            await request(app)
+                .delete(`/service/clientes/${created.id_cliente}`)
+                .send(makeFakeRequest(httpRequest).params)
+                .expect(204);
+        });
+    });
 });
+
 const makeFakeRequest = (request: HttpRequest): HttpRequest => ({ ...request });
 
 const makeCreateEndereco = async (): Promise<DbEnderecoModel> => {
