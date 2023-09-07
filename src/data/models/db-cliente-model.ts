@@ -1,9 +1,9 @@
 export interface DbClienteModel {
-    id_cliente: number;
+    id_cliente?: number;
     nome: string;
     telefone: string;
     cpf: string;
-    carro: any;
-    endereco: any;
-    last_updated: Date;
+    carro_id: number;
+    endereco_id: number;
+    last_updated?: Date;
 }

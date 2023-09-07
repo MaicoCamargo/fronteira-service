@@ -11,7 +11,8 @@ module.exports = {
         '!<rootDir>/src/**/*-protocols.ts',
         '!<rootDir>/src/**/*-model.ts',
         '!<rootDir>/src/domain/usecases/**/*.ts',
-        '!**/protocols/**'
+        '!**/protocols/**',
+        '!<rootDir>/tests/**'
     ],
     coverageDirectory: 'coverage',
     coverageProvider: 'v8',

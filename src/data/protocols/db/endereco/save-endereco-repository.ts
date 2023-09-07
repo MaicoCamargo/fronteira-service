@@ -1,6 +1,6 @@
 import { DbEnderecoModel } from '../../../models/db-endereco-model';
 
-export interface DbAddEnderecoParams {
+export interface DbAddEnderecoModel {
     complemento: string;
     numero: string;
     rua: string;
@@ -8,6 +8,6 @@ export interface DbAddEnderecoParams {
     cep: string;
 }
 
-export interface AddEnderecoRepository {
-    save: (endereco: DbAddEnderecoParams) => Promise<DbEnderecoModel>;
+export interface SaveEnderecoRepository {
+    save: (endereco: DbAddEnderecoModel) => Promise<DbEnderecoModel>;
 }

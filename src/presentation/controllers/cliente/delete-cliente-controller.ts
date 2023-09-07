@@ -1,0 +1,16 @@
+import { Controller, HttpRequest, HttpResponse } from '../../protocols';
+import { DeleteCliente } from '../../../domain/usecases/cliente/delete-cliente';
+import { noContent, serverError } from '../../helpers/http';
+
+export class DeleteClienteController implements Controller {
+    constructor(private readonly deleteCliente: DeleteCliente) {}
+
+    async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
+        try {
+            await this.deleteCliente.delete(httpRequest.params.id);
+            return noContent();
+        } catch (err) {
+            return serverError(err);
+        }
+    }
+}
