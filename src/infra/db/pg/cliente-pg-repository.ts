@@ -7,8 +7,11 @@ import {
     UpdateClienteModel,
     UpdateClienteRepository
 } from '../../../data/protocols/db/cliente/update-cliente-repository';
+import { DeleteClienteRepository } from '../../../data/protocols/db/cliente/delete-cliente-repository';
 
-export class ClientePgRepository implements LoadClientesRepository, LoadClienteByIdRepository, UpdateClienteRepository {
+export class ClientePgRepository
+    implements LoadClientesRepository, LoadClienteByIdRepository, UpdateClienteRepository, DeleteClienteRepository
+{
     async load(): Promise<DbClienteModel[]> {
         return await knexInstance('cliente');
     }
@@ -57,5 +60,9 @@ export class ClientePgRepository implements LoadClientesRepository, LoadClienteB
             carro_id: map.carro_id,
             endereco_id: map.endereco_id
         };
+    }
+
+    async delete(id: number): Promise<void> {
+        await knexInstance('cliente').where({ id_cliente: id }).del();
     }
 }
