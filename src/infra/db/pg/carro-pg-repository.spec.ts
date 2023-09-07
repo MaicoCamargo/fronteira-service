@@ -41,6 +41,28 @@ describe('Carro Postgres Repository', () => {
             expect(carroLoaded.placa).toEqual(mockFakeAddCarroModel().placa);
         });
     });
+
+    describe('update()', () => {
+        test('Deve atualizar e retornar um carro em caso de sucesso', async () => {
+            const sut = makeSut();
+            const carro = await sut.save(mockFakeAddCarroModel());
+            const carroUpdated = await sut.update({
+                id_carro: carro.id_carro,
+                ano: 2020,
+                cor: 'azul',
+                kilometragem: 10000,
+                modelo: 'fusca',
+                placa: 'AAA-0000'
+            });
+            expect(carroUpdated).toBeTruthy();
+            expect(carroUpdated.id_carro).toBeTruthy();
+            expect(carroUpdated.modelo).toEqual('fusca');
+            expect(carroUpdated.ano).toEqual(2020);
+            expect(carroUpdated.cor).toEqual('azul');
+            expect(carroUpdated.kilometragem).toEqual(10000);
+            expect(carroUpdated.placa).toEqual('AAA-0000');
+        });
+    });
 });
 
 const makeSut = (): CarroPgRepository => {
