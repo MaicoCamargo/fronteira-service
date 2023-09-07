@@ -16,4 +16,13 @@ describe('MongoHelper', () => {
         collection = await sut.getCollection('accounts');
         expect(collection).toBeTruthy();
     });
+
+    test('Deve retornar um objeto sem a propriedade _id', async () => {
+        const anySchemaObject = {
+            _id: 'any_id',
+            name: 'any_name'
+        };
+        const mappedObject = sut.map(anySchemaObject);
+        expect(mappedObject).toEqual({ id: 'any_id', name: 'any_name' });
+    });
 });
