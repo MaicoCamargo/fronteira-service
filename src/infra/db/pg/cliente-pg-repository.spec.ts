@@ -153,7 +153,7 @@ const makePgCarroCreate = async (): Promise<DbCarroModel> => {
         id_carro: result.id_carro,
         ano: result.ano,
         cor: result.cor,
-        quilometragem: result.kilometragem,
+        kilometragem: result.kilometragem,
         modelo: result.modelo,
         placa: result.placa
     };
