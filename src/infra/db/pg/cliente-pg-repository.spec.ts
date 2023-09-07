@@ -88,6 +88,27 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente).toBeNull();
         });
     });
+
+    describe('update()', () => {
+        test('Deve atualizar um cliente pelo id', async () => {
+            const model = await makePgClienteCreate(await makePgCarroCreate(), await makePgEnderecoCreate());
+            const sut = makeSut();
+            const cliente = await sut.update({
+                id_cliente: model.id_cliente,
+                nome: 'outher_nome',
+                telefone: 'outher_telefone',
+                cpf: 'any_cpf'
+            });
+            expect(cliente).toBeTruthy();
+            expect(cliente.id_cliente).toEqual(model.id_cliente);
+            expect(cliente.cpf).toEqual('any_cpf');
+            expect(cliente.carro_id).toEqual(model.carro_id);
+            expect(cliente.nome).toEqual('outher_nome');
+            expect(cliente.endereco_id).toEqual(model.endereco_id);
+            expect(cliente.telefone).toEqual('outher_telefone');
+            expect(cliente.last_updated).toBeTruthy();
+        });
+    });
 });
 
 const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoModel): Promise<DbClienteModel> => {
