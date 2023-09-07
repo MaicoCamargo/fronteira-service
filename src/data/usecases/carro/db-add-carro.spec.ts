@@ -1,5 +1,5 @@
 import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
-import { mockFakeCarroModel, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { mockFakeAddCarroModel, mockFakeCarroModel, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbCarroModel } from '../../models/db-carro-model';
 import { DbAddCarro } from './db-add-carro';
 import { knexInstance } from '../../../infra/db/pg/helpers/knex-helper';
@@ -29,6 +29,12 @@ describe('DbAddCarro Usecase', () => {
         jest.spyOn(saveCarroRepositoryStub, 'save').mockImplementationOnce(throwError);
         const promise = sut.add(mockFakeDbCarroModel());
         await expect(promise).rejects.toThrow();
+    });
+
+    test('Deve retornar um carro se SaveCarroRepository retornar um carro', async () => {
+        const { sut } = makeSut();
+        const carro = await sut.add(mockFakeAddCarroModel());
+        expect(carro).toEqual(mockFakeCarroModel());
     });
 });
 
