@@ -2,6 +2,7 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { CarroModel } from '../../../domain/models/carro-model';
 import { mockFakeCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbLoadCarroById } from './db-load-carro-by-id';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbLoadCarroById Usecase', () => {
     test('Deve chamar LoadCarroByIdRepository com valores corretos', async () => {
@@ -10,6 +11,13 @@ describe('DbLoadCarroById Usecase', () => {
         const loadByIdSpy = jest.spyOn(loadCarroByIdRepositoryStub, 'loadById');
         await sut.loadById(id);
         expect(loadByIdSpy).toBeCalledWith(id);
+    });
+
+    test('Deve lançar exceção se LoadCarroByIdRepository lançar exceção', async () => {
+        const { sut, loadCarroByIdRepositoryStub } = makeSut();
+        jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockImplementationOnce(throwError);
+        const promise = sut.loadById(1);
+        await expect(promise).rejects.toThrow();
     });
 });
 
