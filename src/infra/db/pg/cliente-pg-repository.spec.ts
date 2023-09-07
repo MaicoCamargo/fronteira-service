@@ -73,6 +73,15 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente.last_updated).toBeTruthy();
         });
     });
+
+    describe('loadById()', () => {
+        test('Deve retornar um cliente pelo id', async () => {
+            const model = await makePgClienteCreate(await makePgCarroCreate(), await makePgEnderecoCreate());
+            const sut = makeSut();
+            const cliente = await sut.loadById(model.id_cliente);
+            expect(cliente).toEqual(model);
+        });
+    });
 });
 
 const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoModel): Promise<DbClienteModel> => {
@@ -86,10 +95,9 @@ const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoMode
                 cpf: 'any_cpf',
                 carro_id: carro.id_carro,
                 endereco_id: endereco.id_endereco,
-                data_exclusao: null,
-                last_updated: null
+                last_updated: new Date()
             })
-            .returning('*')
+            .returning(['nome', 'telefone', 'cpf', 'carro_id', 'endereco_id', 'last_updated', 'id_cliente'])
     );
 };
 const makePgCarroCreate = async (): Promise<DbCarroModel> => {
