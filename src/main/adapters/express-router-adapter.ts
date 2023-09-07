@@ -8,7 +8,7 @@ export const expressRouterAdapter = (controller: Controller) => {
             params: req.params
         };
         const httpResponse = await controller.handle(httpRequest);
-        if (httpResponse.statusCode === 200) {
+        if (httpResponse.statusCode <= 400) {
             res.status(httpResponse.statusCode).json(httpResponse.body);
         } else {
             res.status(httpResponse.statusCode).json({ error: httpResponse.body.message });
