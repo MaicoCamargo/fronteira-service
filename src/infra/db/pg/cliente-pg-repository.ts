@@ -25,7 +25,7 @@ export class ClientePgRepository implements LoadClientesRepository, LoadClienteB
 
     async loadById(id: number): Promise<DbClienteModel> {
         const result: any = await knexInstance('cliente').where({ id_cliente: id });
-        if (!result) return null;
+        if (result.length === 0) return null;
         const map = mapper(result);
         return {
             id_cliente: map.id_cliente,
