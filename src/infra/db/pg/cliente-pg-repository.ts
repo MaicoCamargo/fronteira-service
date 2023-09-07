@@ -3,8 +3,12 @@ import { DbClienteModel } from '../../../data/models/db-cliente-model';
 import { knexInstance } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
 import { LoadClienteByIdRepository } from '../../../data/protocols/db/cliente/load-cliente-by-id-repository';
+import {
+    UpdateClienteModel,
+    UpdateClienteRepository
+} from '../../../data/protocols/db/cliente/update-cliente-repository';
 
-export class ClientePgRepository implements LoadClientesRepository, LoadClienteByIdRepository {
+export class ClientePgRepository implements LoadClientesRepository, LoadClienteByIdRepository, UpdateClienteRepository {
     async load(): Promise<DbClienteModel[]> {
         return await knexInstance('cliente');
     }
@@ -26,6 +30,23 @@ export class ClientePgRepository implements LoadClientesRepository, LoadClienteB
     async loadById(id: number): Promise<DbClienteModel> {
         const result: any = await knexInstance('cliente').where({ id_cliente: id });
         if (result.length === 0) return null;
+        const map = mapper(result);
+        return {
+            id_cliente: map.id_cliente,
+            cpf: map.cpf,
+            nome: map.nome,
+            telefone: map.telefone,
+            last_updated: map.last_updated,
+            carro_id: map.carro_id,
+            endereco_id: map.endereco_id
+        };
+    }
+
+    async update(model: UpdateClienteModel): Promise<DbClienteModel> {
+        const result: any = await knexInstance('cliente')
+            .where({ id_cliente: model.id_cliente })
+            .update(model)
+            .returning('*');
         const map = mapper(result);
         return {
             id_cliente: map.id_cliente,

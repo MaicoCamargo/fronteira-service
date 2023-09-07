@@ -1,7 +1,7 @@
 import { DbClienteModel } from '../../../models/db-cliente-model';
 
-interface UpdateClienteModel {
-    id: number;
+export interface UpdateClienteModel {
+    id_cliente: number;
     nome: string;
     telefone: string;
     cpf: string;

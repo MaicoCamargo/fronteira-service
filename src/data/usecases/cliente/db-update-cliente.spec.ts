@@ -53,7 +53,12 @@ describe('DbUpdateCliente Usecase', () => {
         const { sut, updateClienteRepositoryStub } = makeSut();
         const updateSpy = jest.spyOn(updateClienteRepositoryStub, 'update');
         await sut.update(mockFakeUpdateClienteParams());
-        expect(updateSpy).toHaveBeenCalledWith(mockFakeUpdateClienteParams());
+        expect(updateSpy).toHaveBeenCalledWith({
+            id_cliente: mockFakeUpdateClienteParams().id,
+            nome: mockFakeUpdateClienteParams().nome,
+            telefone: mockFakeUpdateClienteParams().telefone,
+            cpf: mockFakeUpdateClienteParams().cpf
+        });
     });
 
     test('Deve lançar exceção se UpdateClienteRepository lançar exceção', async () => {

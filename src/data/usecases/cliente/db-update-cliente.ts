@@ -7,7 +7,7 @@ export class DbUpdateCliente implements UpdateCliente {
 
     async update(model: UpdateClienteParams): Promise<ClienteModel> {
         const updated = await this.updateClienteRepository.update({
-            id: model.id,
+            id_cliente: model.id,
             nome: model.nome,
             cpf: model.cpf,
             telefone: model.telefone
