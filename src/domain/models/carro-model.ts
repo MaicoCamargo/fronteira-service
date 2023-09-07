@@ -2,7 +2,7 @@ export interface CarroModel {
     id: number;
     modelo: string;
     placa: string;
-    ano: string;
+    ano: number;
     cor: string;
     quilometragem: number;
 }
