@@ -17,10 +17,8 @@ export class CarroPgRepository implements SaveCarroRepository, LoadCarroByIdRepo
     }
 
     async update(model: UpdateCarroModel): Promise<DbCarroModel> {
-        return (await knexInstance('carro')
-            .where({ id_carro: model.id_carro })
-            .update(model)
-            .returning('*')
-            .first()) as DbCarroModel;
+        const result = await knexInstance('carro').where({ id_carro: model.id_carro }).update(model).returning('*');
+        const map = mapper(result);
+        return Object.assign({}, map, { id: map.id_carro, quilometragem: map.kilometragem });
     }
 }
