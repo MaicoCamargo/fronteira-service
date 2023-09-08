@@ -2,7 +2,7 @@ import { UpdateCliente, UpdateClienteParams } from '../../../domain/usecases/cli
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
 import { UpdateClienteController } from './update-cliente-controller';
-import { throwError } from '../../../domain/helper/test-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 import { ok, serverError } from '../../helpers/http';
 import { mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
 

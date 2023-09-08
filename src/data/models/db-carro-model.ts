@@ -2,7 +2,7 @@ export interface DbCarroModel {
     id_carro: number;
     ano: number;
     cor: string;
-    quilometragem: number;
+    kilometragem: number;
     modelo: string;
     placa: string;
 }
