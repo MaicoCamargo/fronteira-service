@@ -3,6 +3,7 @@ import { ClienteModel } from '../../src/domain/models/cliente-model';
 import { UpdateClienteParams } from '../../src/domain/usecases/cliente/update-cliente';
 import { mockFakeCarroModel } from './mock-carro';
 import { AddClienteParams } from '../../src/domain/usecases/cliente/add-cliente';
+import { mockFakeEnderecoModel } from './mock-endereco';
 
 export const mockFakeDbClienteModel = (): DbClienteModel => ({
     id_cliente: 1,
@@ -20,7 +21,7 @@ export const mockFakeClienteModel = (): ClienteModel => ({
     cpf: 'any_cpf',
     telefone: 'any_telefone',
     carro: mockFakeCarroModel(),
-    endereco: 1,
+    endereco: mockFakeEnderecoModel(),
     lastUpdated: new Date('2021-02-28 00:00:00')
 });
 
@@ -42,7 +43,7 @@ export const makeFakeLoadClienteModelList = (): ClienteModel[] => [
         id: 1,
         cpf: 'any_cpf',
         nome: 'any_nome',
-        endereco: 1,
+        endereco: mockFakeEnderecoModel(),
         lastUpdated: new Date('2022-01-01'),
         telefone: 'any_telefone'
     },
@@ -50,29 +51,15 @@ export const makeFakeLoadClienteModelList = (): ClienteModel[] => [
         id: 2,
         cpf: 'other_cpf',
         nome: 'other_nome',
-        endereco: 2,
+        endereco: {
+            id: 2,
+            cep: 'other_cep',
+            rua: 'other_rua',
+            numero: 'other_numero',
+            complemento: 'other_complemento',
+            cidade: 'other_cidade'
+        },
         lastUpdated: new Date('2022-01-01'),
-        telefone: 'other_telefone'
-    }
-];
-
-export const makeFakeDbClienteModelList = (): DbClienteModel[] => [
-    {
-        id_cliente: 1,
-        cpf: 'any_cpf',
-        carro_id: 1,
-        nome: 'any_nome',
-        endereco_id: 1,
-        last_updated: new Date('2022-01-01'),
-        telefone: 'any_telefone'
-    },
-    {
-        id_cliente: 2,
-        cpf: 'other_cpf',
-        carro_id: 2,
-        nome: 'other_nome',
-        endereco_id: 2,
-        last_updated: new Date('2022-01-01'),
         telefone: 'other_telefone'
     }
 ];

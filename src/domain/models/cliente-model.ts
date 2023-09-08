@@ -1,4 +1,5 @@
 import { CarroModel } from './carro-model';
+import { EnderecoModel } from './endereco-model';
 
 export interface ClienteModel {
     id: number;
@@ -6,6 +7,6 @@ export interface ClienteModel {
     telefone: string;
     cpf: string;
     carro?: CarroModel;
-    endereco: any;
+    endereco?: EnderecoModel;
     lastUpdated: Date;
 }

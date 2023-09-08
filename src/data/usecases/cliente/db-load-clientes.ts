@@ -11,7 +11,6 @@ export class DbLoadClientes implements LoadClientes {
             id: row.id_cliente,
             cpf: row.cpf,
             nome: row.nome,
-            endereco: row.endereco_id,
             telefone: row.telefone,
             lastUpdated: row.last_updated
         }));
