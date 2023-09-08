@@ -10,7 +10,6 @@ export class DbLoadClientes implements LoadClientes {
         return clientes.map((row) => ({
             id: row.id_cliente,
             cpf: row.cpf,
-            carro: row.carro_id,
             nome: row.nome,
             endereco: row.endereco_id,
             telefone: row.telefone,
