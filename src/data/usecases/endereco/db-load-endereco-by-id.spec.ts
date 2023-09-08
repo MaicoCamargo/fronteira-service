@@ -1,7 +1,7 @@
 import { DbLoadEnderecoById } from './db-load-endereco-by-id';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
-import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
+import { mockFakeDbEnderecoModel, mockFakeEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbLoadEnderecoById Use Case', () => {
@@ -18,6 +18,12 @@ describe('DbLoadEnderecoById Use Case', () => {
         jest.spyOn(loadEnderecoByIdRepositoryStub, 'loadById').mockImplementationOnce(throwError);
         const promise = sut.loadById(1);
         await expect(promise).rejects.toThrow();
+    });
+
+    test('Deve retornar um endereço se LoadEnderecoByIdRepository retornar um endereço', async () => {
+        const { sut } = makeSut();
+        const endereco = await sut.loadById(mockFakeDbEnderecoModel().id_endereco);
+        expect(endereco).toEqual(mockFakeEnderecoModel());
     });
 });
 
