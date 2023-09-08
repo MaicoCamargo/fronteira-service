@@ -2,7 +2,6 @@ import { UpdateClienteRepository } from '../../protocols/db/cliente/update-clien
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { DbUpdateCliente } from './db-update-cliente';
 import { mockFakeUpdateClienteParams } from '../../../../tests/mock/mock-cliente';
-import { ClienteModel } from '../../../domain/models/cliente-model';
 
 interface SutTypes {
     sut: DbUpdateCliente;
@@ -19,12 +18,11 @@ const makeUpdatedDbClienteModel = (): DbClienteModel => ({
     last_updated: new Date('2021-02-28 00:00:00')
 });
 
-const makeUpdatedClienteModel = (): ClienteModel => ({
+const makeUpdatedClienteModel = (): any => ({
     id: 1,
     nome: 'updated_nome',
     cpf: 'any_cpf',
     telefone: 'updated_telefone',
-    endereco: 1,
     lastUpdated: new Date('2021-02-28 00:00:00')
 });
 
@@ -47,7 +45,7 @@ const makeSut = (): SutTypes => {
     };
 };
 
-describe('DbUpdateCliente Usecase', () => {
+describe('DbUpdateCliente Use Case', () => {
     test('Deve chamar UpdateClienteRepository com valores corretos', async () => {
         const { sut, updateClienteRepositoryStub } = makeSut();
         const updateSpy = jest.spyOn(updateClienteRepositoryStub, 'update');
