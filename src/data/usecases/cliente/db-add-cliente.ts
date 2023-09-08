@@ -17,7 +17,6 @@ export class DbAddCliente implements AddCliente {
         const cliente = await this.addClienteRepository.save(model);
         return {
             id: cliente.id_cliente,
-            endereco: cliente.endereco_id,
             lastUpdated: cliente.last_updated,
             cpf: cliente.cpf,
             nome: cliente.nome,
