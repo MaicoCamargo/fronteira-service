@@ -3,6 +3,7 @@ import { LoadClienteController } from './load-cliente-controller';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
 import { created, ok, serverError } from '../../helpers/http';
+import { makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
 
 interface SutTypes {
     sut: LoadClienteController;
@@ -11,31 +12,10 @@ interface SutTypes {
 
 const makeFakeHttpRequest = (): HttpRequest => ({});
 
-const makeFakeClientes = (): ClienteModel[] => [
-    {
-        nome: 'any_name',
-        cpf: 'any_cpf',
-        endereco: 'any_endereco',
-        id: 1,
-        telefone: 'any_telefone',
-        carro: 'any_carro',
-        lastUpdated: new Date('2023-01-01')
-    },
-    {
-        nome: 'other_name',
-        cpf: 'other_cpf',
-        endereco: 'other_endereco',
-        id: 1,
-        telefone: 'other_telefone',
-        carro: 'other_carro',
-        lastUpdated: new Date('2023-01-01')
-    }
-];
-
 const makeLoadCliente = (): LoadClientes => {
     class LoadClienteStub implements LoadClientes {
         async load(): Promise<ClienteModel[]> {
-            return await makeFakeClientes();
+            return makeFakeLoadClienteModelList();
         }
     }
     return new LoadClienteStub();

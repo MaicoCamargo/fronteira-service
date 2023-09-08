@@ -2,6 +2,9 @@ import { LoadClienteByIdRepository } from '../../protocols/db/cliente/load-clien
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeClienteModel, mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { DbLoadClienteById } from './db-load-cliente-by-id';
+import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
+import { DbCarroModel } from '../../models/db-carro-model';
+import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 
 const makeLoadClienteByIdRepositoryStub = () => {
     class LoadClienteByIdRepositoryStub implements LoadClienteByIdRepository {
@@ -12,17 +15,29 @@ const makeLoadClienteByIdRepositoryStub = () => {
     return new LoadClienteByIdRepositoryStub();
 };
 
+const makeLoadCarroByIdRepositoryStub = () => {
+    class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
+        loadById(id: number): Promise<DbCarroModel> {
+            return Promise.resolve(mockFakeDbCarroModel());
+        }
+    }
+    return new LoadCarroByIdRepositoryStub();
+};
+
 interface SutTypes {
     sut: DbLoadClienteById;
     loadClienteByIdRepositoryStub: LoadClienteByIdRepository;
+    loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
 }
 
 const makeSut = (): SutTypes => {
     const loadClienteByIdRepositoryStub = makeLoadClienteByIdRepositoryStub();
-    const sut = new DbLoadClienteById(loadClienteByIdRepositoryStub);
+    const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepositoryStub();
+    const sut = new DbLoadClienteById(loadClienteByIdRepositoryStub, loadCarroByIdRepositoryStub);
     return {
         sut,
-        loadClienteByIdRepositoryStub
+        loadClienteByIdRepositoryStub,
+        loadCarroByIdRepositoryStub
     };
 };
 

@@ -2,54 +2,12 @@ import { DbLoadClientes } from './db-load-clientes';
 import { LoadClientesRepository } from '../../protocols/db/cliente/load-clientes-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { throwError } from '../../../../tests/helper/test-helper';
-import { ClienteModel } from '../../../domain/models/cliente-model';
-
-const makeFakeLoadClienteModel = (): ClienteModel[] => [
-    {
-        id: 1,
-        cpf: 'any_cpf',
-        carro: 1,
-        nome: 'any_nome',
-        endereco: 1,
-        lastUpdated: new Date('2022-01-01'),
-        telefone: 'any_telefone'
-    },
-    {
-        id: 2,
-        cpf: 'other_cpf',
-        carro: 2,
-        nome: 'other_nome',
-        endereco: 2,
-        lastUpdated: new Date('2022-01-01'),
-        telefone: 'other_telefone'
-    }
-];
-
-const makeFakeDbClienteModel = (): DbClienteModel[] => [
-    {
-        id_cliente: 1,
-        cpf: 'any_cpf',
-        carro_id: 1,
-        nome: 'any_nome',
-        endereco_id: 1,
-        last_updated: new Date('2022-01-01'),
-        telefone: 'any_telefone'
-    },
-    {
-        id_cliente: 2,
-        cpf: 'other_cpf',
-        carro_id: 2,
-        nome: 'other_nome',
-        endereco_id: 2,
-        last_updated: new Date('2022-01-01'),
-        telefone: 'other_telefone'
-    }
-];
+import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {
         load(): Promise<DbClienteModel[]> {
-            return Promise.resolve(makeFakeDbClienteModel());
+            return Promise.resolve(makeFakeDbClienteModelList());
         }
     }
     return new LoadClienteRepositoryStub();
@@ -68,7 +26,7 @@ describe('DbLoadCliente Use Case', () => {
     test('Deve retornar todos os clientes em caso de sucesso', async () => {
         const { sut } = makeSut();
         const clientes = await sut.load();
-        expect(clientes).toEqual(makeFakeLoadClienteModel());
+        expect(clientes).toEqual(makeFakeLoadClienteModelList());
     });
 
     test('Deve "throws" se LoadCliente throws', async () => {

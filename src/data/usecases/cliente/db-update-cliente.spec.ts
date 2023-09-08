@@ -24,7 +24,6 @@ const makeUpdatedClienteModel = (): ClienteModel => ({
     nome: 'updated_nome',
     cpf: 'any_cpf',
     telefone: 'updated_telefone',
-    carro: 1,
     endereco: 1,
     lastUpdated: new Date('2021-02-28 00:00:00')
 });
