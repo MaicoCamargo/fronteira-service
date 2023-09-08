@@ -6,7 +6,14 @@ export class DbLoadEnderecoById implements LoadEnderecoById {
     constructor(private readonly loadEnderecoByIdRepository: LoadEnderecoByIdRepository) {}
 
     async loadById(id: number): Promise<EnderecoModel> {
-        await this.loadEnderecoByIdRepository.loadById(id);
-        return await Promise.resolve(undefined);
+        const result = await this.loadEnderecoByIdRepository.loadById(id);
+        return {
+            id: result.id_endereco,
+            cep: result.cep,
+            cidade: result.cidade,
+            rua: result.rua,
+            complemento: result.complemento,
+            numero: result.numero
+        };
     }
 }
