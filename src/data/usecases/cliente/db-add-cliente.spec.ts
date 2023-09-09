@@ -5,12 +5,10 @@ import { DbClienteModel } from '../../models/db-cliente-model';
 import { AddClienteParams } from '../../../domain/usecases/cliente/add-cliente';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 
-const mockFakeClienteParams = (): AddClienteParams => ({
+const mockFakeAddClienteParams = (): AddClienteParams => ({
     cpf: 'any_cpf',
     nome: 'any_nome',
-    telefone: 'any_telefone',
-    carro: 1,
-    endereco: 1
+    telefone: 'any_telefone'
 });
 
 const mockFakeAddClienteModel = (): AddClienteModel => ({
@@ -63,25 +61,28 @@ describe('DbAddCliente Use Case', () => {
         const { sut, saveClienteRepositoryStub } = makeSut();
 
         const saveSpy = jest.spyOn(saveClienteRepositoryStub, 'save');
-        sut.add(mockFakeClienteParams());
-        expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteModel());
+        sut.add(mockFakeAddClienteParams());
+        expect(saveSpy).toHaveBeenCalledWith({
+            cpf: 'any_cpf',
+            nome: 'any_nome',
+            last_updated: new Date(),
+            telefone: 'any_telefone'
+        });
     });
 
     test('deve lançar exceção se SaveClienteRepository lançar exceção', async () => {
         const { sut, saveClienteRepositoryStub } = makeSut();
         jest.spyOn(saveClienteRepositoryStub, 'save').mockImplementationOnce(throwError);
-        const promise = sut.add(mockFakeClienteParams());
+        const promise = sut.add(mockFakeAddClienteParams());
         await expect(promise).rejects.toThrow();
     });
 
     test('deve salvar um novo cliente e retornar em caso de sucesso', async () => {
         const { sut } = makeSut();
-        const cliente = await sut.add(mockFakeClienteParams());
+        const cliente = await sut.add(mockFakeAddClienteParams());
         expect(cliente.id).toBeTruthy();
-        expect(cliente.cpf).toBe(mockFakeClienteParams().cpf);
-        expect(cliente.nome).toBe(mockFakeClienteParams().nome);
-        expect(cliente.telefone).toBe(mockFakeClienteParams().telefone);
-        expect(cliente.endereco).toBe(mockFakeClienteParams().endereco);
-        expect(cliente.carro).toBe(mockFakeClienteParams().carro);
+        expect(cliente.cpf).toBe(mockFakeAddClienteParams().cpf);
+        expect(cliente.nome).toBe(mockFakeAddClienteParams().nome);
+        expect(cliente.telefone).toBe(mockFakeAddClienteParams().telefone);
     });
 });

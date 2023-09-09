@@ -16,8 +16,6 @@ export class DbUpdateCliente implements UpdateCliente {
             id: updated.id_cliente,
             cpf: updated.cpf,
             lastUpdated: updated.last_updated,
-            carro: updated.carro_id,
-            endereco: updated.endereco_id,
             telefone: updated.telefone,
             nome: updated.nome
         };

@@ -3,38 +3,22 @@ import { AddCliente, AddClienteParams } from '../../../domain/usecases/cliente/a
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { SaveClienteController } from './save-cliente-controller';
 import { created, serverError } from '../../helpers/http';
+import { mockFakeAddClienteParams, mockFakeClienteModel } from '../../../../tests/mock/mock-cliente';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 interface SutTypes {
     sut: SaveClienteController;
     addClienteStub: AddCliente;
 }
 
-const makeFakeAddClienteParams = (): AddClienteParams => ({
-    nome: 'any_name',
-    cpf: 'any_cpf',
-    endereco: 1,
-    telefone: 'any_telefone',
-    carro: 1
-});
-
 const makeFakeHttpRequest = (): HttpRequest => ({
-    body: { ...makeFakeAddClienteParams() }
-});
-
-const makeFakeClienteModel = (): ClienteModel => ({
-    nome: 'any_name',
-    cpf: 'any_cpf',
-    endereco: 1,
-    telefone: 'any_telefone',
-    carro: 1,
-    id: 1,
-    lastUpdated: new Date('2023-01-01')
+    body: { ...mockFakeAddClienteParams() }
 });
 
 const makeSaveCliente = (): AddCliente => {
     class AddClienteStub implements AddCliente {
         async add(params: AddClienteParams): Promise<ClienteModel> {
-            return makeFakeClienteModel();
+            return mockFakeClienteModel();
         }
     }
     return new AddClienteStub();
@@ -57,12 +41,12 @@ describe('SaveClienteController', () => {
     test('Deve retornar 201 em caso de sucesso', async () => {
         const { sut } = makeSut();
         const httpResponse = await sut.handle(makeFakeHttpRequest());
-        expect(httpResponse).toEqual(created(makeFakeClienteModel()));
+        expect(httpResponse).toEqual(created(mockFakeClienteModel()));
     });
 
     test('Deve retornar 500 se AddCliente falhar', async () => {
         const { sut, addClienteStub } = makeSut();
-        jest.spyOn(addClienteStub, 'add').mockReturnValueOnce(Promise.reject(new Error()));
+        jest.spyOn(addClienteStub, 'add').mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
     });

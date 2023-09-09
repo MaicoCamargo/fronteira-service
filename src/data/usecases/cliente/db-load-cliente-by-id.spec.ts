@@ -2,6 +2,12 @@ import { LoadClienteByIdRepository } from '../../protocols/db/cliente/load-clien
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeClienteModel, mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { DbLoadClienteById } from './db-load-cliente-by-id';
+import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
+import { DbCarroModel } from '../../models/db-carro-model';
+import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
+import { DbEnderecoModel } from '../../models/db-endereco-model';
+import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 
 const makeLoadClienteByIdRepositoryStub = () => {
     class LoadClienteByIdRepositoryStub implements LoadClienteByIdRepository {
@@ -12,17 +18,45 @@ const makeLoadClienteByIdRepositoryStub = () => {
     return new LoadClienteByIdRepositoryStub();
 };
 
+const makeLoadCarroByIdRepositoryStub = () => {
+    class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
+        loadById(id: number): Promise<DbCarroModel> {
+            return Promise.resolve(mockFakeDbCarroModel());
+        }
+    }
+    return new LoadCarroByIdRepositoryStub();
+};
+
+const makeLoadEnderecoByIdRepositoryStub = () => {
+    class LoadEnderecoByIdRepositoryStub implements LoadEnderecoByIdRepository {
+        loadById(id: number): Promise<DbEnderecoModel> {
+            return Promise.resolve(mockFakeDbEnderecoModel());
+        }
+    }
+    return new LoadEnderecoByIdRepositoryStub();
+};
+
 interface SutTypes {
     sut: DbLoadClienteById;
     loadClienteByIdRepositoryStub: LoadClienteByIdRepository;
+    loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
+    loadEnderecoByIdRepositoryStub: LoadEnderecoByIdRepository;
 }
 
 const makeSut = (): SutTypes => {
     const loadClienteByIdRepositoryStub = makeLoadClienteByIdRepositoryStub();
-    const sut = new DbLoadClienteById(loadClienteByIdRepositoryStub);
+    const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepositoryStub();
+    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoByIdRepositoryStub();
+    const sut = new DbLoadClienteById(
+        loadClienteByIdRepositoryStub,
+        loadCarroByIdRepositoryStub,
+        loadEnderecoByIdRepositoryStub
+    );
     return {
         sut,
-        loadClienteByIdRepositoryStub
+        loadClienteByIdRepositoryStub,
+        loadCarroByIdRepositoryStub,
+        loadEnderecoByIdRepositoryStub
     };
 };
 
