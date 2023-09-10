@@ -2,8 +2,9 @@ import { LoadClientes } from '../../../domain/usecases/cliente/load-clientes';
 import { LoadClienteController } from './load-cliente-controller';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
-import { created, ok, serverError } from '../../helpers/http';
+import { serverError } from '../../helpers/http';
 import { makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
+import { Wrapper } from '../../protocols/http/http-wrapper';
 
 interface SutTypes {
     sut: LoadClienteController;
@@ -14,8 +15,8 @@ const makeFakeHttpRequest = (): HttpRequest => ({});
 
 const makeLoadCliente = (): LoadClientes => {
     class LoadClienteStub implements LoadClientes {
-        async load(): Promise<ClienteModel[]> {
-            return makeFakeLoadClienteModelList();
+        async load(): Promise<Wrapper<ClienteModel[]>> {
+            return { content: makeFakeLoadClienteModelList() };
         }
     }
     return new LoadClienteStub();
