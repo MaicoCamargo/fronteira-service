@@ -6,6 +6,7 @@ import { CarroModel } from '../../../domain/models/carro-model';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
+import { Wrapper } from '../../../presentation/protocols/http/http-wrapper';
 
 export class DbLoadClientes implements LoadClientes {
     constructor(
@@ -14,9 +15,9 @@ export class DbLoadClientes implements LoadClientes {
         private readonly loadEnderecoByIdRepository: LoadEnderecoByIdRepository
     ) {}
 
-    async load(): Promise<ClienteModel[]> {
+    async load(): Promise<Wrapper<ClienteModel[]>> {
         const model = await this.loadClientesRepository.load();
-        const clientes: Array<Promise<ClienteModel>> = model.map(async (row: DbClienteModel) => ({
+        const clientes: Array<Promise<ClienteModel>> = model.content.map(async (row: DbClienteModel) => ({
             id: row.id_cliente,
             cpf: row.cpf,
             nome: row.nome,
@@ -25,7 +26,7 @@ export class DbLoadClientes implements LoadClientes {
             carro: await this.getCarro(row.carro_id),
             endereco: await this.getEndereco(row.endereco_id)
         }));
-        return await Promise.all(clientes);
+        return { content: await Promise.all(clientes), pagination: model.pagination };
     }
 
     private async getCarro(id: number): Promise<CarroModel> {

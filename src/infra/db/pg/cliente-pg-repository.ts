@@ -9,6 +9,8 @@ import {
 } from '../../../data/protocols/db/cliente/update-cliente-repository';
 import { DeleteClienteRepository } from '../../../data/protocols/db/cliente/delete-cliente-repository';
 import { AddClienteModel, SaveClienteRepository } from '../../../data/protocols/db/cliente/save-cliente-repository';
+import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
+import { Wrapper } from '../../../presentation/protocols/http/http-wrapper';
 
 export class ClientePgRepository
     implements
@@ -18,8 +20,9 @@ export class ClientePgRepository
         DeleteClienteRepository,
         SaveClienteRepository
 {
-    async load(): Promise<DbClienteModel[]> {
-        return await knexInstance('cliente');
+    async load(page?: number, limit?: number): Promise<Wrapper<DbClienteModel[]>> {
+        const query = knexInstance('cliente');
+        return await knexPaginateAdapter(query, page, limit);
     }
 
     async save(model: AddClienteModel): Promise<DbClienteModel> {

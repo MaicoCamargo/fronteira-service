@@ -1,5 +1,6 @@
 import { DbClienteModel } from '../../../models/db-cliente-model';
+import { Wrapper } from '../../../../presentation/protocols/http/http-wrapper';
 
 export interface LoadClientesRepository {
-    load: () => Promise<DbClienteModel[]>;
+    load: (page?: number, limit?: number) => Promise<Wrapper<DbClienteModel[]>>;
 }
