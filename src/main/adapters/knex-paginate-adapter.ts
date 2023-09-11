@@ -1,4 +1,4 @@
-import { Wrapper } from '../../presentation/protocols/http/http-wrapper';
+import { Wrapper } from '../protocols/http-wrapper';
 
 export const knexPaginateAdapter = async <T>(query: any, page?: number, limit?: number): Promise<Wrapper<T>> => {
     if (!page && !limit) {

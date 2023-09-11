@@ -10,7 +10,7 @@ import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
-import { Wrapper } from '../../../presentation/protocols/http/http-wrapper';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {

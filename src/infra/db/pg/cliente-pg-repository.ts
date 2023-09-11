@@ -10,7 +10,7 @@ import {
 import { DeleteClienteRepository } from '../../../data/protocols/db/cliente/delete-cliente-repository';
 import { AddClienteModel, SaveClienteRepository } from '../../../data/protocols/db/cliente/save-cliente-repository';
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
-import { Wrapper } from '../../../presentation/protocols/http/http-wrapper';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
 
 export class ClientePgRepository
     implements

@@ -6,7 +6,7 @@ import { CarroModel } from '../../../domain/models/carro-model';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
-import { Wrapper } from '../../../presentation/protocols/http/http-wrapper';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
 
 export class DbLoadClientes implements LoadClientes {
     constructor(

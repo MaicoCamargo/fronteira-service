@@ -4,7 +4,7 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
 import { serverError } from '../../helpers/http';
 import { makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
-import { Wrapper } from '../../protocols/http/http-wrapper';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
 
 interface SutTypes {
     sut: LoadClienteController;
