@@ -1,5 +1,6 @@
 import { knex } from 'knex';
 import { ENV } from '../../../../main/config/env';
+import { attachPaginate } from 'knex-paginate';
 
 let connection;
 if (ENV.NODE_ENV === 'test') {
@@ -20,6 +21,7 @@ if (ENV.NODE_ENV === 'test') {
     };
 }
 
+attachPaginate();
 export const knexInstance = knex({
     client: 'pg',
     connection

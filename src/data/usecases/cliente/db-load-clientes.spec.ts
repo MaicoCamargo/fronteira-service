@@ -9,11 +9,14 @@ import { DbCarroModel } from '../../models/db-carro-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
+import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {
-        load(): Promise<DbClienteModel[]> {
-            return Promise.resolve(makeFakeDbClienteModelList());
+        async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
+            return await knexPaginateAdapter(makeFakeDbClienteModelList(), pageFilter);
         }
     }
     return new LoadClienteRepositoryStub();
@@ -59,7 +62,7 @@ describe('DbLoadCliente Use Case', () => {
         const { sut, loadCarroByIdRepositoryStub, loadEnderecoByIdRepositoryStub, loadClientesRepositoryStub } =
             makeSut();
         jest.spyOn(loadClientesRepositoryStub, 'load').mockReturnValueOnce(
-            Promise.resolve(makeFakeDbClienteModelList())
+            Promise.resolve(await knexPaginateAdapter(makeFakeDbClienteModelList()))
         );
         jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockReturnValueOnce(
             Promise.resolve(mockFakeDbCarroModel())
@@ -87,7 +90,7 @@ describe('DbLoadCliente Use Case', () => {
         jest.spyOn(loadEnderecoByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(dbEnderecoModel));
 
         const clientes = await sut.load();
-        expect(clientes).toEqual(makeFakeLoadClienteModelList());
+        expect(clientes.content).toEqual(makeFakeLoadClienteModelList());
     });
 
     test('Deve "throws" se LoadCliente throws', async () => {

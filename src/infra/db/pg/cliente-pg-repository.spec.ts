@@ -4,6 +4,7 @@ import { ClientePgRepository } from './cliente-pg-repository';
 import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
 import { mapper } from './helpers/mapper';
 import { DbCarroModel } from '../../../data/models/db-carro-model';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 const makeSut = () => {
     return new ClientePgRepository();
@@ -29,24 +30,43 @@ describe('Cliente Postgres Repository', () => {
                 await makePgClienteCreate(carro, endereco)
             ];
             const sut = makeSut();
-            const clientes = await sut.load();
-            expect(clientes).toBeTruthy();
-            expect(clientes.length).toEqual(createdClientes.length);
-            expect(clientes[0].id_cliente).toEqual(createdClientes[0].id_cliente);
-            expect(clientes[0].cpf).toEqual(createdClientes[0].cpf);
-            expect(clientes[0].carro_id).toEqual(createdClientes[0].carro_id);
-            expect(clientes[0].nome).toEqual(createdClientes[0].nome);
-            expect(clientes[0].endereco_id).toEqual(createdClientes[0].endereco_id);
-            expect(clientes[0].telefone).toEqual(createdClientes[0].telefone);
-            expect(clientes[0].last_updated).toEqual(createdClientes[0].last_updated);
+            const wrapper = await sut.load();
+            expect(wrapper).toBeTruthy();
+            expect(wrapper.content.length).toEqual(createdClientes.length);
+            expect(wrapper.content[0].id_cliente).toEqual(createdClientes[0].id_cliente);
+            expect(wrapper.content[0].cpf).toEqual(createdClientes[0].cpf);
+            expect(wrapper.content[0].carro_id).toEqual(createdClientes[0].carro_id);
+            expect(wrapper.content[0].nome).toEqual(createdClientes[0].nome);
+            expect(wrapper.content[0].endereco_id).toEqual(createdClientes[0].endereco_id);
+            expect(wrapper.content[0].telefone).toEqual(createdClientes[0].telefone);
+            expect(wrapper.content[0].last_updated).toEqual(createdClientes[0].last_updated);
 
-            expect(clientes[1].id_cliente).toEqual(createdClientes[1].id_cliente);
-            expect(clientes[1].cpf).toEqual(createdClientes[1].cpf);
-            expect(clientes[1].carro_id).toEqual(createdClientes[1].carro_id);
-            expect(clientes[1].nome).toEqual(createdClientes[1].nome);
-            expect(clientes[1].endereco_id).toEqual(createdClientes[1].endereco_id);
-            expect(clientes[1].telefone).toEqual(createdClientes[1].telefone);
-            expect(clientes[1].last_updated).toEqual(createdClientes[1].last_updated);
+            expect(wrapper.content[1].id_cliente).toEqual(createdClientes[1].id_cliente);
+            expect(wrapper.content[1].cpf).toEqual(createdClientes[1].cpf);
+            expect(wrapper.content[1].carro_id).toEqual(createdClientes[1].carro_id);
+            expect(wrapper.content[1].nome).toEqual(createdClientes[1].nome);
+            expect(wrapper.content[1].endereco_id).toEqual(createdClientes[1].endereco_id);
+            expect(wrapper.content[1].telefone).toEqual(createdClientes[1].telefone);
+            expect(wrapper.content[1].last_updated).toEqual(createdClientes[1].last_updated);
+        });
+
+        test('Deve retornar os dados paginados em caso de sucesso', async () => {
+            const carro = await makePgCarroCreate();
+            const endereco = await makePgEnderecoCreate();
+            await Promise.all([
+                await makePgClienteCreate(carro, endereco),
+                await makePgClienteCreate(carro, endereco),
+                await makePgClienteCreate(carro, endereco),
+                await makePgClienteCreate(carro, endereco),
+                await makePgClienteCreate(carro, endereco)
+            ]);
+
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 6 };
+            const wrapper = await sut.load(pageFilter);
+            expect(wrapper).toBeTruthy();
+            expect(wrapper.content.length).toEqual(pageFilter.size);
+            expect(wrapper.pagination.perPage).toEqual(pageFilter.size);
         });
     });
 
