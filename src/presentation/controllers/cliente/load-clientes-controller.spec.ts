@@ -1,5 +1,5 @@
 import { LoadClientes } from '../../../domain/usecases/cliente/load-clientes';
-import { LoadClienteController } from './load-cliente-controller';
+import { LoadClientesController } from './load-clientes-controller';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { HttpRequest } from '../../protocols';
 import { serverError } from '../../helpers/http';
@@ -9,7 +9,7 @@ import { throwError } from '../../../../tests/helper/test-helper';
 import { PageFilter } from '../../../main/protocols/page-filter';
 
 interface SutTypes {
-    sut: LoadClienteController;
+    sut: LoadClientesController;
     loadClientesStub: LoadClientes;
 }
 
@@ -25,11 +25,11 @@ const makeLoadCliente = (): LoadClientes => {
 };
 const makeSut = (): SutTypes => {
     const loadClientesStub = makeLoadCliente();
-    const sut = new LoadClienteController(loadClientesStub);
+    const sut = new LoadClientesController(loadClientesStub);
     return { sut, loadClientesStub };
 };
 
-describe('LoadClienteController', () => {
+describe('LoadClientesController', () => {
     test('Deve chamar LoadCliente', async () => {
         const { sut, loadClientesStub } = makeSut();
         const spy = jest.spyOn(loadClientesStub, 'load');

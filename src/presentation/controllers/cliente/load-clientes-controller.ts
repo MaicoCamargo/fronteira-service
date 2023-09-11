@@ -3,7 +3,7 @@ import { LoadClientes } from '../../../domain/usecases/cliente/load-clientes';
 import { ok, serverError } from '../../helpers/http';
 import { PageFilter } from '../../../main/protocols/page-filter';
 
-export class LoadClienteController implements Controller {
+export class LoadClientesController implements Controller {
     constructor(private readonly loadClientes: LoadClientes) {}
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
