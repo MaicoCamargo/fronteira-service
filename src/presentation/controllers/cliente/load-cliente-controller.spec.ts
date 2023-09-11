@@ -5,6 +5,8 @@ import { HttpRequest } from '../../protocols';
 import { serverError } from '../../helpers/http';
 import { makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { throwError } from '../../../../tests/helper/test-helper';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 interface SutTypes {
     sut: LoadClienteController;
@@ -15,7 +17,7 @@ const makeFakeHttpRequest = (): HttpRequest => ({});
 
 const makeLoadCliente = (): LoadClientes => {
     class LoadClienteStub implements LoadClientes {
-        async load(): Promise<Wrapper<ClienteModel[]>> {
+        async load(pageFilter: PageFilter): Promise<Wrapper<ClienteModel[]>> {
             return { content: makeFakeLoadClienteModelList() };
         }
     }
@@ -36,7 +38,7 @@ describe('LoadClienteController', () => {
     });
     test('Deve retornar 500 se LoadCliente falhar', async () => {
         const { sut, loadClientesStub } = makeSut();
-        jest.spyOn(loadClientesStub, 'load').mockReturnValueOnce(Promise.reject(new Error()));
+        jest.spyOn(loadClientesStub, 'load').mockImplementationOnce(throwError);
         const httpResponse = await sut.handle(makeFakeHttpRequest());
         expect(httpResponse).toEqual(serverError(new Error()));
     });

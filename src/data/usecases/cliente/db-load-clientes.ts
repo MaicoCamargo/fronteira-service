@@ -17,7 +17,7 @@ export class DbLoadClientes implements LoadClientes {
     ) {}
 
     async load(pageFilter?: PageFilter): Promise<Wrapper<ClienteModel[]>> {
-        const model = await this.loadClientesRepository.load();
+        const model = await this.loadClientesRepository.load(pageFilter);
         const clientes: Array<Promise<ClienteModel>> = model.content.map(async (row: DbClienteModel) => ({
             id: row.id_cliente,
             cpf: row.cpf,

@@ -4,6 +4,7 @@ import { ClientePgRepository } from './cliente-pg-repository';
 import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
 import { mapper } from './helpers/mapper';
 import { DbCarroModel } from '../../../data/models/db-carro-model';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 const makeSut = () => {
     return new ClientePgRepository();
@@ -61,12 +62,11 @@ describe('Cliente Postgres Repository', () => {
             ]);
 
             const sut = makeSut();
-            const page = 1;
-            const limit = 6;
-            const wrapper = await sut.load(page, limit);
+            const pageFilter: PageFilter = { page: 1, size: 6 };
+            const wrapper = await sut.load(pageFilter);
             expect(wrapper).toBeTruthy();
-            expect(wrapper.content.length).toEqual(limit);
-            expect(wrapper.pagination.perPage).toEqual(limit);
+            expect(wrapper.content.length).toEqual(pageFilter.size);
+            expect(wrapper.pagination.perPage).toEqual(pageFilter.size);
         });
     });
 

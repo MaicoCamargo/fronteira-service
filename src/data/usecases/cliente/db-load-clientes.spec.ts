@@ -11,11 +11,12 @@ import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {
-        async load(): Promise<Wrapper<DbClienteModel[]>> {
-            return await knexPaginateAdapter(makeFakeDbClienteModelList());
+        async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
+            return await knexPaginateAdapter(makeFakeDbClienteModelList(), pageFilter);
         }
     }
     return new LoadClienteRepositoryStub();
