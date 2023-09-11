@@ -2,9 +2,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 export const ENV = {
     NODE_ENV: process.env.NODE_ENV || 'test',
-    MONGO_URL:
-        process.env.MONGO_URL ||
-        'mongodb+srv://fronteira-db-user:JcNXRpY8ywi3TJgn@fronteira-db.0fq1r.mongodb.net/?retryWrites=true&w=majority',
+    MONGO_URL: process.env.MONGO_URL || 'mongodb://172.17.0.3:27017/fronteira-test',
     PORT: process.env.PORT || 5050,
     DB_POSTGRES: {
         HOST: process.env.DB_POSTGRES_HOST || '127.0.0.1',
