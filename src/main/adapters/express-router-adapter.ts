@@ -5,7 +5,8 @@ export const expressRouterAdapter = (controller: Controller) => {
     return async (req: Request, res: Response) => {
         const httpRequest: HttpRequest = {
             body: req.body,
-            params: req.params
+            params: req.params,
+            query: req.query
         };
         const httpResponse = await controller.handle(httpRequest);
         if (httpResponse.statusCode <= 400) {
