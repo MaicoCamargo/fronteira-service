@@ -1,6 +1,7 @@
 import { ClienteModel } from '../../models/cliente-model';
-import { Wrapper } from '../../../main/adapters/knex-paginate-adapter';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 export interface LoadClientes {
-    load: () => Promise<Wrapper<ClienteModel[]>>;
+    load: (pageFilter?: PageFilter) => Promise<Wrapper<ClienteModel[]>>;
 }

@@ -7,6 +7,7 @@ import { DbClienteModel } from '../../models/db-cliente-model';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 export class DbLoadClientes implements LoadClientes {
     constructor(
@@ -15,7 +16,7 @@ export class DbLoadClientes implements LoadClientes {
         private readonly loadEnderecoByIdRepository: LoadEnderecoByIdRepository
     ) {}
 
-    async load(): Promise<Wrapper<ClienteModel[]>> {
+    async load(pageFilter?: PageFilter): Promise<Wrapper<ClienteModel[]>> {
         const model = await this.loadClientesRepository.load();
         const clientes: Array<Promise<ClienteModel>> = model.content.map(async (row: DbClienteModel) => ({
             id: row.id_cliente,
