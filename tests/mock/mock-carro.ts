@@ -22,6 +22,25 @@ export const mockFakeDbCarroModel = (): DbCarroModel => ({
     id_carro: 1
 });
 
+export const mockFakeDbCarroModelList = (): DbCarroModel[] => [
+    {
+        cor: 'any_cor',
+        ano: 2020,
+        modelo: 'any_modelo',
+        placa: 'any_placa',
+        kilometragem: 0,
+        id_carro: 1
+    },
+    {
+        cor: 'other_cor',
+        ano: 2025,
+        modelo: 'other_modelo',
+        placa: 'other_placa',
+        kilometragem: 10,
+        id_carro: 2
+    }
+];
+
 export const mockFakeCarroModel = (): CarroModel => ({
     cor: 'any_cor',
     ano: 2020,
@@ -30,6 +49,25 @@ export const mockFakeCarroModel = (): CarroModel => ({
     quilometragem: 0,
     id: 1
 });
+
+export const mockFakeCarroModelList = (): CarroModel[] => [
+    {
+        cor: 'any_cor',
+        ano: 2020,
+        modelo: 'any_modelo',
+        placa: 'any_placa',
+        quilometragem: 0,
+        id: 1
+    },
+    {
+        cor: 'other_cor',
+        ano: 2025,
+        modelo: 'other_modelo',
+        placa: 'other_placa',
+        quilometragem: 10,
+        id: 2
+    }
+];
 
 export const mockFakeAddCarroParams = (): AddCarroParams => ({
     cor: 'any_cor',

@@ -2,9 +2,8 @@ import { DbLoadClientes } from './db-load-clientes';
 import { LoadClientesRepository } from '../../protocols/db/cliente/load-clientes-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { throwError } from '../../../../tests/helper/test-helper';
-import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
-import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { mockFakeDbCarroModel, mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
 import { DbCarroModel } from '../../models/db-carro-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
@@ -12,6 +11,7 @@ import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { PageFilter } from '../../../main/protocols/page-filter';
+import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {
@@ -22,13 +22,13 @@ const makeLoadClienteRepository = (): LoadClientesRepository => {
     return new LoadClienteRepositoryStub();
 };
 
-const makeLoadCarroRepository = (): LoadCarroByIdRepository => {
-    class LoadCarroRepositoryStub implements LoadCarroByIdRepository {
-        loadById(id: number): Promise<DbCarroModel> {
-            return Promise.resolve(mockFakeDbCarroModel());
+const makeLoadCarroByClienteIdRepository = (): LoadCarroByClienteIdRepository => {
+    class LoadCarroByClienteIdRepositoryStub implements LoadCarroByClienteIdRepository {
+        loadByClienteId(id: number): Promise<DbCarroModel[]> {
+            return Promise.resolve(mockFakeDbCarroModelList());
         }
     }
-    return new LoadCarroRepositoryStub();
+    return new LoadCarroByClienteIdRepositoryStub();
 };
 
 const makeLoadEnderecoRepository = (): LoadEnderecoByIdRepository => {
@@ -43,42 +43,35 @@ const makeLoadEnderecoRepository = (): LoadEnderecoByIdRepository => {
 interface SutTypes {
     sut: DbLoadClientes;
     loadClientesRepositoryStub: LoadClientesRepository;
-    loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
+    loadCarroByClienteIdRepositoryStub: LoadCarroByClienteIdRepository;
     loadEnderecoByIdRepositoryStub: LoadEnderecoByIdRepository;
 }
 const makeSut = (): SutTypes => {
     const loadClientesRepositoryStub = makeLoadClienteRepository();
-    const loadCarroByIdRepositoryStub = makeLoadCarroRepository();
+    const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepository();
     const loadEnderecoByIdRepositoryStub = makeLoadEnderecoRepository();
     const sut = new DbLoadClientes(
         loadClientesRepositoryStub,
-        loadCarroByIdRepositoryStub,
+        loadCarroByClienteIdRepositoryStub,
         loadEnderecoByIdRepositoryStub
     );
-    return { sut, loadClientesRepositoryStub, loadCarroByIdRepositoryStub, loadEnderecoByIdRepositoryStub };
+    return { sut, loadClientesRepositoryStub, loadCarroByClienteIdRepositoryStub, loadEnderecoByIdRepositoryStub };
 };
-describe('DbLoadCliente Use Case', () => {
+describe('DbLoadClientes Use Case', () => {
     test('Deve retornar todos os clientes em caso de sucesso', async () => {
-        const { sut, loadCarroByIdRepositoryStub, loadEnderecoByIdRepositoryStub, loadClientesRepositoryStub } =
+        const { sut, loadCarroByClienteIdRepositoryStub, loadEnderecoByIdRepositoryStub, loadClientesRepositoryStub } =
             makeSut();
         jest.spyOn(loadClientesRepositoryStub, 'load').mockReturnValueOnce(
             Promise.resolve(await knexPaginateAdapter(makeFakeDbClienteModelList()))
         );
-        jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockReturnValueOnce(
-            Promise.resolve(mockFakeDbCarroModel())
+        jest.spyOn(loadCarroByClienteIdRepositoryStub, 'loadByClienteId').mockReturnValueOnce(
+            Promise.resolve([mockFakeDbCarroModel()])
         );
         jest.spyOn(loadEnderecoByIdRepositoryStub, 'loadById').mockReturnValueOnce(
             Promise.resolve(mockFakeDbEnderecoModel())
         );
-        const dbCarroModel: DbCarroModel = {
-            cor: makeFakeLoadClienteModelList()[1].carro.cor,
-            ano: makeFakeLoadClienteModelList()[1].carro.ano,
-            modelo: makeFakeLoadClienteModelList()[1].carro.modelo,
-            placa: makeFakeLoadClienteModelList()[1].carro.placa,
-            kilometragem: makeFakeLoadClienteModelList()[1].carro.quilometragem,
-            id_carro: makeFakeLoadClienteModelList()[1].carro.id
-        };
-        jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(dbCarroModel));
+
+        jest.spyOn(loadCarroByClienteIdRepositoryStub, 'loadByClienteId').mockReturnValueOnce(Promise.resolve([]));
         const dbEnderecoModel: DbEnderecoModel = {
             id_endereco: makeFakeLoadClienteModelList()[1].endereco.id,
             cep: makeFakeLoadClienteModelList()[1].endereco.cep,
