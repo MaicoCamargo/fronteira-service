@@ -10,7 +10,6 @@ export const mockFakeDbClienteModel = (): DbClienteModel => ({
     nome: 'any_nome',
     cpf: 'any_cpf',
     telefone: 'any_telefone',
-    carro_id: 1,
     endereco_id: 1,
     last_updated: new Date('2021-02-28 00:00:00')
 });
@@ -20,7 +19,7 @@ export const mockFakeClienteModel = (): ClienteModel => ({
     nome: 'any_nome',
     cpf: 'any_cpf',
     telefone: 'any_telefone',
-    carro: mockFakeCarroModel(),
+    carros: [mockFakeCarroModel()],
     endereco: mockFakeEnderecoModel(),
     lastUpdated: new Date('2021-02-28 00:00:00')
 });
@@ -54,14 +53,7 @@ export const makeFakeLoadClienteModelList = (): ClienteModel[] => [
         },
         lastUpdated: new Date('2022-01-01'),
         telefone: 'other_telefone',
-        carro: {
-            cor: 'other_cor',
-            ano: 2020,
-            modelo: 'other_modelo',
-            placa: 'other_placa',
-            quilometragem: 0,
-            id: 2
-        }
+        carros: []
     }
 ];
 
@@ -70,7 +62,6 @@ export const makeFakeDbClienteModelList = (): DbClienteModel[] => [
     {
         id_cliente: 2,
         cpf: 'other_cpf',
-        carro_id: 2,
         nome: 'other_nome',
         endereco_id: 2,
         last_updated: new Date('2022-01-01'),

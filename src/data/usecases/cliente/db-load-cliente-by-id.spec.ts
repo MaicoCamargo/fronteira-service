@@ -8,6 +8,7 @@ import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
+import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 
 const makeLoadClienteByIdRepositoryStub = () => {
     class LoadClienteByIdRepositoryStub implements LoadClienteByIdRepository {
@@ -18,10 +19,10 @@ const makeLoadClienteByIdRepositoryStub = () => {
     return new LoadClienteByIdRepositoryStub();
 };
 
-const makeLoadCarroByIdRepositoryStub = () => {
-    class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
-        loadById(id: number): Promise<DbCarroModel> {
-            return Promise.resolve(mockFakeDbCarroModel());
+const makeLoadCarroByClienteIdRepositoryStub = (): LoadCarroByClienteIdRepository => {
+    class LoadCarroByIdRepositoryStub implements LoadCarroByClienteIdRepository {
+        loadByClienteId(id: number): Promise<DbCarroModel[]> {
+            return Promise.resolve([mockFakeDbCarroModel()]);
         }
     }
     return new LoadCarroByIdRepositoryStub();
@@ -39,29 +40,29 @@ const makeLoadEnderecoByIdRepositoryStub = () => {
 interface SutTypes {
     sut: DbLoadClienteById;
     loadClienteByIdRepositoryStub: LoadClienteByIdRepository;
-    loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
+    loadCarroByClienteIdRepositoryStub: LoadCarroByClienteIdRepository;
     loadEnderecoByIdRepositoryStub: LoadEnderecoByIdRepository;
 }
 
 const makeSut = (): SutTypes => {
     const loadClienteByIdRepositoryStub = makeLoadClienteByIdRepositoryStub();
-    const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepositoryStub();
+    const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStub();
     const loadEnderecoByIdRepositoryStub = makeLoadEnderecoByIdRepositoryStub();
     const sut = new DbLoadClienteById(
         loadClienteByIdRepositoryStub,
-        loadCarroByIdRepositoryStub,
+        loadCarroByClienteIdRepositoryStub,
         loadEnderecoByIdRepositoryStub
     );
     return {
         sut,
         loadClienteByIdRepositoryStub,
-        loadCarroByIdRepositoryStub,
+        loadCarroByClienteIdRepositoryStub,
         loadEnderecoByIdRepositoryStub
     };
 };
 
 describe('DbLoadClienteById', () => {
-    test('Deve chamar LoadClienteByIdRepository com id correto', async () => {
+    test('Deve chamar LoadCarroByClienteIdRepository com id correto', async () => {
         const { sut, loadClienteByIdRepositoryStub } = makeSut();
         const id = 1;
         const loadByIdSpy = jest.spyOn(loadClienteByIdRepositoryStub, 'loadById');
@@ -69,7 +70,7 @@ describe('DbLoadClienteById', () => {
         expect(loadByIdSpy).toBeCalledWith(id);
     });
 
-    test('Deve retornar null se LoadClienteByIdRepository retornar null', async () => {
+    test('Deve retornar null se LoadCarroByClienteIdRepository retornar null', async () => {
         const { sut, loadClienteByIdRepositoryStub } = makeSut();
         jest.spyOn(loadClienteByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(null));
         const id = 1;
@@ -77,7 +78,7 @@ describe('DbLoadClienteById', () => {
         expect(cliente).toBeNull();
     });
 
-    test('Deve retornar um cliente se LoadClienteByIdRepository retornar um cliente', async () => {
+    test('Deve retornar um cliente se LoadCarroByClienteIdRepository retornar um cliente', async () => {
         const { sut } = makeSut();
         const id = 1;
         const cliente = await sut.loadById(id);

@@ -12,10 +12,14 @@ const makeSut = () => {
 
 describe('Cliente Postgres Repository', () => {
     beforeAll(async () => {
+        await knexInstance('cliente_carro').del();
         await knexInstance('cliente').del();
+        await knexInstance('endereco').del();
+        await knexInstance('carro').del();
     });
 
     afterAll(async () => {
+        await knexInstance('cliente_carro').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
         await knexInstance('carro').del();
@@ -23,19 +27,14 @@ describe('Cliente Postgres Repository', () => {
     });
     describe('load()', () => {
         test('Deve retornar todos os clientes em caso de sucesso', async () => {
-            const carro = await makePgCarroCreate();
             const endereco = await makePgEnderecoCreate();
-            const createdClientes = [
-                await makePgClienteCreate(carro, endereco),
-                await makePgClienteCreate(carro, endereco)
-            ];
+            const createdClientes = [await makePgClienteCreate(endereco), await makePgClienteCreate(endereco)];
             const sut = makeSut();
             const wrapper = await sut.load();
             expect(wrapper).toBeTruthy();
             expect(wrapper.content.length).toEqual(createdClientes.length);
             expect(wrapper.content[0].id_cliente).toEqual(createdClientes[0].id_cliente);
             expect(wrapper.content[0].cpf).toEqual(createdClientes[0].cpf);
-            expect(wrapper.content[0].carro_id).toEqual(createdClientes[0].carro_id);
             expect(wrapper.content[0].nome).toEqual(createdClientes[0].nome);
             expect(wrapper.content[0].endereco_id).toEqual(createdClientes[0].endereco_id);
             expect(wrapper.content[0].telefone).toEqual(createdClientes[0].telefone);
@@ -43,7 +42,6 @@ describe('Cliente Postgres Repository', () => {
 
             expect(wrapper.content[1].id_cliente).toEqual(createdClientes[1].id_cliente);
             expect(wrapper.content[1].cpf).toEqual(createdClientes[1].cpf);
-            expect(wrapper.content[1].carro_id).toEqual(createdClientes[1].carro_id);
             expect(wrapper.content[1].nome).toEqual(createdClientes[1].nome);
             expect(wrapper.content[1].endereco_id).toEqual(createdClientes[1].endereco_id);
             expect(wrapper.content[1].telefone).toEqual(createdClientes[1].telefone);
@@ -51,14 +49,13 @@ describe('Cliente Postgres Repository', () => {
         });
 
         test('Deve retornar os dados paginados em caso de sucesso', async () => {
-            const carro = await makePgCarroCreate();
             const endereco = await makePgEnderecoCreate();
             await Promise.all([
-                await makePgClienteCreate(carro, endereco),
-                await makePgClienteCreate(carro, endereco),
-                await makePgClienteCreate(carro, endereco),
-                await makePgClienteCreate(carro, endereco),
-                await makePgClienteCreate(carro, endereco)
+                await makePgClienteCreate(endereco),
+                await makePgClienteCreate(endereco),
+                await makePgClienteCreate(endereco),
+                await makePgClienteCreate(endereco),
+                await makePgClienteCreate(endereco)
             ]);
 
             const sut = makeSut();
@@ -78,7 +75,6 @@ describe('Cliente Postgres Repository', () => {
                 cpf: 'any_cpf',
                 nome: 'any_nome',
                 telefone: 'any_telefone',
-                carro_id: carro.id_carro,
                 endereco_id: endereco.id_endereco
             };
             const sut = makeSut();
@@ -86,7 +82,6 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente).toBeTruthy();
             expect(cliente.id_cliente).toBeTruthy();
             expect(cliente.cpf).toEqual(model.cpf);
-            expect(cliente.carro_id).toEqual(model.carro_id);
             expect(cliente.nome).toEqual(model.nome);
             expect(cliente.endereco_id).toEqual(model.endereco_id);
             expect(cliente.telefone).toEqual(model.telefone);
@@ -96,7 +91,7 @@ describe('Cliente Postgres Repository', () => {
 
     describe('loadById()', () => {
         test('Deve retornar um cliente pelo id', async () => {
-            const model = await makePgClienteCreate(await makePgCarroCreate(), await makePgEnderecoCreate());
+            const model = await makePgClienteCreate(await makePgEnderecoCreate());
             const sut = makeSut();
             const cliente = await sut.loadById(model.id_cliente);
             expect(cliente).toEqual(model);
@@ -111,7 +106,7 @@ describe('Cliente Postgres Repository', () => {
 
     describe('update()', () => {
         test('Deve atualizar um cliente pelo id', async () => {
-            const model = await makePgClienteCreate(await makePgCarroCreate(), await makePgEnderecoCreate());
+            const model = await makePgClienteCreate(await makePgEnderecoCreate());
             const sut = makeSut();
             const cliente = await sut.update({
                 id_cliente: model.id_cliente,
@@ -122,7 +117,6 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente).toBeTruthy();
             expect(cliente.id_cliente).toEqual(model.id_cliente);
             expect(cliente.cpf).toEqual('any_cpf');
-            expect(cliente.carro_id).toEqual(model.carro_id);
             expect(cliente.nome).toEqual('outher_nome');
             expect(cliente.endereco_id).toEqual(model.endereco_id);
             expect(cliente.telefone).toEqual('outher_telefone');
@@ -132,7 +126,7 @@ describe('Cliente Postgres Repository', () => {
 
     describe('delete()', () => {
         test('Deve deletar um cliente pelo id', async () => {
-            const model = await makePgClienteCreate(await makePgCarroCreate(), await makePgEnderecoCreate());
+            const model = await makePgClienteCreate(await makePgEnderecoCreate());
             const sut = makeSut();
             await sut.delete(model.id_cliente);
             const cliente = await sut.loadById(model.id_cliente);
@@ -141,7 +135,7 @@ describe('Cliente Postgres Repository', () => {
     });
 });
 
-const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoModel): Promise<DbClienteModel> => {
+const makePgClienteCreate = async (endereco: DbEnderecoModel): Promise<DbClienteModel> => {
     const randomStr = (Math.random() + 1).toString(36).substring(7);
 
     return mapper(
@@ -150,11 +144,10 @@ const makePgClienteCreate = async (carro: DbCarroModel, endereco: DbEnderecoMode
                 nome: randomStr,
                 telefone: randomStr,
                 cpf: 'any_cpf',
-                carro_id: carro.id_carro,
                 endereco_id: endereco.id_endereco,
                 last_updated: new Date()
             })
-            .returning(['nome', 'telefone', 'cpf', 'carro_id', 'endereco_id', 'last_updated', 'id_cliente'])
+            .returning(['nome', 'telefone', 'cpf', 'endereco_id', 'last_updated', 'id_cliente'])
     );
 };
 const makePgCarroCreate = async (): Promise<DbCarroModel> => {

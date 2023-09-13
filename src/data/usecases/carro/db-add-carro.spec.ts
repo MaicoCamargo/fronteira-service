@@ -9,6 +9,7 @@ import { DbCarroModel } from '../../models/db-carro-model';
 import { DbAddCarro } from './db-add-carro';
 import { knexInstance } from '../../../infra/db/pg/helpers/knex-helper';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
 
 describe('DbAddCarro Usecase', () => {
     beforeAll(async () => {
@@ -16,6 +17,7 @@ describe('DbAddCarro Usecase', () => {
     });
 
     afterAll(async () => {
+        await knexInstance('cliente_carro').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
         await knexInstance('carro').del();
@@ -25,20 +27,23 @@ describe('DbAddCarro Usecase', () => {
     test('Deve chamar SaveCarroRepository com valores corretos', async () => {
         const { sut, saveCarroRepositoryStub } = makeSut();
         const addSpy = jest.spyOn(saveCarroRepositoryStub, 'save');
-        await sut.add(mockFakeAddCarroParams());
-        expect(addSpy).toBeCalledWith(mockFakeAddCarroModel());
+        const cliente = await makePgClienteCreate();
+        await sut.add(mockFakeAddCarroParams(), cliente.id_cliente);
+        expect(addSpy).toBeCalledWith(mockFakeAddCarroModel(), cliente.id_cliente);
     });
 
     test('Deve lançar exceção se SaveCarroRepository lançar exceção', async () => {
         const { sut, saveCarroRepositoryStub } = makeSut();
         jest.spyOn(saveCarroRepositoryStub, 'save').mockImplementationOnce(throwError);
-        const promise = sut.add(mockFakeAddCarroParams());
+        const cliente = await makePgClienteCreate();
+        const promise = sut.add(mockFakeAddCarroParams(), cliente.id_cliente);
         await expect(promise).rejects.toThrow();
     });
 
     test('Deve retornar um carro se SaveCarroRepository retornar um carro', async () => {
         const { sut } = makeSut();
-        const carro = await sut.add(mockFakeAddCarroParams());
+        const cliente = await makePgClienteCreate();
+        const carro = await sut.add(mockFakeAddCarroParams(), cliente.id_cliente);
         expect(carro).toEqual(mockFakeCarroModel());
     });
 });

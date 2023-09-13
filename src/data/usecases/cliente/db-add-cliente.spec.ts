@@ -13,7 +13,6 @@ const mockFakeAddClienteParams = (): AddClienteParams => ({
 
 const mockFakeAddClienteModel = (): AddClienteModel => ({
     cpf: 'any_cpf',
-    carro_id: 1,
     nome: 'any_nome',
     endereco_id: 1,
     last_updated: new Date(),

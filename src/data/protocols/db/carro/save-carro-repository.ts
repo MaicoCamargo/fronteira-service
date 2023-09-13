@@ -9,5 +9,5 @@ export interface AddCarroModel {
 }
 
 export interface SaveCarroRepository {
-    save: (model: AddCarroModel) => Promise<DbCarroModel>;
+    save: (model: AddCarroModel, clienteId: number) => Promise<DbCarroModel>;
 }

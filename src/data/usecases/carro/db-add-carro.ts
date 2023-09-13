@@ -5,7 +5,7 @@ import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/sav
 export class DbAddCarro implements AddCarro {
     constructor(private readonly saveCarroRepository: SaveCarroRepository) {}
 
-    async add(params: AddCarroParams): Promise<CarroModel> {
+    async add(params: AddCarroParams, clienteId: number): Promise<CarroModel> {
         const model: AddCarroModel = {
             ano: params.ano,
             cor: params.cor,
@@ -13,7 +13,7 @@ export class DbAddCarro implements AddCarro {
             modelo: params.modelo,
             placa: params.placa
         };
-        const carro = await this.saveCarroRepository.save(model);
+        const carro = await this.saveCarroRepository.save(model, clienteId);
         return {
             id: carro.id_carro,
             ano: carro.ano,

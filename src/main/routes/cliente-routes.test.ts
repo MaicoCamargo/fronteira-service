@@ -44,7 +44,6 @@ describe('/clientes', () => {
                 nome: 'any_nome',
                 cpf: 'any_cpf',
                 last_updated: new Date(),
-                carro_id: (await makeCreateCarro()).id,
                 endereco_id: (await makeCreateEndereco()).id_endereco,
                 telefone: 'any_telefone'
             };
@@ -68,7 +67,6 @@ describe('/clientes', () => {
                 nome: 'any_nome',
                 cpf: 'any_cpf',
                 last_updated: new Date(),
-                carro_id: (await makeCreateCarro()).id,
                 endereco_id: (await makeCreateEndereco()).id_endereco,
                 telefone: 'any_telefone'
             };
@@ -94,11 +92,4 @@ const makeCreateEndereco = async (): Promise<DbEnderecoModel> => {
     };
     const enderecoPgRepository = new EnderecoPgRepository();
     return await enderecoPgRepository.save(model);
-};
-
-const makeCreateCarro = async (): Promise<{ id: number }> => {
-    const result = await knexInstance('carro')
-        .insert({ modelo: 'any_modelo', placa: 'any_placa' })
-        .returning('id_carro');
-    return result[0];
 };

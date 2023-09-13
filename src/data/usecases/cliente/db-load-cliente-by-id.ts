@@ -1,13 +1,13 @@
 import { LoadClienteById } from '../../../domain/usecases/cliente/load-cliente-by-id';
 import { LoadClienteByIdRepository } from '../../protocols/db/cliente/load-cliente-by-id-repository';
 import { ClienteModel } from '../../../domain/models/cliente-model';
-import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
+import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 
 export class DbLoadClienteById implements LoadClienteById {
     constructor(
         private readonly loadClienteByIdRepository: LoadClienteByIdRepository,
-        private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
+        private readonly loadCarroByClienteIdRepository: LoadCarroByClienteIdRepository,
         private readonly loadEnderecoByIdRepository: LoadEnderecoByIdRepository
     ) {}
 
@@ -21,17 +21,18 @@ export class DbLoadClienteById implements LoadClienteById {
             telefone: dbClienteModel.telefone,
             lastUpdated: dbClienteModel.last_updated
         };
-        const carro = await this.loadCarroByIdRepository.loadById(dbClienteModel.carro_id);
-        if (carro) {
-            cliente.carro = {
-                id: carro.id_carro,
+        const carrosModel = await this.loadCarroByClienteIdRepository.loadByClienteId(dbClienteModel.id_cliente);
+        if (carrosModel.length > 0) {
+            cliente.carros = carrosModel.map((carro) => ({
                 cor: carro.cor,
                 ano: carro.ano,
-                quilometragem: carro.kilometragem,
+                modelo: carro.modelo,
+                id: carro.id_carro,
                 placa: carro.placa,
-                modelo: carro.modelo
-            };
+                quilometragem: carro.kilometragem
+            }));
         }
+
         const endereco = await this.loadEnderecoByIdRepository.loadById(dbClienteModel.endereco_id);
         if (endereco) {
             cliente.endereco = {

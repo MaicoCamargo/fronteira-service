@@ -35,7 +35,6 @@ export class ClientePgRepository
             nome: map.nome,
             telefone: map.telefone,
             last_updated: map.last_updated,
-            carro_id: map.carro_id,
             endereco_id: map.endereco_id
         };
     }
@@ -50,7 +49,6 @@ export class ClientePgRepository
             nome: map.nome,
             telefone: map.telefone,
             last_updated: map.last_updated,
-            carro_id: map.carro_id,
             endereco_id: map.endereco_id
         };
     }
@@ -67,7 +65,6 @@ export class ClientePgRepository
             nome: map.nome,
             telefone: map.telefone,
             last_updated: map.last_updated,
-            carro_id: map.carro_id,
             endereco_id: map.endereco_id
         };
     }

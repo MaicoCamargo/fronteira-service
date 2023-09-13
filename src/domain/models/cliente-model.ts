@@ -6,7 +6,7 @@ export interface ClienteModel {
     nome: string;
     telefone: string;
     cpf: string;
-    carro?: CarroModel;
+    carros?: CarroModel[];
     endereco?: EnderecoModel;
     lastUpdated: Date;
 }
