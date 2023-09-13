@@ -27,11 +27,9 @@ export class CarroPgRepository
     }
 
     async loadByClienteId(id: number): Promise<DbCarroModel[]> {
-        const models: any = await knexInstance('carro')
+        return knexInstance('carro')
             .leftJoin('cliente_carro', 'carro.id_carro', 'cliente_carro.carro_id')
             .where({ 'cliente_carro.cliente_id': id })
-            .select(['carro.id_carro', 'placa', 'modelo', 'ano', 'cor', 'kilometragem']);
-        if (!models.length) return [];
-        return mapper(models);
+            .select(['carro.id_carro', 'placa', 'modelo', 'ano', 'cor', 'kilometragem']) as any;
     }
 }
