@@ -1,7 +1,7 @@
 import { DbAddItem } from './db-add-item';
 import { SaveItemModel, SaveItemRepository } from '../../protocols/db/item/save-item-repository';
 import { DbItemModel } from '../../models/db-item-model';
-import { mockFakeAddItemParams, mockFakeDbItemModel } from '../../../../tests/mock/mock-item';
+import { mockFakeAddItemParams, mockFakeDbItemModel, mockFakeItemModel } from '../../../../tests/mock/mock-item';
 import { knexInstance } from '../../../infra/db/pg/helpers/knex-helper';
 
 describe('DbAddItem Use Case', () => {
@@ -20,6 +20,13 @@ describe('DbAddItem Use Case', () => {
         const item = mockFakeAddItemParams();
         sut.add(item);
         expect(addItemSpy).toHaveBeenCalledWith(item);
+    });
+
+    test('Deve retornar um item em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const item = mockFakeAddItemParams();
+        const response = await sut.add(item);
+        expect(response).toEqual(mockFakeItemModel());
     });
 });
 
