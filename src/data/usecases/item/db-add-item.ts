@@ -11,7 +11,7 @@ export class DbAddItem implements AddItem {
             marca: item.marca,
             valor: item.valor
         };
-        await this.saveItemRepository.save(model);
-        return await Promise.resolve(undefined);
+        const dbModel = await this.saveItemRepository.save(model);
+        return Object.assign({}, item, { id: dbModel.id_peca }) as ItemModel;
     }
 }
