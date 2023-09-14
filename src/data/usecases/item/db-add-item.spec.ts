@@ -3,6 +3,7 @@ import { SaveItemModel, SaveItemRepository } from '../../protocols/db/item/save-
 import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeAddItemParams, mockFakeDbItemModel, mockFakeItemModel } from '../../../../tests/mock/mock-item';
 import { knexInstance } from '../../../infra/db/pg/helpers/knex-helper';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbAddItem Use Case', () => {
     beforeAll(async () => {
@@ -27,6 +28,14 @@ describe('DbAddItem Use Case', () => {
         const item = mockFakeAddItemParams();
         const response = await sut.add(item);
         expect(response).toEqual(mockFakeItemModel());
+    });
+
+    test('Deve lançar exceção se SaveItemRepository lançar exceção', async () => {
+        const { sut, saveItemRepositoryStub } = makeSut();
+        jest.spyOn(saveItemRepositoryStub, 'save').mockImplementationOnce(throwError);
+        const item = mockFakeAddItemParams();
+        const promise = sut.add(item);
+        await expect(promise).rejects.toThrow();
     });
 });
 
