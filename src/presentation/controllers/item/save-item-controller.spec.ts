@@ -12,6 +12,14 @@ describe('SaveItemController', () => {
         await sut.handle(makeFakeHttpRequest({ body }));
         expect(saveSpy).toHaveBeenCalled();
     });
+
+    test('Deve retornar 201 em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const body: AddItemParams = mockFakeItemModel();
+        const httpResponse = await sut.handle(makeFakeHttpRequest({ body }));
+        expect(httpResponse.statusCode).toBe(201);
+        expect(httpResponse.body).toEqual(mockFakeItemModel());
+    });
 });
 
 interface SutTypes {
