@@ -6,8 +6,9 @@ import { knexInstance } from './helpers/knex-helper';
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
 import { SaveItemModel, SaveItemRepository } from '../../../data/protocols/db/item/save-item-repository';
 import { mapper } from './helpers/mapper';
+import { DbUpdateItemModel, UpdateItemRepository } from '../../../data/protocols/db/item/update-item-repository';
 
-export class ItemPgRepository implements LoadItensRepository, SaveItemRepository {
+export class ItemPgRepository implements LoadItensRepository, SaveItemRepository, UpdateItemRepository {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
         const query = knexInstance('peca').returning(['id_peca', 'marca', 'valor', 'nome']);
         return await knexPaginateAdapter(query, pageFilter);
@@ -15,6 +16,14 @@ export class ItemPgRepository implements LoadItensRepository, SaveItemRepository
 
     async save(item: SaveItemModel): Promise<DbItemModel> {
         const result = await knexInstance('peca').insert(item).returning(['id_peca', 'marca', 'valor', 'nome']);
+        return mapper(result);
+    }
+
+    async update(item: DbUpdateItemModel): Promise<DbItemModel> {
+        const result = await knexInstance('peca')
+            .update(item)
+            .where({ id_peca: item.id_peca })
+            .returning(['id_peca', 'marca', 'valor', 'nome']);
         return mapper(result);
     }
 }
