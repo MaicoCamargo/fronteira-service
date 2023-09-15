@@ -44,6 +44,19 @@ describe('ItemPgRepository', () => {
             expect(wrapper.pagination.total).toEqual(createdItens.length);
         });
     });
+
+    describe('save()', () => {
+        test('Deve retornar criar um item em caso de sucesso', async () => {
+            const sut = makeSut();
+            const item = mockFakeSaveItemModel();
+            const result = await sut.save(item);
+            expect(result).toBeTruthy();
+            expect(result.id_peca).toBeTruthy();
+            expect(result.nome).toEqual(item.nome);
+            expect(result.marca).toEqual(item.marca);
+            expect(result.valor).toEqual(item.valor);
+        });
+    });
 });
 
 const makeSut = (): ItemPgRepository => {
