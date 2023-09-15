@@ -7,7 +7,7 @@ import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapte
 
 export class ItemPgRepository implements LoadItensRepository {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
-        const model = await knexInstance('peca').select('id_peca', 'marca', 'valor', 'nome');
-        return await knexPaginateAdapter(model, pageFilter);
+        const query = knexInstance('peca').returning(['id_peca', 'marca', 'valor', 'nome']);
+        return await knexPaginateAdapter(query, pageFilter);
     }
 }
