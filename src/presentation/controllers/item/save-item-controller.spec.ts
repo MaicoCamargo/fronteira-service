@@ -1,0 +1,40 @@
+import { SaveItemController } from './save-item-controller';
+import { ItemModel } from '../../../domain/models/item-model';
+import { HttpRequest } from '../../protocols';
+import { AddItem, AddItemParams } from '../../../domain/usecases/item/add-item';
+import { mockFakeItemModel } from '../../../../tests/mock/mock-item';
+
+describe('SaveItemController', () => {
+    test('Deve chamar AddItem com valores corretos', async () => {
+        const { sut, addItemStub } = makeSut();
+        const saveSpy = jest.spyOn(addItemStub, 'add');
+        const body: AddItemParams = mockFakeItemModel();
+        await sut.handle(makeFakeHttpRequest({ body }));
+        expect(saveSpy).toHaveBeenCalled();
+    });
+});
+
+interface SutTypes {
+    sut: SaveItemController;
+    addItemStub: AddItem;
+}
+
+const makeSut = (): SutTypes => {
+    const addItemStub = makeAddItem();
+    const sut = new SaveItemController(addItemStub);
+    return {
+        sut,
+        addItemStub
+    };
+};
+
+const makeAddItem = (): AddItem => {
+    class AddItemStub implements AddItem {
+        async add(item: AddItemParams): Promise<ItemModel> {
+            return Promise.resolve(mockFakeItemModel());
+        }
+    }
+    return new AddItemStub();
+};
+
+const makeFakeHttpRequest = (httpRequest?: HttpRequest): HttpRequest => httpRequest;
