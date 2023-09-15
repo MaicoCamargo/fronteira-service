@@ -7,6 +7,7 @@ import {
     mockFakeUpdateItemModel
 } from '../../../../tests/mock/mock-item';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbUpateItem Use Case', () => {
     beforeAll(async () => {
@@ -22,6 +23,13 @@ describe('DbUpateItem Use Case', () => {
         const updateSpy = jest.spyOn(updateItemRepositoryStub, 'update');
         await sut.update(mockFakeUpdateItemModel());
         expect(updateSpy).toHaveBeenCalledWith(mockFakeDbUpdateItemModel());
+    });
+
+    test('Deve lançar exceção se UpdateItemRepository lançar exceção', async () => {
+        const { sut, updateItemRepositoryStub } = makeSut();
+        jest.spyOn(updateItemRepositoryStub, 'update').mockImplementationOnce(throwError);
+        const promise = sut.update(mockFakeUpdateItemModel());
+        await expect(promise).rejects.toThrow();
     });
 });
 
