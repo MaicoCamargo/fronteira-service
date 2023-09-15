@@ -4,6 +4,7 @@ import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../tests/mock/mock-item';
 import { PageFilter } from '../../../main/protocols/page-filter';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbLoadItens Use Case', () => {
     test('Deve chamar LoadItensRepository', async () => {
@@ -17,6 +18,13 @@ describe('DbLoadItens Use Case', () => {
         const { sut } = makeSut();
         const itens = (await sut.load()).content;
         expect(itens).toEqual(mockFakeItemModelList());
+    });
+
+    test('Deve lançar uma exceção se LoadItensRepository lançar uma exceção', async () => {
+        const { sut, loadItensRepositoryStub } = makeSut();
+        jest.spyOn(loadItensRepositoryStub, 'load').mockImplementationOnce(throwError);
+        const promise = sut.load();
+        await expect(promise).rejects.toThrow();
     });
 });
 
