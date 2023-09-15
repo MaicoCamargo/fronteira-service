@@ -3,6 +3,8 @@ import { ItemModel } from '../../../domain/models/item-model';
 import { HttpRequest } from '../../protocols';
 import { AddItem, AddItemParams } from '../../../domain/usecases/item/add-item';
 import { mockFakeItemModel } from '../../../../tests/mock/mock-item';
+import { throwError } from '../../../../tests/helper/test-helper';
+import { serverError } from '../../helpers/http';
 
 describe('SaveItemController', () => {
     test('Deve chamar AddItem com valores corretos', async () => {
@@ -19,6 +21,14 @@ describe('SaveItemController', () => {
         const httpResponse = await sut.handle(makeFakeHttpRequest({ body }));
         expect(httpResponse.statusCode).toBe(201);
         expect(httpResponse.body).toEqual(mockFakeItemModel());
+    });
+
+    test('Deve retornar 500 se AddItem falhar', async () => {
+        const { sut, addItemStub } = makeSut();
+        jest.spyOn(addItemStub, 'add').mockImplementationOnce(throwError);
+        const body: AddItemParams = mockFakeItemModel();
+        const httpResponse = await sut.handle(makeFakeHttpRequest({ body }));
+        expect(httpResponse).toEqual(serverError(new Error()));
     });
 });
 
