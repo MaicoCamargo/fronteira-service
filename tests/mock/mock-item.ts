@@ -11,6 +11,16 @@ export const mockFakeItemModel = (): ItemModel => ({
     id: 1
 });
 
+export const mockFakeItemModelList = (): ItemModel[] => [
+    mockFakeItemModel(),
+    {
+        nome: 'other_nome',
+        marca: 'other_marca',
+        valor: 10,
+        id: 2
+    }
+];
+
 export const mockFakeSaveItemModel = (): SaveItemModel => ({
     nome: 'any_nome',
     marca: 'any_marca',
@@ -26,6 +36,18 @@ export const mockFakeDbItemModel = (): DbItemModel => ({
     dh_exclusion: null,
     updated_at: new Date()
 });
+
+export const mockFakeDbItemModelList = (): DbItemModel[] => [
+    mockFakeDbItemModel(),
+    {
+        nome: 'other_nome',
+        marca: 'other_marca',
+        valor: 10,
+        id_peca: 2,
+        dh_exclusion: null,
+        updated_at: new Date()
+    }
+];
 
 export const mockFakeAddItemParams = (): AddItemParams => ({
     nome: 'any_nome',
