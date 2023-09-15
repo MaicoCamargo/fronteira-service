@@ -13,7 +13,12 @@ export class DbUpdateItem implements UpdateItem {
             valor: item.valor,
             id_peca: item.id
         };
-        await this.updateItemRepository.update(model);
-        return await Promise.resolve(undefined);
+        const resut = await this.updateItemRepository.update(model);
+        return {
+            id: resut.id_peca,
+            nome: resut.nome,
+            marca: resut.marca,
+            valor: resut.valor
+        };
     }
 }
