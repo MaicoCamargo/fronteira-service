@@ -26,6 +26,19 @@ describe('UpdateItemController', () => {
         const httpResponse = await sut.handle(httpRequest);
         expect(httpResponse).toEqual(ok(mockFakeUpdateItemModel()));
     });
+
+    test('Deve chamar UpdateItem com os valores corretos', async () => {
+        const { sut, updateItemStub } = makeSut();
+        const updateSpy = jest.spyOn(updateItemStub, 'update');
+        const httpRequest = {
+            params: {
+                id: mockFakeUpdateItemModel().id
+            },
+            body: mockFakeUpdateItemModel()
+        };
+        await sut.handle(httpRequest);
+        expect(updateSpy).toHaveBeenCalledWith(httpRequest.body);
+    });
 });
 
 interface SutTypes {
