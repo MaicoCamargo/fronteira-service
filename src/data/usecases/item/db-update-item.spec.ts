@@ -31,6 +31,12 @@ describe('DbUpateItem Use Case', () => {
         const promise = sut.update(mockFakeUpdateItemModel());
         await expect(promise).rejects.toThrow();
     });
+
+    test('Deve retornar um item atualizado em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const item = await sut.update(mockFakeUpdateItemModel());
+        expect(item).toEqual(mockFakeUpdateItemModel());
+    });
 });
 
 interface SutTypes {
@@ -49,7 +55,7 @@ const makeSut = (): SutTypes => {
 const makeUpdateItemRepository = (): UpdateItemRepository => {
     class UpdateItemRepositoryStub implements UpdateItemRepository {
         update(item: DbItemModel): Promise<DbItemModel> {
-            return Promise.resolve(mockFakeDbItemModel());
+            return Promise.resolve(mockFakeDbUpdateItemModel());
         }
     }
     return new UpdateItemRepositoryStub();
