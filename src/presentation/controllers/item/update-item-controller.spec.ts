@@ -2,7 +2,7 @@ import { UpdateItem } from '../../../domain/usecases/item/update-item';
 import { UpdateItemController } from './update-item-controller';
 import { ItemModel } from '../../../domain/models/item-model';
 import { mockFakeUpdateItemModel } from '../../../../tests/mock/mock-item';
-import { badRequest } from '../../helpers/http';
+import { badRequest, ok } from '../../helpers/http';
 import { MissingParamError } from '../../errors';
 
 describe('UpdateItemController', () => {
@@ -13,6 +13,18 @@ describe('UpdateItemController', () => {
         };
         const httpResponse = await sut.handle(httpRequest);
         expect(httpResponse).toEqual(badRequest(new MissingParamError('query param id')));
+    });
+
+    test('Deve retornar 200 em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const httpRequest = {
+            params: {
+                id: mockFakeUpdateItemModel().id
+            },
+            body: mockFakeUpdateItemModel()
+        };
+        const httpResponse = await sut.handle(httpRequest);
+        expect(httpResponse).toEqual(ok(mockFakeUpdateItemModel()));
     });
 });
 
