@@ -15,10 +15,10 @@ describe('LoadItensController', () => {
         expect(loadSpy).toHaveBeenCalledWith(filter);
     });
 
-    test.skip('Deve retornar uma lista de itens em caso de sucesso', () => {
+    test('Deve retornar 200 em caso de sucesso', async () => {
         const { sut } = makeSut();
         const httpRequest = makeFakeRequest({});
-        const httpResponse = sut.handle(httpRequest);
+        const httpResponse = await sut.handle(httpRequest);
         expect(httpResponse).toEqual(ok(mockFakeItemModelList()));
     });
 });
