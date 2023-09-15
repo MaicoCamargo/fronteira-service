@@ -4,6 +4,7 @@ import { knexInstance } from './helpers/knex-helper';
 import { mockFakeSaveItemModel } from '../../../../tests/mock/mock-item';
 import { PageFilter } from '../../../main/protocols/page-filter';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
+import { DbUpdateItemModel } from '../../../data/protocols/db/item/update-item-repository';
 
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
@@ -52,6 +53,25 @@ describe('ItemPgRepository', () => {
             const result = await sut.save(item);
             expect(result).toBeTruthy();
             expect(result.id_peca).toBeTruthy();
+            expect(result.nome).toEqual(item.nome);
+            expect(result.marca).toEqual(item.marca);
+            expect(result.valor).toEqual(item.valor);
+        });
+    });
+
+    describe('update()', () => {
+        test('Deve retornar atualizar um item em caso de sucesso', async () => {
+            const sut = makeSut();
+            const createdItens = await makePgItemCreate();
+            const item: DbUpdateItemModel = {
+                id_peca: createdItens[0].id_peca,
+                nome: 'other_nome',
+                marca: 'other_marca',
+                valor: 11
+            };
+            const result = await sut.update(item);
+            expect(result).toBeTruthy();
+            expect(result.id_peca).toEqual(item.id_peca);
             expect(result.nome).toEqual(item.nome);
             expect(result.marca).toEqual(item.marca);
             expect(result.valor).toEqual(item.valor);
