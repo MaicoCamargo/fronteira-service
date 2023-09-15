@@ -2,24 +2,46 @@ import { ItemPgRepository } from './item-pg-repository';
 import { DbItemModel } from '../../../data/models/db-item-model';
 import { knexInstance } from './helpers/knex-helper';
 import { mockFakeSaveItemModel } from '../../../../tests/mock/mock-item';
+import { PageFilter } from '../../../main/protocols/page-filter';
+import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
         await knexInstance('peca').del();
+        mockDateAdapter.set(new Date());
     });
 
     afterAll(async () => {
         await knexInstance('peca').del();
         await knexInstance.destroy();
+        mockDateAdapter.reset();
     });
 
     describe('load()', () => {
+        let createdItens: DbItemModel[];
+        beforeAll(async () => {
+            createdItens = await makePgItemCreate();
+        });
         test('Deve retornar uma lista de item em caso de sucesso', async () => {
-            const createdItens = await makePgItemCreate();
             const sut = makeSut();
             const result = await sut.load();
             expect(result.content).toBeTruthy();
             expect(result.content.length).toEqual(createdItens.length);
+            expect(result.content).toEqual(createdItens);
+        });
+
+        test('Deve retornar uma lista de item paginada em caso de sucesso', async () => {
+            const sut = makeSut();
+            const filter: PageFilter = {
+                page: 1,
+                size: 2
+            };
+            const wrapper = await sut.load(filter);
+            expect(wrapper.content).toBeTruthy();
+            expect(wrapper.content.length).toEqual(filter.size);
+            expect(wrapper.content).toEqual(createdItens);
+            expect(wrapper.pagination).toBeTruthy();
+            expect(wrapper.pagination.total).toEqual(createdItens.length);
         });
     });
 });

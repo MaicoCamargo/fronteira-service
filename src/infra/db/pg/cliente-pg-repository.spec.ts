@@ -99,7 +99,7 @@ describe('Cliente Postgres Repository', () => {
 
         test('Deve retornar null caso não encontre o cliente', async () => {
             const sut = makeSut();
-            const cliente = await sut.loadById(999);
+            const cliente = await sut.loadById(0);
             expect(cliente).toBeNull();
         });
     });
