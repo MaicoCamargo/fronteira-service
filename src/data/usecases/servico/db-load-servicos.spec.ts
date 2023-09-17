@@ -47,6 +47,13 @@ describe('DbLoadServicos Use Case', () => {
         const promise = sut.load();
         await expect(promise).rejects.toThrow();
     });
+
+    test('Deve retornar uma lista vazia caso nao existir servicos para listar', async () => {
+        const { sut, loadServicosRepositoryStub } = makeSut();
+        jest.spyOn(loadServicosRepositoryStub, 'load').mockReturnValueOnce(Promise.resolve({ content: [] }));
+        const { content: servicos } = await sut.load();
+        expect(servicos).toEqual([]);
+    });
 });
 
 interface SutTypes {
