@@ -34,7 +34,7 @@ describe('Carro Postgres Repository', () => {
             expect(carro.modelo).toEqual(mockFakeAddCarroModel().modelo);
             expect(carro.ano).toEqual(mockFakeAddCarroModel().ano);
             expect(carro.cor).toEqual(mockFakeAddCarroModel().cor);
-            expect(carro.kilometragem).toEqual(mockFakeAddCarroModel().kilometragem);
+            expect(carro.quilometragem).toEqual(mockFakeAddCarroModel().quilometragem);
             const clienteCarro = mapper(
                 await knexInstance('cliente_carro').where({ cliente_id: cliente.id_cliente, carro_id: carro.id_carro })
             );
@@ -54,7 +54,7 @@ describe('Carro Postgres Repository', () => {
             expect(carroLoaded.modelo).toEqual(mockFakeAddCarroModel().modelo);
             expect(carroLoaded.ano).toEqual(mockFakeAddCarroModel().ano);
             expect(carroLoaded.cor).toEqual(mockFakeAddCarroModel().cor);
-            expect(carroLoaded.kilometragem).toEqual(mockFakeAddCarroModel().kilometragem);
+            expect(carroLoaded.quilometragem).toEqual(mockFakeAddCarroModel().quilometragem);
             expect(carroLoaded.placa).toEqual(mockFakeAddCarroModel().placa);
         });
     });
@@ -67,7 +67,7 @@ describe('Carro Postgres Repository', () => {
                 id_carro: carro.id_carro,
                 ano: 2020,
                 cor: 'azul',
-                kilometragem: 10000,
+                quilometragem: 10000,
                 modelo: 'fusca',
                 placa: 'AAA-0000'
             });
@@ -76,7 +76,7 @@ describe('Carro Postgres Repository', () => {
             expect(carroUpdated.modelo).toEqual('fusca');
             expect(carroUpdated.ano).toEqual(2020);
             expect(carroUpdated.cor).toEqual('azul');
-            expect(carroUpdated.kilometragem).toEqual(10000);
+            expect(carroUpdated.quilometragem).toEqual(10000);
             expect(carroUpdated.placa).toEqual('AAA-0000');
         });
     });

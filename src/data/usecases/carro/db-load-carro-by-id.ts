@@ -13,7 +13,7 @@ export class DbLoadCarroById implements LoadCarroById {
             placa: carro.placa,
             ano: carro.ano,
             cor: carro.cor,
-            quilometragem: carro.kilometragem
+            quilometragem: carro.quilometragem
         };
     }
 }

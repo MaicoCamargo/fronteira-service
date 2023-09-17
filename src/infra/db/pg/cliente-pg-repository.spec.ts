@@ -99,7 +99,7 @@ describe('Cliente Postgres Repository', () => {
 
         test('Deve retornar null caso não encontre o cliente', async () => {
             const sut = makeSut();
-            const cliente = await sut.loadById(999);
+            const cliente = await sut.loadById(0);
             expect(cliente).toBeNull();
         });
     });
@@ -156,7 +156,7 @@ const makePgCarroCreate = async (): Promise<DbCarroModel> => {
             .insert({
                 ano: 2023,
                 cor: 'any_cor',
-                kilometragem: 100,
+                quilometragem: 100,
                 modelo: 'any_modelo',
                 placa: 'any_placa'
             })
@@ -166,7 +166,7 @@ const makePgCarroCreate = async (): Promise<DbCarroModel> => {
         id_carro: result.id_carro,
         ano: result.ano,
         cor: result.cor,
-        kilometragem: result.kilometragem,
+        quilometragem: result.quilometragem,
         modelo: result.modelo,
         placa: result.placa
     };

@@ -13,7 +13,7 @@ export class CarroPgRepository
         const result: any = await knexInstance('carro').insert(model).returning('*');
         const map = mapper(result);
         await knexInstance('cliente_carro').insert({ cliente_id: clienteId, carro_id: map.id_carro });
-        return Object.assign({}, map, { id: map.id_carro, quilometragem: map.kilometragem });
+        return Object.assign({}, map, { id: map.id_carro, quilometragem: map.quilometragem });
     }
 
     async loadById(id: number): Promise<DbCarroModel> {
@@ -23,13 +23,13 @@ export class CarroPgRepository
     async update(model: UpdateCarroModel): Promise<DbCarroModel> {
         const result = await knexInstance('carro').where({ id_carro: model.id_carro }).update(model).returning('*');
         const map = mapper(result);
-        return Object.assign({}, map, { id: map.id_carro, quilometragem: map.kilometragem });
+        return Object.assign({}, map, { id: map.id_carro, quilometragem: map.quilometragem });
     }
 
     async loadByClienteId(id: number): Promise<DbCarroModel[]> {
         return knexInstance('carro')
             .leftJoin('cliente_carro', 'carro.id_carro', 'cliente_carro.carro_id')
             .where({ 'cliente_carro.cliente_id': id })
-            .select(['carro.id_carro', 'placa', 'modelo', 'ano', 'cor', 'kilometragem']) as any;
+            .select(['carro.id_carro', 'placa', 'modelo', 'ano', 'cor', 'quilometragem']) as any;
     }
 }

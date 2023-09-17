@@ -11,7 +11,7 @@ export class DbLoadCarroByClienteId implements LoadCarroByClienteId {
         return models.map((model) => ({
             cor: model.cor,
             ano: model.ano,
-            quilometragem: model.kilometragem,
+            quilometragem: model.quilometragem,
             modelo: model.modelo,
             placa: model.placa,
             id: model.id_carro
