@@ -4,8 +4,10 @@ import { makeDbLoadItens } from '../factories/usescase/item/db-load-itens-factor
 import { Router } from 'express';
 import { SaveItemController } from '../../presentation/controllers/item/save-item-controller';
 import { makeDbSaveItem } from '../factories/usescase/item/db-save-item-factory';
+import { makeUpdateItemController } from '../factories/controller/update-item-controller-factory';
 
 export default (router: Router): void => {
     router.get('/itens', expressRouterAdapter(new LoadItensController(makeDbLoadItens())));
     router.post('/itens', expressRouterAdapter(new SaveItemController(makeDbSaveItem())));
+    router.put('/itens/:id', expressRouterAdapter(makeUpdateItemController()));
 };
