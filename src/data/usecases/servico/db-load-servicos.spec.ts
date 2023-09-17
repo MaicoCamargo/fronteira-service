@@ -8,6 +8,7 @@ import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -38,6 +39,13 @@ describe('DbLoadServicos Use Case', () => {
         const loadSpy = jest.spyOn(loadServicosRepositoryStub, 'load');
         await sut.load(pageFilter);
         expect(loadSpy).toHaveBeenCalledWith(pageFilter);
+    });
+
+    test('Deve lançar exceção de LoadServicosRepository caso ocorra exceção', async () => {
+        const { sut, loadServicosRepositoryStub } = makeSut();
+        jest.spyOn(loadServicosRepositoryStub, 'load').mockImplementationOnce(throwError);
+        const promise = sut.load();
+        await expect(promise).rejects.toThrow();
     });
 });
 
