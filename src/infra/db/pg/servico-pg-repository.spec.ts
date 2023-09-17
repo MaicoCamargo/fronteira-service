@@ -75,6 +75,25 @@ describe('Servico Postgres Repository', () => {
             expect(result.carro_id).toEqual(carro.id_carro);
         });
     });
+
+    describe('update()', () => {
+        test('Deve editar em caso de sucesso', async () => {
+            const sut = makeSut();
+            const result = await sut.update({
+                id_servico: servicos[0].id_servico,
+                valor: 10,
+                descricao: 'other_descricao',
+                quilometragem: 100,
+                carro_id: servicos[0].carro_id
+            });
+            expect(result.id_servico).toBeTruthy();
+            expect(result.valor).toEqual(10);
+            expect(result.descricao).toEqual('other_descricao');
+            expect(result.data).toEqual(servicos[0].data);
+            expect(result.quilometragem).toEqual(100);
+            expect(result.carro_id).toEqual(servicos[0].carro_id);
+        });
+    });
 });
 
 const makeSut = (): ServicoPgRepository => {
