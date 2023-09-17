@@ -4,12 +4,16 @@ import { knexInstance } from './helpers/knex-helper';
 import { DbCarroModel } from '../../../data/models/db-carro-model';
 import { mapper } from './helpers/mapper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
+import { PageFilter } from '../../../main/protocols/page-filter';
 
 describe('Servico Postgres Repository', () => {
+    let servicos: DbServicoModel[];
+
     beforeAll(async () => {
         mockDateAdapter.set(new Date());
         await knexInstance('servico').del();
         await knexInstance('carro').del();
+        servicos = await makePgServicoCreate();
     });
 
     afterAll(async () => {
@@ -21,11 +25,10 @@ describe('Servico Postgres Repository', () => {
 
     describe('load()', () => {
         test('Deve retornar uma lista de serviços em caso de sucesso', async () => {
-            const result = await makePgServicoCreate();
             const sut = makeSut();
             const wrapper = await sut.load();
-            expect(result).toEqual(wrapper.content);
-            expect(result.length).toEqual(wrapper.content.length);
+            expect(servicos).toEqual(wrapper.content);
+            expect(servicos.length).toEqual(wrapper.content.length);
         });
 
         test('Deve retornar uma lista vazia caso não exista serviços', async () => {
@@ -34,6 +37,22 @@ describe('Servico Postgres Repository', () => {
             const wrapper = await sut.load();
             expect(wrapper.content).toEqual([]);
             expect(wrapper.content.length).toEqual(0);
+        });
+
+        test('Deve retornar uma lista de serviços paginada em caso de sucesso', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 2 };
+            const wrapper = await sut.load(pageFilter);
+            expect(servicos).toEqual(wrapper.content);
+            expect(servicos.length).toEqual(wrapper.content.length);
+            expect(wrapper.pagination.total).toEqual(servicos.length);
+            expect(wrapper.pagination.perPage).toEqual(pageFilter.size);
+            expect(wrapper.pagination.currentPage).toEqual(pageFilter.page);
+            expect(wrapper.pagination.nextPage).toBeNull();
+            expect(wrapper.pagination.prevPage).toBeNull();
+            expect(wrapper.pagination.from).toEqual(0);
+            expect(wrapper.pagination.to).toEqual(servicos.length);
+            expect(wrapper.pagination.lastPage).toEqual(1);
         });
     });
 });
