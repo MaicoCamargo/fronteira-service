@@ -23,6 +23,8 @@ export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
     }
 ];
 
+export const mockFakeDbServicoModel = (): DbServicoModel => mockFakeDbServicoModelList()[0];
+
 export const mockFakeServicoModelList = (): ServicoModel[] => [
     {
         id: mockFakeDbServicoModelList()[0].id_servico,
@@ -43,3 +45,5 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         carro: mockFakeCarroModelList()[1]
     }
 ];
+
+export const mockFakeServicoModel = (): ServicoModel => mockFakeServicoModelList()[0];
