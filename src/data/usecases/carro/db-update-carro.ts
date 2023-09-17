@@ -8,7 +8,7 @@ export class DbUpdateCarro implements UpdateCarro {
         const model: UpdateCarroModel = {
             ano: params.ano,
             cor: params.cor,
-            kilometragem: params.quilometragem,
+            quilometragem: params.quilometragem,
             modelo: params.modelo,
             placa: params.placa,
             id_carro: params.id

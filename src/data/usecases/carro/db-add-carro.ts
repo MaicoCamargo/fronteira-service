@@ -9,7 +9,7 @@ export class DbAddCarro implements AddCarro {
         const model: AddCarroModel = {
             ano: params.ano,
             cor: params.cor,
-            kilometragem: params.quilometragem,
+            quilometragem: params.quilometragem,
             modelo: params.modelo,
             placa: params.placa
         };
@@ -18,7 +18,7 @@ export class DbAddCarro implements AddCarro {
             id: carro.id_carro,
             ano: carro.ano,
             cor: carro.cor,
-            quilometragem: carro.kilometragem,
+            quilometragem: carro.quilometragem,
             modelo: carro.modelo,
             placa: carro.placa
         };

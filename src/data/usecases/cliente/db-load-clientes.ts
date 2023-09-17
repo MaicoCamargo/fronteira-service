@@ -37,7 +37,7 @@ export class DbLoadClientes implements LoadClientes {
             id: carro.id_carro,
             cor: carro.cor,
             ano: carro.ano,
-            quilometragem: carro.kilometragem,
+            quilometragem: carro.quilometragem,
             modelo: carro.modelo,
             placa: carro.placa
         }));

@@ -3,7 +3,7 @@ import { DbCarroModel } from '../../../models/db-carro-model';
 export interface AddCarroModel {
     ano: number;
     cor: string;
-    kilometragem: number;
+    quilometragem: number;
     modelo: string;
     placa: string;
 }

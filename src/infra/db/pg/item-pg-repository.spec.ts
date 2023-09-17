@@ -8,12 +8,12 @@ import { DbUpdateItemModel } from '../../../data/protocols/db/item/update-item-r
 
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
-        await knexInstance('peca').del();
+        await knexInstance('item').del();
         mockDateAdapter.set(new Date());
     });
 
     afterAll(async () => {
-        await knexInstance('peca').del();
+        await knexInstance('item').del();
         await knexInstance.destroy();
         mockDateAdapter.reset();
     });
@@ -84,7 +84,7 @@ const makeSut = (): ItemPgRepository => {
 };
 
 const makePgItemCreate = async (): Promise<DbItemModel[]> => {
-    const result = await knexInstance('peca')
+    const result = await knexInstance('item')
         .insert([
             mockFakeSaveItemModel(),
             {

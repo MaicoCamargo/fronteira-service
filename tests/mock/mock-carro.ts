@@ -10,7 +10,7 @@ export const mockFakeAddCarroModel = (): AddCarroModel => ({
     ano: 2020,
     modelo: 'any_modelo',
     placa: 'any_placa',
-    kilometragem: 0
+    quilometragem: 0
 });
 
 export const mockFakeDbCarroModel = (): DbCarroModel => ({
@@ -18,7 +18,7 @@ export const mockFakeDbCarroModel = (): DbCarroModel => ({
     ano: 2020,
     modelo: 'any_modelo',
     placa: 'any_placa',
-    kilometragem: 0,
+    quilometragem: 0,
     id_carro: 1
 });
 
@@ -28,7 +28,7 @@ export const mockFakeDbCarroModelList = (): DbCarroModel[] => [
         ano: 2020,
         modelo: 'any_modelo',
         placa: 'any_placa',
-        kilometragem: 0,
+        quilometragem: 0,
         id_carro: 1
     },
     {
@@ -36,7 +36,7 @@ export const mockFakeDbCarroModelList = (): DbCarroModel[] => [
         ano: 2025,
         modelo: 'other_modelo',
         placa: 'other_placa',
-        kilometragem: 10,
+        quilometragem: 10,
         id_carro: 2
     }
 ];
@@ -91,6 +91,6 @@ export const mockFakeUpdateCarroModel = (): UpdateCarroModel => ({
     ano: 2020,
     modelo: 'any_modelo',
     placa: 'any_placa',
-    kilometragem: 0,
+    quilometragem: 0,
     id_carro: 1
 });

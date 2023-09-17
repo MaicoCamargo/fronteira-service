@@ -7,11 +7,11 @@ import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbAddItem Use Case', () => {
     beforeAll(async () => {
-        await knexInstance('peca').del();
+        await knexInstance('item').del();
     });
 
     afterAll(async () => {
-        await knexInstance('peca').del();
+        await knexInstance('item').del();
         await knexInstance.destroy();
     });
 

@@ -10,17 +10,17 @@ import { DbUpdateItemModel, UpdateItemRepository } from '../../../data/protocols
 
 export class ItemPgRepository implements LoadItensRepository, SaveItemRepository, UpdateItemRepository {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
-        const query = knexInstance('peca').returning(['id_peca', 'marca', 'valor', 'nome']);
+        const query = knexInstance('item').returning(['id_peca', 'marca', 'valor', 'nome']);
         return await knexPaginateAdapter(query, pageFilter);
     }
 
     async save(item: SaveItemModel): Promise<DbItemModel> {
-        const result = await knexInstance('peca').insert(item).returning(['id_peca', 'marca', 'valor', 'nome']);
+        const result = await knexInstance('item').insert(item).returning(['id_peca', 'marca', 'valor', 'nome']);
         return mapper(result);
     }
 
     async update(item: DbUpdateItemModel): Promise<DbItemModel> {
-        const result = await knexInstance('peca')
+        const result = await knexInstance('item')
             .update(item)
             .where({ id_peca: item.id_peca })
             .returning(['id_peca', 'marca', 'valor', 'nome']);

@@ -29,7 +29,7 @@ export class DbLoadClienteById implements LoadClienteById {
                 modelo: carro.modelo,
                 id: carro.id_carro,
                 placa: carro.placa,
-                quilometragem: carro.kilometragem
+                quilometragem: carro.quilometragem
             }));
         }
 
