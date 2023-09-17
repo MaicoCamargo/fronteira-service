@@ -8,6 +8,7 @@ export class LoadServicosController implements Controller {
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         const pageFilter: PageFilter = { page: httpRequest.query?.page, size: httpRequest.query?.size };
-        return ok(this.loadServicos.load(pageFilter));
+        const servicos = await this.loadServicos.load(pageFilter);
+        return ok(servicos);
     }
 }
