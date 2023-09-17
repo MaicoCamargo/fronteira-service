@@ -31,6 +31,14 @@ describe('DbLoadServicos Use Case', () => {
         expect(servicos[0]).toEqual(mockFakeServicoModelList()[0]);
         expect(servicos.length).toEqual(mockFakeServicoModelList().length);
     });
+
+    test('Deve chamar LoadServicosRepository com valores corretos', async () => {
+        const pageFilter: PageFilter = { page: 1, size: 10 };
+        const { sut, loadServicosRepositoryStub } = makeSut();
+        const loadSpy = jest.spyOn(loadServicosRepositoryStub, 'load');
+        await sut.load(pageFilter);
+        expect(loadSpy).toHaveBeenCalledWith(pageFilter);
+    });
 });
 
 interface SutTypes {
