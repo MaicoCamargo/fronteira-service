@@ -27,6 +27,14 @@ describe('Servico Postgres Repository', () => {
             expect(result).toEqual(wrapper.content);
             expect(result.length).toEqual(wrapper.content.length);
         });
+
+        test('Deve retornar uma lista vazia caso não exista serviços', async () => {
+            const sut = makeSut();
+            jest.spyOn(sut, 'load').mockResolvedValueOnce({ content: [] });
+            const wrapper = await sut.load();
+            expect(wrapper.content).toEqual([]);
+            expect(wrapper.content.length).toEqual(0);
+        });
     });
 });
 
