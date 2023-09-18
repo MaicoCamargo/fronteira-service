@@ -1,7 +1,9 @@
 import { expressRouterAdapter } from '../adapters/express-router-adapter';
 import { makeLoadServicosController } from '../factories/controller/load-servicos-controller-factory';
 import { Router } from 'express';
+import { makeSaveServicoController } from '../factories/controller/save-servico-controller-factory';
 
 export default (router: Router): void => {
     router.get('/servicos', expressRouterAdapter(makeLoadServicosController()));
+    router.post('/servicos', expressRouterAdapter(makeSaveServicoController()));
 };
