@@ -54,19 +54,51 @@ describe('DbLoadServicos Use Case', () => {
         const { content: servicos } = await sut.load();
         expect(servicos).toEqual([]);
     });
+
+    describe('loadCarroById()', () => {
+        test('Deve chamar LoadCarroByIdRepository com valores corretos', async () => {
+            const { sut, loadCarroByIdRepositoryStub } = makeSut();
+            const loadByIdSpy = jest.spyOn(loadCarroByIdRepositoryStub, 'loadById');
+            await sut.load();
+            expect(loadByIdSpy).toHaveBeenCalledWith(mockFakeServicoModelList()[0].carro.id);
+        });
+
+        test('Deve lançar exceção de LoadCarroByIdRepository caso ocorra exceção', async () => {
+            const { sut, loadCarroByIdRepositoryStub } = makeSut();
+            jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockImplementationOnce(throwError);
+            const promise = sut.load();
+            await expect(promise).rejects.toThrow();
+        });
+
+        test('Deve retornar um carro em caso de sucesso', async () => {
+            const { sut } = makeSut();
+            const carro = await sut.load();
+            expect(carro.content[0].carro).toEqual(mockFakeServicoModelList()[0].carro);
+        });
+
+        test('Deve retornar null caso não encontrar um carro', async () => {
+            const { sut, loadCarroByIdRepositoryStub } = makeSut();
+            jest.spyOn(loadCarroByIdRepositoryStub, 'loadById').mockReturnValueOnce(Promise.resolve(null));
+            const carro = await sut.load();
+            expect(carro.content[0].carro).toBeNull();
+        });
+    });
 });
 
 interface SutTypes {
     sut: DbLoadServicos;
     loadServicosRepositoryStub: LoadServicosRepository;
+    loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
 }
+
 const makeSut = (): SutTypes => {
     const loadServicosRepositoryStub = makeLoadServicosRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
     const sut = new DbLoadServicos(loadServicosRepositoryStub, loadCarroByIdRepositoryStub);
     return {
         sut,
-        loadServicosRepositoryStub
+        loadServicosRepositoryStub,
+        loadCarroByIdRepositoryStub
     };
 };
 
