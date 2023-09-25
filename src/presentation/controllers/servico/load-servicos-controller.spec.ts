@@ -6,8 +6,17 @@ import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { ServicoModel } from '../../../domain/models/servico-model';
 import { mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
 import { ok } from '../../helpers/http';
+import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 
 describe('LoadServicosController', () => {
+    beforeAll(() => {
+        mockDateAdapter.set(new Date());
+    });
+
+    afterAll(() => {
+        mockDateAdapter.reset();
+    });
+
     test('Deve Chamar o LoadServicos com os valores corretos', () => {
         const { sut, loadServicosStub } = makeSut();
         const spy = jest.spyOn(loadServicosStub, 'load');

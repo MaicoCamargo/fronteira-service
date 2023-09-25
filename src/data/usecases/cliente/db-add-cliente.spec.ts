@@ -2,27 +2,12 @@ import { AddClienteModel, SaveClienteRepository } from '../../protocols/db/clien
 import { DbAddCliente } from './db-add-cliente';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { DbClienteModel } from '../../models/db-cliente-model';
-import { AddClienteParams } from '../../../domain/usecases/cliente/add-cliente';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
-
-const mockFakeAddClienteParams = (): AddClienteParams => ({
-    cpf: 'any_cpf',
-    nome: 'any_nome',
-    telefone: 'any_telefone'
-});
-
-const mockFakeAddClienteModel = (): AddClienteModel => ({
-    cpf: 'any_cpf',
-    nome: 'any_nome',
-    endereco_id: 1,
-    last_updated: new Date(),
-    telefone: 'any_telefone'
-});
-
-const mockFakeDbClienteModel = (): DbClienteModel => ({
-    id_cliente: 1,
-    ...mockFakeAddClienteModel()
-});
+import {
+    mockFakeAddClienteModel,
+    mockFakeAddClienteParams,
+    mockFakeDbClienteModel
+} from '../../../../tests/mock/mock-cliente';
 
 const makeSaveClienteRepository = (): SaveClienteRepository => {
     class SaveClienteRepositoryStub implements SaveClienteRepository {
@@ -34,12 +19,23 @@ const makeSaveClienteRepository = (): SaveClienteRepository => {
     return new SaveClienteRepositoryStub();
 };
 
+const makeSaveCarroRepository = (): SaveClienteRepository => {
+    class SaveCarroRepositoryStub implements SaveClienteRepository {
+        async save(cliente: AddClienteModel): Promise<DbClienteModel> {
+            return Promise.resolve(mockFakeDbClienteModel());
+        }
+    }
+
+    return new SaveCarroRepositoryStub();
+};
+
 interface SutTypes {
     sut: DbAddCliente;
     saveClienteRepositoryStub: SaveClienteRepository;
 }
 const makeSut = (): SutTypes => {
     const saveClienteRepositoryStub = makeSaveClienteRepository();
+    const saveCarroRepositoryStub = makeSaveCarroRepository();
     const sut = new DbAddCliente(saveClienteRepositoryStub);
     return {
         sut,
@@ -56,17 +52,12 @@ describe('DbAddCliente Use Case', () => {
         mockDateAdapter.reset();
     });
 
-    test('deve chamar SaveClienteRepository com valores corretos', () => {
+    test('Deve chamar SaveClienteRepository com valores corretos', () => {
         const { sut, saveClienteRepositoryStub } = makeSut();
 
         const saveSpy = jest.spyOn(saveClienteRepositoryStub, 'save');
         sut.add(mockFakeAddClienteParams());
-        expect(saveSpy).toHaveBeenCalledWith({
-            cpf: 'any_cpf',
-            nome: 'any_nome',
-            last_updated: new Date(),
-            telefone: 'any_telefone'
-        });
+        expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteModel());
     });
 
     test('deve lançar exceção se SaveClienteRepository lançar exceção', async () => {
