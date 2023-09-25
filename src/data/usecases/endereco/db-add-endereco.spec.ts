@@ -1,34 +1,12 @@
 import { DbAddEndereco } from './db-add-endereco';
 import { SaveEnderecoRepository, DbAddEnderecoModel } from '../../protocols/db/endereco/save-endereco-repository';
-import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
-import { EnderecoModel } from '../../../domain/models/endereco-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { throwError } from '../../../../tests/helper/test-helper';
-
-const makeFakeEnderecoModel = (): EnderecoModel => ({
-    rua: 'any_rua',
-    complemento: 'any_complemento',
-    numero: 'any_numero',
-    cep: 'any_cep',
-    cidade: 'any_cidade',
-    id: 1
-});
-const makeFakeAddEnderecoParams = (): AddEnderecoParams => ({
-    rua: 'any_rua',
-    complemento: 'any_complemento',
-    numero: 'any_numero',
-    cep: 'any_cep',
-    cidade: 'any_cidade'
-});
-
-const makeFakeDbEnderecoModel = (): DbEnderecoModel => ({
-    rua: 'any_rua',
-    complemento: 'any_complemento',
-    numero: 'any_numero',
-    cep: 'any_cep',
-    cidade: 'any_cidade',
-    id_endereco: 1
-});
+import {
+    makeFakeAddEnderecoParams,
+    makeFakeDbEnderecoModel,
+    makeFakeEnderecoModel
+} from '../../../../tests/mock/mock-endereco';
 
 const makeSaveEnderecoRepository = (): SaveEnderecoRepository => {
     class SaveEnderecoRepositoryStub implements SaveEnderecoRepository {
