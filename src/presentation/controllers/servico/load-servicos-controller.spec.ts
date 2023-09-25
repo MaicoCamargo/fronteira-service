@@ -61,5 +61,6 @@ const makePagination = (pageFilter: PageFilter, total) => ({
     nextPage: null,
     currentPage: pageFilter.page,
     perPage: pageFilter.size,
-    total
+    total,
+    totalItemPage: total.length
 });

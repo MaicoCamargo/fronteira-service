@@ -5,6 +5,7 @@ interface Pagination {
     nextPage: number;
     perPage: number;
     currentPage: number;
+    totalItemPage: number;
     from: number;
     to: number;
 }
