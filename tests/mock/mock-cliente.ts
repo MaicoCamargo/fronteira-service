@@ -1,7 +1,7 @@
 import { DbClienteModel } from '../../src/data/models/db-cliente-model';
 import { ClienteModel } from '../../src/domain/models/cliente-model';
 import { UpdateClienteParams } from '../../src/domain/usecases/cliente/update-cliente';
-import { mockFakeCarroModel } from './mock-carro';
+import { mockFakeAddCarroParams, mockFakeCarroModel } from './mock-carro';
 import { AddClienteParams } from '../../src/domain/usecases/cliente/add-cliente';
 import { makeFakeEnderecoModel } from './mock-endereco';
 import { AddClienteModel } from '../../src/data/protocols/db/cliente/save-cliente-repository';
@@ -35,7 +35,8 @@ export const mockFakeUpdateClienteParams = (): UpdateClienteParams => ({
 export const mockFakeAddClienteParams = (): AddClienteParams => ({
     nome: 'any_nome',
     cpf: 'any_cpf',
-    telefone: 'any_telefone'
+    telefone: 'any_telefone',
+    carros: [mockFakeAddCarroParams()]
 });
 
 export const makeFakeLoadClienteModelList = (): ClienteModel[] => [
