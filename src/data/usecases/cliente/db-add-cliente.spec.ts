@@ -96,6 +96,7 @@ describe('DbAddCliente Use Case', () => {
         expect(cliente.nome).toBe(mockFakeAddClienteParams().nome);
         expect(cliente.telefone).toBe(mockFakeAddClienteParams().telefone);
         expect(cliente.carros).toEqual(mockFakeClienteModel().carros);
+        expect(cliente.endereco).toEqual(mockFakeClienteModel().endereco);
     });
 
     test('Deve chamar SaveCarroRepository com valores corretos', async () => {
