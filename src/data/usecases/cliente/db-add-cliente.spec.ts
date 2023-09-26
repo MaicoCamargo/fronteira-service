@@ -6,6 +6,7 @@ import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import {
     mockFakeAddClienteModel,
     mockFakeAddClienteParams,
+    mockFakeClienteModel,
     mockFakeDbClienteModel
 } from '../../../../tests/mock/mock-cliente';
 import { mockFakeAddCarroModel, mockFakeAddCarroParams, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
@@ -72,13 +73,14 @@ describe('DbAddCliente Use Case', () => {
         await expect(promise).rejects.toThrow();
     });
 
-    test('deve salvar um novo cliente e retornar em caso de sucesso', async () => {
+    test('Deve salvar um novo cliente e retornar em caso de sucesso', async () => {
         const { sut } = makeSut();
         const cliente = await sut.add(mockFakeAddClienteParams());
         expect(cliente.id).toBeTruthy();
         expect(cliente.cpf).toBe(mockFakeAddClienteParams().cpf);
         expect(cliente.nome).toBe(mockFakeAddClienteParams().nome);
         expect(cliente.telefone).toBe(mockFakeAddClienteParams().telefone);
+        expect(cliente.carros).toEqual(mockFakeClienteModel().carros);
     });
 
     test('Deve chamar SaveCarroRepository com valores corretos', async () => {
