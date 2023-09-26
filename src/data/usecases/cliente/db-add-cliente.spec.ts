@@ -8,6 +8,9 @@ import {
     mockFakeAddClienteParams,
     mockFakeDbClienteModel
 } from '../../../../tests/mock/mock-cliente';
+import { mockFakeAddCarroModel, mockFakeAddCarroParams, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
+import { DbCarroModel } from '../../models/db-carro-model';
 
 const makeSaveClienteRepository = (): SaveClienteRepository => {
     class SaveClienteRepositoryStub implements SaveClienteRepository {
@@ -19,27 +22,29 @@ const makeSaveClienteRepository = (): SaveClienteRepository => {
     return new SaveClienteRepositoryStub();
 };
 
-const makeSaveCarroRepository = (): SaveClienteRepository => {
-    class SaveCarroRepositoryStub implements SaveClienteRepository {
-        async save(cliente: AddClienteModel): Promise<DbClienteModel> {
-            return Promise.resolve(mockFakeDbClienteModel());
+const makeSaveCarroRepository = (): SaveCarroRepository => {
+    class SaveCarroRepositoryStub implements SaveCarroRepository {
+        async save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
+            return mockFakeDbCarroModel();
         }
     }
-
     return new SaveCarroRepositoryStub();
 };
 
 interface SutTypes {
     sut: DbAddCliente;
     saveClienteRepositoryStub: SaveClienteRepository;
+    saveCarroRepositoryStub: SaveCarroRepository;
 }
+
 const makeSut = (): SutTypes => {
     const saveClienteRepositoryStub = makeSaveClienteRepository();
     const saveCarroRepositoryStub = makeSaveCarroRepository();
-    const sut = new DbAddCliente(saveClienteRepositoryStub);
+    const sut = new DbAddCliente(saveClienteRepositoryStub, saveCarroRepositoryStub);
     return {
         sut,
-        saveClienteRepositoryStub
+        saveClienteRepositoryStub,
+        saveCarroRepositoryStub
     };
 };
 
@@ -74,5 +79,13 @@ describe('DbAddCliente Use Case', () => {
         expect(cliente.cpf).toBe(mockFakeAddClienteParams().cpf);
         expect(cliente.nome).toBe(mockFakeAddClienteParams().nome);
         expect(cliente.telefone).toBe(mockFakeAddClienteParams().telefone);
+    });
+
+    test('Deve chamar SaveCarroRepository com valores corretos', async () => {
+        const { sut, saveCarroRepositoryStub } = makeSut();
+
+        const saveSpy = jest.spyOn(saveCarroRepositoryStub, 'save');
+        await sut.add(mockFakeAddClienteParams());
+        expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteParams().carros[0], mockFakeDbClienteModel().id_cliente);
     });
 });
