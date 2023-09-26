@@ -20,7 +20,7 @@ export const makeFakeEnderecoModel = (): EnderecoModel => ({
     id: 1
 });
 
-export const makeFakeAddEnderecoParams = (): AddEnderecoParams => ({
+export const mockFakeAddEnderecoParams = (): AddEnderecoParams => ({
     rua: 'any_rua',
     complemento: 'any_complemento',
     numero: 'any_numero',

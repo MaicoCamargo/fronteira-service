@@ -3,9 +3,9 @@ import { SaveEnderecoRepository, DbAddEnderecoModel } from '../../protocols/db/e
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { throwError } from '../../../../tests/helper/test-helper';
 import {
-    makeFakeAddEnderecoParams,
     makeFakeDbEnderecoModel,
-    makeFakeEnderecoModel
+    makeFakeEnderecoModel,
+    mockFakeAddEnderecoParams
 } from '../../../../tests/mock/mock-endereco';
 
 const makeSaveEnderecoRepository = (): SaveEnderecoRepository => {
@@ -30,20 +30,20 @@ describe('DBAddEndereco UseCase', () => {
     test('Deve chamar o SaveEnderecoRepository com valores corretos', async () => {
         const { sut, saveEnderecoRepositoryStubStub } = makeSut();
         const spy = jest.spyOn(saveEnderecoRepositoryStubStub, 'save');
-        await sut.add(makeFakeAddEnderecoParams());
-        expect(spy).toHaveBeenCalledWith(makeFakeAddEnderecoParams());
+        await sut.add(mockFakeAddEnderecoParams());
+        expect(spy).toHaveBeenCalledWith(mockFakeAddEnderecoParams());
     });
 
     test('Deve retornar o endereco em caso de sucesso', async () => {
         const { sut } = makeSut();
-        const endereco = await sut.add(makeFakeAddEnderecoParams());
+        const endereco = await sut.add(mockFakeAddEnderecoParams());
         expect(endereco).toEqual(makeFakeEnderecoModel());
     });
 
     test('Deve jogar a excessão se o AddEnderecoRepository retornar uma excessão', async () => {
         const { sut, saveEnderecoRepositoryStubStub } = makeSut();
         jest.spyOn(saveEnderecoRepositoryStubStub, 'save').mockImplementationOnce(throwError);
-        const promise = sut.add(makeFakeAddEnderecoParams());
+        const promise = sut.add(mockFakeAddEnderecoParams());
         await expect(promise).rejects.toThrow();
     });
 });
