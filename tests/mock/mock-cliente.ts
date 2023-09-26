@@ -76,5 +76,6 @@ export const mockFakeAddClienteModel = (): AddClienteModel => ({
     cpf: 'any_cpf',
     nome: 'any_nome',
     last_updated: new Date(),
-    telefone: 'any_telefone'
+    telefone: 'any_telefone',
+    endereco_id: makeFakeEnderecoModel().id
 });

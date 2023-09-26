@@ -9,9 +9,12 @@ import {
     mockFakeClienteModel,
     mockFakeDbClienteModel
 } from '../../../../tests/mock/mock-cliente';
-import { mockFakeAddCarroModel, mockFakeAddCarroParams, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
+import { DbAddEnderecoModel, SaveEnderecoRepository } from '../../protocols/db/endereco/save-endereco-repository';
+import { DbEnderecoModel } from '../../models/db-endereco-model';
+import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 
 const makeSaveClienteRepository = (): SaveClienteRepository => {
     class SaveClienteRepositoryStub implements SaveClienteRepository {
@@ -32,20 +35,32 @@ const makeSaveCarroRepository = (): SaveCarroRepository => {
     return new SaveCarroRepositoryStub();
 };
 
+const makeSaveEnderecoRepository = (): SaveEnderecoRepository => {
+    class SaveEnderecoRepositoryStub implements SaveEnderecoRepository {
+        save(endereco: DbAddEnderecoModel): Promise<DbEnderecoModel> {
+            return Promise.resolve(mockFakeDbEnderecoModel());
+        }
+    }
+    return new SaveEnderecoRepositoryStub();
+};
+
 interface SutTypes {
     sut: DbAddCliente;
     saveClienteRepositoryStub: SaveClienteRepository;
     saveCarroRepositoryStub: SaveCarroRepository;
+    saveEnderecoRepositoryStub: SaveEnderecoRepository;
 }
 
 const makeSut = (): SutTypes => {
     const saveClienteRepositoryStub = makeSaveClienteRepository();
     const saveCarroRepositoryStub = makeSaveCarroRepository();
-    const sut = new DbAddCliente(saveClienteRepositoryStub, saveCarroRepositoryStub);
+    const saveEnderecoRepositoryStub = makeSaveEnderecoRepository();
+    const sut = new DbAddCliente(saveClienteRepositoryStub, saveCarroRepositoryStub, saveEnderecoRepositoryStub);
     return {
         sut,
         saveClienteRepositoryStub,
-        saveCarroRepositoryStub
+        saveCarroRepositoryStub,
+        saveEnderecoRepositoryStub
     };
 };
 
@@ -58,11 +73,11 @@ describe('DbAddCliente Use Case', () => {
         mockDateAdapter.reset();
     });
 
-    test('Deve chamar SaveClienteRepository com valores corretos', () => {
+    test('Deve chamar SaveClienteRepository com valores corretos', async () => {
         const { sut, saveClienteRepositoryStub } = makeSut();
 
         const saveSpy = jest.spyOn(saveClienteRepositoryStub, 'save');
-        sut.add(mockFakeAddClienteParams());
+        await sut.add(mockFakeAddClienteParams());
         expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteModel());
     });
 
@@ -89,5 +104,13 @@ describe('DbAddCliente Use Case', () => {
         const saveSpy = jest.spyOn(saveCarroRepositoryStub, 'save');
         await sut.add(mockFakeAddClienteParams());
         expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteParams().carros[0], mockFakeDbClienteModel().id_cliente);
+    });
+
+    test('Deve chamar SaveEnderecoRepository com valores corretos', async () => {
+        const { sut, saveEnderecoRepositoryStub } = makeSut();
+
+        const saveSpy = jest.spyOn(saveEnderecoRepositoryStub, 'save');
+        await sut.add(mockFakeAddClienteParams());
+        expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteParams().endereco);
     });
 });
