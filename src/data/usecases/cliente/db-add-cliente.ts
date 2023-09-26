@@ -5,6 +5,8 @@ import { SaveCarroRepository } from '../../protocols/db/carro/save-carro-reposit
 import { DbCarroModel } from '../../models/db-carro-model';
 import { CarroModel } from '../../../domain/models/carro-model';
 import { SaveEnderecoRepository } from '../../protocols/db/endereco/save-endereco-repository';
+import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
+import { EnderecoModel } from '../../../domain/models/endereco-model';
 
 export class DbAddCliente implements AddCliente {
     constructor(
@@ -16,25 +18,21 @@ export class DbAddCliente implements AddCliente {
     async add(params: AddClienteParams): Promise<ClienteModel> {
         const { carros, cpf, nome, telefone, endereco } = params;
 
-        let enderecoId: number;
-        if (endereco) {
-            const enderecoModel = await this.saveEnderecoRepository.save(endereco);
-            enderecoId = enderecoModel.id_endereco;
-        }
-
+        const savedEndereco = await this.saveEndereco(endereco);
         const model: AddClienteModel = {
             cpf,
             nome,
             telefone,
             last_updated: new Date(),
-            endereco_id: enderecoId
+            endereco_id: savedEndereco.id
         };
+
         const cliente = await this.addClienteRepository.save(model);
+
         const promises: Array<Promise<DbCarroModel>> = [];
         carros.forEach((carro) => {
             promises.push(this.saveCarroRepository.save(carro, cliente.id_cliente));
         });
-
         const savedCars: CarroModel[] = (await Promise.all(promises)).map((carro: DbCarroModel) => ({
             cor: carro.cor,
             ano: carro.ano,
@@ -50,7 +48,20 @@ export class DbAddCliente implements AddCliente {
             cpf: cliente.cpf,
             nome: cliente.nome,
             telefone: cliente.telefone,
-            carros: savedCars
+            carros: savedCars,
+            endereco: savedEndereco
+        };
+    }
+
+    private async saveEndereco(endereco: AddEnderecoParams): Promise<EnderecoModel> {
+        const model = await this.saveEnderecoRepository.save(endereco);
+        return {
+            id: model.id_endereco,
+            cep: model.cep,
+            numero: model.numero,
+            cidade: model.cidade,
+            rua: model.rua,
+            complemento: model.complemento
         };
     }
 }
