@@ -4,20 +4,30 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
 import { CarroModel } from '../../../domain/models/carro-model';
+import { SaveEnderecoRepository } from '../../protocols/db/endereco/save-endereco-repository';
 
 export class DbAddCliente implements AddCliente {
     constructor(
         private readonly addClienteRepository: SaveClienteRepository,
-        private readonly saveCarroRepository: SaveCarroRepository
+        private readonly saveCarroRepository: SaveCarroRepository,
+        private readonly saveEnderecoRepository: SaveEnderecoRepository
     ) {}
 
     async add(params: AddClienteParams): Promise<ClienteModel> {
-        const { carros, cpf, nome, telefone } = params;
+        const { carros, cpf, nome, telefone, endereco } = params;
+
+        let enderecoId: number;
+        if (endereco) {
+            const enderecoModel = await this.saveEnderecoRepository.save(endereco);
+            enderecoId = enderecoModel.id_endereco;
+        }
+
         const model: AddClienteModel = {
             cpf,
             nome,
             telefone,
-            last_updated: new Date()
+            last_updated: new Date(),
+            endereco_id: enderecoId
         };
         const cliente = await this.addClienteRepository.save(model);
         const promises: Array<Promise<DbCarroModel>> = [];
