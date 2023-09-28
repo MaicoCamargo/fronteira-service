@@ -10,6 +10,6 @@ export default (router: Router): void => {
     router.get('/clientes', expressRouterAdapter(makeLoadClientesController()));
     router.get('/clientes/:id', expressRouterAdapter(makeLoadClienteByIdController()));
     router.post('/clientes', expressRouterAdapter(makeSaveClienteController()));
-    router.put('/clientes', expressRouterAdapter(makeUpdateClienteController()));
+    router.put('/clientes/:id', expressRouterAdapter(makeUpdateClienteController()));
     router.delete('/clientes/:id', expressRouterAdapter(makeDeleteClienteController()));
 };
