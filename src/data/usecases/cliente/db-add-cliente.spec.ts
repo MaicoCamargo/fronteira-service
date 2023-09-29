@@ -114,4 +114,14 @@ describe('DbAddCliente Use Case', () => {
         await sut.add(mockFakeAddClienteParams());
         expect(saveSpy).toHaveBeenCalledWith(mockFakeAddClienteParams().endereco);
     });
+
+    test('Deve chamar SaveEnderecoRepository apenas se um endereco for fornecido', async () => {
+        const { sut, saveEnderecoRepositoryStub } = makeSut();
+
+        const saveSpy = jest.spyOn(saveEnderecoRepositoryStub, 'save');
+        const { endereco, ...params } = mockFakeAddClienteParams();
+        const addClienteParamsWithOutEndereco = Object.assign({}, { ...params });
+        await sut.add(addClienteParamsWithOutEndereco);
+        expect(saveSpy).not.toHaveBeenCalled();
+    });
 });
