@@ -18,13 +18,14 @@ export class DbAddCliente implements AddCliente {
     async add(params: AddClienteParams): Promise<ClienteModel> {
         const { carros, cpf, nome, telefone, endereco } = params;
 
-        const savedEndereco = await this.saveEndereco(endereco);
+        let savedEndereco: EnderecoModel | undefined;
+        if (endereco) savedEndereco = await this.saveEndereco(endereco);
         const model: AddClienteModel = {
             cpf,
             nome,
             telefone,
             last_updated: new Date(),
-            endereco_id: savedEndereco.id
+            endereco_id: savedEndereco?.id
         };
 
         const cliente = await this.addClienteRepository.save(model);
