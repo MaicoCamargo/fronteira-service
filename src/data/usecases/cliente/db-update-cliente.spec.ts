@@ -66,7 +66,7 @@ describe('DbUpdateCliente Use Case', () => {
 
     test('Deve retornar um cliente atualizado em caso de sucesso', async () => {
         const { sut } = makeSut();
-        const cliente = await sut.update(mockFakeUpdateClienteParams());
-        expect(cliente).toEqual(makeUpdatedClienteModel());
+        const wrapper = await sut.update(mockFakeUpdateClienteParams());
+        expect(wrapper.content).toEqual(makeUpdatedClienteModel());
     });
 });
