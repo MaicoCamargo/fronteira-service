@@ -1,4 +1,5 @@
 import { ClienteModel } from '../../models/cliente-model';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
 
 export interface UpdateClienteParams {
     id: number;
@@ -7,5 +8,5 @@ export interface UpdateClienteParams {
     cpf: string;
 }
 export interface UpdateCliente {
-    update: (cliente: UpdateClienteParams) => Promise<ClienteModel>;
+    update: (cliente: UpdateClienteParams) => Promise<Wrapper<ClienteModel>>;
 }
