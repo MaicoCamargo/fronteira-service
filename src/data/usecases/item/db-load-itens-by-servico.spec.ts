@@ -16,6 +16,13 @@ describe('DbLoadItensByServico UseCase', () => {
         const itens = await sut.load(1);
         expect(itens).toEqual(mockFakeItemModelList());
     });
+
+    test('Deve retornar uma lista vazia se LoadItensByServicoRepository retornar uma lista vazia', async () => {
+        const { sut, loadItensByServicoRepositoryStub } = makeSut();
+        jest.spyOn(loadItensByServicoRepositoryStub, 'loadByServico').mockReturnValueOnce(Promise.resolve([]));
+        const itens = await sut.load(1);
+        expect(itens).toEqual([]);
+    });
 });
 
 interface SutTypes {
