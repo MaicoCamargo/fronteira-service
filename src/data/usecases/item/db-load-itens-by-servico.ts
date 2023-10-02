@@ -6,7 +6,12 @@ export class DbLoadItensByServico implements LoadItensByIdServico {
     constructor(private readonly loadItensByServicoRepository: LoadItensByServicoRepository) {}
 
     async load(idServico: number): Promise<ItemModel[]> {
-        await this.loadItensByServicoRepository.loadByServico(idServico);
-        return await Promise.resolve([]);
+        const dbItemModels = await this.loadItensByServicoRepository.loadByServico(idServico);
+        return dbItemModels.map((dbItemModel) => ({
+            id: dbItemModel.id_peca,
+            marca: dbItemModel.marca,
+            valor: dbItemModel.valor,
+            nome: dbItemModel.nome
+        }));
     }
 }
