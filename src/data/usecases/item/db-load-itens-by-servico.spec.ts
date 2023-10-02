@@ -2,6 +2,7 @@ import { DbLoadItensByServico } from './db-load-itens-by-servico';
 import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
 import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../tests/mock/mock-item';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbLoadItensByServico UseCase', () => {
     test('Deve chamar LoadItensByServicoRepository com valor correto', async () => {
@@ -22,6 +23,13 @@ describe('DbLoadItensByServico UseCase', () => {
         jest.spyOn(loadItensByServicoRepositoryStub, 'loadByServico').mockReturnValueOnce(Promise.resolve([]));
         const itens = await sut.load(1);
         expect(itens).toEqual([]);
+    });
+
+    test('Deve lançar exceção se LoadItensByServicoRepository lançar exceção', async () => {
+        const { sut, loadItensByServicoRepositoryStub } = makeSut();
+        jest.spyOn(loadItensByServicoRepositoryStub, 'loadByServico').mockImplementationOnce(throwError);
+        const promise = sut.load(1);
+        await expect(promise).rejects.toThrow();
     });
 });
 
