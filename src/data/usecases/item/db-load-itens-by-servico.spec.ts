@@ -1,7 +1,7 @@
 import { DbLoadItensByServico } from './db-load-itens-by-servico';
 import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
 import { DbItemModel } from '../../models/db-item-model';
-import { mockFakeDbItemModelList } from '../../../../tests/mock/mock-item';
+import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../tests/mock/mock-item';
 
 describe('DbLoadItensByServico UseCase', () => {
     test('Deve chamar LoadItensByServicoRepository com valor correto', async () => {
@@ -9,6 +9,12 @@ describe('DbLoadItensByServico UseCase', () => {
         const loadByServicoSpy = jest.spyOn(loadItensByServicoRepositoryStub, 'loadByServico');
         await sut.load(1);
         expect(loadByServicoSpy).toHaveBeenCalledWith(1);
+    });
+
+    test('Deve retornar uma lista de itens em caso de sucesso', async () => {
+        const { sut } = makeSut();
+        const itens = await sut.load(1);
+        expect(itens).toEqual(mockFakeItemModelList());
     });
 });
 
