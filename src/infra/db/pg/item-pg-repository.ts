@@ -7,8 +7,11 @@ import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapte
 import { SaveItemModel, SaveItemRepository } from '../../../data/protocols/db/item/save-item-repository';
 import { mapper } from './helpers/mapper';
 import { DbUpdateItemModel, UpdateItemRepository } from '../../../data/protocols/db/item/update-item-repository';
+import { LoadItensByServicoRepository } from '../../../data/protocols/db/item/load-itens-by-servico-repository';
 
-export class ItemPgRepository implements LoadItensRepository, SaveItemRepository, UpdateItemRepository {
+export class ItemPgRepository
+    implements LoadItensRepository, SaveItemRepository, UpdateItemRepository, LoadItensByServicoRepository
+{
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
         const query = knexInstance('item').returning(['id_peca', 'marca', 'valor', 'nome']);
         return await knexPaginateAdapter(query, pageFilter);
@@ -25,5 +28,13 @@ export class ItemPgRepository implements LoadItensRepository, SaveItemRepository
             .where({ id_peca: item.id_peca })
             .returning(['id_peca', 'marca', 'valor', 'nome']);
         return mapper(result);
+    }
+
+    async loadByServico(servicoId: number): Promise<DbItemModel[]> {
+        const result = await knexInstance('item')
+            .innerJoin('servico_peca', 'item.id_peca', 'servico_peca.peca_id')
+            .where({ servico_id: servicoId })
+            .returning(['id_peca', 'marca', 'valor', 'nome']);
+        return result;
     }
 }
