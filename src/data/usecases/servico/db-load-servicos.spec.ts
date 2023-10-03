@@ -9,6 +9,9 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
+import { DbItemModel } from '../../models/db-item-model';
+import { mockFakeDbItemModelList } from '../../../../tests/mock/mock-item';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -89,17 +92,33 @@ interface SutTypes {
     sut: DbLoadServicos;
     loadServicosRepositoryStub: LoadServicosRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
+    loadItensByServicoRepositoryStub: LoadItensByServicoRepository;
 }
 
 const makeSut = (): SutTypes => {
     const loadServicosRepositoryStub = makeLoadServicosRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
-    const sut = new DbLoadServicos(loadServicosRepositoryStub, loadCarroByIdRepositoryStub);
+    const loadItensByServicoRepositoryStub = makeLoadItensByServicoRepository();
+    const sut = new DbLoadServicos(
+        loadServicosRepositoryStub,
+        loadCarroByIdRepositoryStub,
+        loadItensByServicoRepositoryStub
+    );
     return {
         sut,
         loadServicosRepositoryStub,
-        loadCarroByIdRepositoryStub
+        loadCarroByIdRepositoryStub,
+        loadItensByServicoRepositoryStub
     };
+};
+
+const makeLoadItensByServicoRepository = (): LoadItensByServicoRepository => {
+    class LoadItensByServicoRepositoryStub implements LoadItensByServicoRepository {
+        async loadByServico(servicoId: number): Promise<DbItemModel[]> {
+            return mockFakeDbItemModelList();
+        }
+    }
+    return new LoadItensByServicoRepositoryStub();
 };
 
 const makeLoadServicosRepository = (): LoadServicosRepository => {

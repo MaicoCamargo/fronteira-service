@@ -1,6 +1,7 @@
 import { DbServicoModel } from '../../src/data/models/db-servico-model';
 import { ServicoModel } from '../../src/domain/models/servico-model';
 import { mockFakeCarroModelList } from './mock-carro';
+import { mockFakeItemModelList } from './mock-item';
 
 export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
     {
@@ -33,7 +34,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         quilometragem: mockFakeDbServicoModelList()[0].quilometragem,
         descricao: mockFakeDbServicoModelList()[0].descricao,
         lastUpdate: mockFakeDbServicoModelList()[0].last_updated,
-        carro: mockFakeCarroModelList()[0]
+        carro: mockFakeCarroModelList()[0],
+        itens: mockFakeItemModelList()
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
@@ -42,7 +44,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         quilometragem: mockFakeDbServicoModelList()[1].quilometragem,
         descricao: mockFakeDbServicoModelList()[1].descricao,
         lastUpdate: mockFakeDbServicoModelList()[1].last_updated,
-        carro: mockFakeCarroModelList()[1]
+        carro: mockFakeCarroModelList()[1],
+        itens: []
     }
 ];
 
