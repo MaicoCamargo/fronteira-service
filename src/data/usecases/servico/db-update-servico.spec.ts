@@ -7,6 +7,9 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
+import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
+import { DbItemModel } from '../../models/db-item-model';
+import { mockFakeDbItemModelList } from '../../../../tests/mock/mock-item';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -27,6 +30,7 @@ describe('DbUpdateServico Use Case', () => {
 interface SutTypes {
     updateServicoRepositoryStub: UpdateServicoRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
+    loadItensByServicoRepositoryStub: LoadItensByServicoRepository;
     sut: DbUpdateServico;
 }
 
@@ -48,13 +52,29 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     return new LoadCarroByIdRepositoryStub();
 };
 
+const makeLoadItensByServicoRepository = (): LoadItensByServicoRepository => {
+    class LoadItensByServicoRepositoryStub implements LoadItensByServicoRepository {
+        async loadByServico(servicoId: number): Promise<DbItemModel[]> {
+            return mockFakeDbItemModelList();
+        }
+    }
+    return new LoadItensByServicoRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
-    const sut = new DbUpdateServico(updateServicoRepositoryStub, loadCarroByIdRepositoryStub);
+    const loadItensByServicoRepositoryStub = makeLoadItensByServicoRepository();
+
+    const sut = new DbUpdateServico(
+        updateServicoRepositoryStub,
+        loadCarroByIdRepositoryStub,
+        loadItensByServicoRepositoryStub
+    );
     return {
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
+        loadItensByServicoRepositoryStub,
         sut
     };
 };
