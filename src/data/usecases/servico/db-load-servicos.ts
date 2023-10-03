@@ -5,11 +5,14 @@ import { LoadServicosRepository } from '../../protocols/db/servico/load-servicos
 import { PageFilter } from '../../../main/protocols/page-filter';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
+import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
+import { ItemModel } from '../../../domain/models/item-model';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
         private readonly loadServicosRepository: LoadServicosRepository,
-        private readonly loadCarroByIdRepository: LoadCarroByIdRepository
+        private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
+        private readonly loadItensByServicoRepository: LoadItensByServicoRepository
     ) {}
 
     async load(pageFilter?: PageFilter): Promise<Wrapper<ServicoModel[]>> {
@@ -21,7 +24,8 @@ export class DbLoadServicos implements LoadServicos {
             descricao: item.descricao,
             data: item.data,
             quilometragem: item.quilometragem,
-            carro: await this.loadCarroById(item.carro_id)
+            carro: await this.loadCarroById(item.carro_id),
+            itens: await this.loadItens(item.id_servico)
         }));
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }
@@ -37,5 +41,15 @@ export class DbLoadServicos implements LoadServicos {
             placa: model.placa,
             cor: model.cor
         };
+    }
+
+    async loadItens(servicoId: number): Promise<ItemModel[]> {
+        const dbItemModels = await this.loadItensByServicoRepository.loadByServico(servicoId);
+        return dbItemModels.map((item) => ({
+            nome: item.nome,
+            valor: item.valor,
+            marca: item.marca,
+            id: item.id_peca
+        }));
     }
 }
