@@ -3,11 +3,14 @@ import { ServicoModel } from '../../../domain/models/servico-model';
 import { UpdateServicoModel, UpdateServicoRepository } from '../../protocols/db/servico/update-servico-repository';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
+import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
+import { ItemModel } from '../../../domain/models/item-model';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
         private readonly updateServicoRepository: UpdateServicoRepository,
-        private readonly loadCarroByIdRepository: LoadCarroByIdRepository
+        private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
+        private readonly loadItensByServicoRepository: LoadItensByServicoRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -21,6 +24,7 @@ export class DbUpdateServico implements UpdateServico {
         };
         const updated = await this.updateServicoRepository.update(model);
         const carro = await this.loadCarroById(updated.carro_id);
+        const itens = await this.loadItens(updated.id_servico);
         return {
             id: updated.id_servico,
             valor: updated.valor,
@@ -28,7 +32,8 @@ export class DbUpdateServico implements UpdateServico {
             quilometragem: updated.quilometragem,
             data: updated.data,
             lastUpdate: updated.last_updated,
-            carro
+            carro,
+            itens
         };
     }
 
@@ -42,5 +47,17 @@ export class DbUpdateServico implements UpdateServico {
             cor: model.cor,
             quilometragem: model.quilometragem
         };
+    }
+
+    private async loadItens(servicoId: number): Promise<ItemModel[]> {
+        const dbItemModels = await this.loadItensByServicoRepository.loadByServico(servicoId);
+        return dbItemModels.map((dbItemModel) => {
+            return {
+                id: dbItemModel.id_peca,
+                marca: dbItemModel.marca,
+                valor: dbItemModel.valor,
+                nome: dbItemModel.nome
+            };
+        });
     }
 }
