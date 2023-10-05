@@ -1,7 +1,7 @@
 import { DbServicoModel } from '../../src/data/models/db-servico-model';
 import { ServicoModel } from '../../src/domain/models/servico-model';
 import { mockFakeCarroModelList } from './mock-carro';
-import { mockFakeItemModelList } from './mock-item';
+import { mockFakeIncludedItemModelList } from './mock-included-itens';
 
 export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
     {
@@ -35,7 +35,7 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         descricao: mockFakeDbServicoModelList()[0].descricao,
         lastUpdate: mockFakeDbServicoModelList()[0].last_updated,
         carro: mockFakeCarroModelList()[0],
-        itens: mockFakeItemModelList()
+        itens: mockFakeIncludedItemModelList()
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,

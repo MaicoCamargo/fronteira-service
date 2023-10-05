@@ -7,9 +7,9 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
-import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
-import { DbItemModel } from '../../models/db-item-model';
-import { mockFakeDbItemModelList } from '../../../../tests/mock/mock-item';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
+import { DbIncludedItemModel } from '../../models/db-included-itens-model';
+import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-included-itens';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -30,7 +30,7 @@ describe('DbUpdateServico Use Case', () => {
 interface SutTypes {
     updateServicoRepositoryStub: UpdateServicoRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
-    loadItensByServicoRepositoryStub: LoadItensByServicoRepository;
+    loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
     sut: DbUpdateServico;
 }
 
@@ -52,29 +52,29 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     return new LoadCarroByIdRepositoryStub();
 };
 
-const makeLoadItensByServicoRepository = (): LoadItensByServicoRepository => {
-    class LoadItensByServicoRepositoryStub implements LoadItensByServicoRepository {
-        async loadByServico(servicoId: number): Promise<DbItemModel[]> {
-            return mockFakeDbItemModelList();
+const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
+    class LoadIncludedItensRepositoryStub implements LoadIncludedItensRepository {
+        async loadIncludedItens(servicoId: number): Promise<DbIncludedItemModel[]> {
+            return mockFakeDbIncludedItemModelList();
         }
     }
-    return new LoadItensByServicoRepositoryStub();
+    return new LoadIncludedItensRepositoryStub();
 };
 
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
-    const loadItensByServicoRepositoryStub = makeLoadItensByServicoRepository();
+    const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadItensByServicoRepositoryStub
+        loadIncludedItensRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadItensByServicoRepositoryStub,
+        loadIncludedItensRepositoryStub,
         sut
     };
 };

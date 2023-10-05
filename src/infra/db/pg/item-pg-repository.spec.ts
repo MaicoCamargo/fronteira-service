@@ -123,7 +123,7 @@ const makePgItemCreate = async (): Promise<DbItemModel[]> => {
                 nome: 'other_nome',
                 marca: 'other_marca',
                 valor: 11,
-                updated_at: new Date()
+                last_updated: new Date()
             }
         ])
         .returning('*');

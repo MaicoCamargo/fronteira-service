@@ -9,9 +9,9 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { throwError } from '../../../../tests/helper/test-helper';
-import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
-import { DbItemModel } from '../../models/db-item-model';
-import { mockFakeDbItemModelList } from '../../../../tests/mock/mock-item';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
+import { DbIncludedItemModel } from '../../models/db-included-itens-model';
+import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-included-itens';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -92,33 +92,33 @@ interface SutTypes {
     sut: DbLoadServicos;
     loadServicosRepositoryStub: LoadServicosRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
-    loadItensByServicoRepositoryStub: LoadItensByServicoRepository;
+    loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
 }
 
 const makeSut = (): SutTypes => {
     const loadServicosRepositoryStub = makeLoadServicosRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
-    const loadItensByServicoRepositoryStub = makeLoadItensByServicoRepository();
+    const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadItensByServicoRepositoryStub
+        loadIncludedItensRepositoryStub
     );
     return {
         sut,
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadItensByServicoRepositoryStub
+        loadIncludedItensRepositoryStub
     };
 };
 
-const makeLoadItensByServicoRepository = (): LoadItensByServicoRepository => {
-    class LoadItensByServicoRepositoryStub implements LoadItensByServicoRepository {
-        async loadByServico(servicoId: number): Promise<DbItemModel[]> {
-            return mockFakeDbItemModelList();
+const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
+    class LoadIncludedItensRepositoryStub implements LoadIncludedItensRepository {
+        async loadIncludedItens(servicoId: number): Promise<DbIncludedItemModel[]> {
+            return mockFakeDbIncludedItemModelList();
         }
     }
-    return new LoadItensByServicoRepositoryStub();
+    return new LoadIncludedItensRepositoryStub();
 };
 
 const makeLoadServicosRepository = (): LoadServicosRepository => {

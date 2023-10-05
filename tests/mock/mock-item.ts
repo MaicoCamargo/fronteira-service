@@ -25,7 +25,7 @@ export const mockFakeSaveItemModel = (): SaveItemModel => ({
     nome: 'any_nome',
     marca: 'any_marca',
     valor: 0,
-    updated_at: new Date()
+    last_updated: new Date()
 });
 
 export const mockFakeDbItemModel = (): DbItemModel => ({
@@ -34,7 +34,7 @@ export const mockFakeDbItemModel = (): DbItemModel => ({
     valor: 0,
     id_peca: 1,
     dh_exclusion: null,
-    updated_at: new Date()
+    last_updated: new Date()
 });
 
 export const mockFakeDbItemModelList = (): DbItemModel[] => [
@@ -45,7 +45,7 @@ export const mockFakeDbItemModelList = (): DbItemModel[] => [
         valor: 10,
         id_peca: 2,
         dh_exclusion: null,
-        updated_at: new Date()
+        last_updated: new Date()
     }
 ];
 

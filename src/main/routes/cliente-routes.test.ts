@@ -9,6 +9,12 @@ import { DbEnderecoModel } from '../../data/models/db-endereco-model';
 import { AddClienteModel } from '../../data/protocols/db/cliente/save-cliente-repository';
 
 describe('/clientes', () => {
+    beforeAll(async () => {
+        await knexInstance('cliente').del();
+        await knexInstance('endereco').del();
+        await knexInstance('carro').del();
+    });
+
     afterAll(async () => {
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
@@ -18,10 +24,8 @@ describe('/clientes', () => {
 
     describe('GET', () => {
         test('Deve retornar 200 em caso de sucesso', async () => {
-            await request(app).get('/service/clientes').send(makeFakeRequest().body).expect(200);
+            await request(app).get('/service/clientes').expect(200);
         });
-
-        const makeFakeRequest = (): HttpRequest => ({});
     });
 
     describe('POST', () => {
@@ -56,7 +60,10 @@ describe('/clientes', () => {
                     cpf: 'any_cpf'
                 }
             };
-            await request(app).put('/service/clientes').send(makeFakeRequest(httpRequest).body).expect(200);
+            await request(app)
+                .put(`/service/clientes/${created.id_cliente}`)
+                .send(makeFakeRequest(httpRequest).body)
+                .expect(200);
         });
     });
 

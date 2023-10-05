@@ -12,6 +12,7 @@ const makeSut = () => {
 
 describe('Cliente Postgres Repository', () => {
     beforeAll(async () => {
+        await knexInstance('servico').del();
         await knexInstance('cliente_carro').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
@@ -19,6 +20,7 @@ describe('Cliente Postgres Repository', () => {
     });
 
     afterAll(async () => {
+        await knexInstance('servico').del();
         await knexInstance('cliente_carro').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
