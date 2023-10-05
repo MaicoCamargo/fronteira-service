@@ -31,9 +31,11 @@ export class DbAddCliente implements AddCliente {
         const cliente = await this.addClienteRepository.save(model);
 
         const promises: Array<Promise<DbCarroModel>> = [];
-        carros.forEach((carro) => {
-            promises.push(this.saveCarroRepository.save(carro, cliente.id_cliente));
-        });
+        if (carros && carros.length > 0) {
+            carros.forEach((carro) => {
+                promises.push(this.saveCarroRepository.save(carro, cliente.id_cliente));
+            });
+        }
         const savedCars: CarroModel[] = (await Promise.all(promises)).map((carro: DbCarroModel) => ({
             cor: carro.cor,
             ano: carro.ano,

@@ -10,8 +10,12 @@ import {
     UpdateServicoModel,
     UpdateServicoRepository
 } from '../../../data/protocols/db/servico/update-servico-repository';
+import { LoadIncludedItensRepository } from '../../../data/protocols/db/servico/included-item/load-included-itens-repository';
+import { DbIncludedItemModel } from '../../../data/models/db-included-itens-model';
 
-export class ServicoPgRepository implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository {
+export class ServicoPgRepository
+    implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository, LoadIncludedItensRepository
+{
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbServicoModel[]>> {
         const query = knexInstance('servico').select([
             'id_servico',
@@ -38,5 +42,20 @@ export class ServicoPgRepository implements LoadServicosRepository, SaveServicoR
             .update(model)
             .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
         return mapper(updated);
+    }
+
+    async loadIncludedItens(servicoId: number): Promise<DbIncludedItemModel[]> {
+        return knexInstance('servico_peca')
+            .innerJoin('item', 'servico_peca.peca_id', 'item.id_peca')
+            .where({ servico_id: servicoId })
+            .select([
+                'id_servico_peca',
+                'quantidade',
+                'valor_por_unidade',
+                'valor_por_unidade',
+                'nome',
+                'marca',
+                'valor_total'
+            ]) as any;
     }
 }
