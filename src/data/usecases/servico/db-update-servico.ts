@@ -1,16 +1,15 @@
 import { UpdateServico, UpdateServicoParams } from '../../../domain/usecases/servico/update-servico';
-import { ServicoModel } from '../../../domain/models/servico-model';
+import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
 import { UpdateServicoModel, UpdateServicoRepository } from '../../protocols/db/servico/update-servico-repository';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
-import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
-import { ItemModel } from '../../../domain/models/item-model';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
         private readonly updateServicoRepository: UpdateServicoRepository,
         private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
-        private readonly loadItensByServicoRepository: LoadItensByServicoRepository
+        private readonly loadIncludedItensRepository: LoadIncludedItensRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -49,15 +48,15 @@ export class DbUpdateServico implements UpdateServico {
         };
     }
 
-    private async loadItens(servicoId: number): Promise<ItemModel[]> {
-        const dbItemModels = await this.loadItensByServicoRepository.loadByServico(servicoId);
-        return dbItemModels.map((dbItemModel) => {
-            return {
-                id: dbItemModel.id_peca,
-                marca: dbItemModel.marca,
-                valor: dbItemModel.valor,
-                nome: dbItemModel.nome
-            };
-        });
+    private async loadItens(servicoId: number): Promise<IncludedItemModel[]> {
+        const dbItemModels = await this.loadIncludedItensRepository.loadIncludedItens(servicoId);
+        return dbItemModels.map((dbItemModel) => ({
+            nome: dbItemModel.nome,
+            valor: dbItemModel.valor_por_unidade,
+            marca: dbItemModel.marca,
+            id: dbItemModel.id_servico_peca,
+            quantidade: dbItemModel.quantidade,
+            total: dbItemModel.valor_total
+        }));
     }
 }

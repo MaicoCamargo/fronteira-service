@@ -1,18 +1,17 @@
 import { LoadServicos } from '../../../domain/usecases/servico/load-servicos';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
-import { ServicoModel } from '../../../domain/models/servico-model';
+import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
 import { LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { PageFilter } from '../../../main/protocols/page-filter';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
-import { LoadItensByServicoRepository } from '../../protocols/db/item/load-itens-by-servico-repository';
-import { ItemModel } from '../../../domain/models/item-model';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
         private readonly loadServicosRepository: LoadServicosRepository,
         private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
-        private readonly loadItensByServicoRepository: LoadItensByServicoRepository
+        private readonly loadIncludedItensRepository: LoadIncludedItensRepository
     ) {}
 
     async load(pageFilter?: PageFilter): Promise<Wrapper<ServicoModel[]>> {
@@ -43,13 +42,17 @@ export class DbLoadServicos implements LoadServicos {
         };
     }
 
-    async loadItens(servicoId: number): Promise<ItemModel[]> {
-        const dbItemModels = await this.loadItensByServicoRepository.loadByServico(servicoId);
-        return dbItemModels.map((item) => ({
+    async loadItens(servicoId: number): Promise<IncludedItemModel[]> {
+        const dbIncludedItens = await this.loadIncludedItensRepository.loadIncludedItens(servicoId);
+        return dbIncludedItens.map((item) => ({
             nome: item.nome,
-            valor: item.valor,
+            valor: item.valor_por_unidade,
             marca: item.marca,
-            id: item.id_peca
+            id: item.id_servico_peca,
+            quantidade: item.quantidade,
+            total: item.valor_total,
+            lastUpdate: item.last_updated,
+            created_at: item.created_at
         }));
     }
 }

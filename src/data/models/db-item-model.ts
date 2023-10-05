@@ -4,6 +4,6 @@ export interface DbItemModel {
     marca: string;
     valor: number;
     created_at?: Date;
-    updated_at?: Date;
+    last_updated?: Date;
     dh_exclusion?: Date;
 }
