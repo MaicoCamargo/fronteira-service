@@ -9,7 +9,6 @@ export class DbAddServico implements AddServico {
     async add(params: AddServicoParams): Promise<ServicoModel> {
         const model: SaveServicoModel = {
             valor: params.valor,
-            data: params.data,
             quilometragem: params.quilometragem,
             descricao: params.descricao,
             carro_id: params.carro.id

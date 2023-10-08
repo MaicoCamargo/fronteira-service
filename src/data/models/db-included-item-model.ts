@@ -7,4 +7,6 @@ export interface DbIncludedItemModel {
     nome: string;
     marca: string;
     valor_total: number;
+    servico_id: number;
+    peca_id: number;
 }

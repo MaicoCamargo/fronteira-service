@@ -1,7 +1,12 @@
 import { DbAddServico } from './db-add-servico';
 import { SaveServicoModel, SaveServicoRepository } from '../../protocols/db/servico/save-servico-repository';
 import { DbServicoModel } from '../../models/db-servico-model';
-import { mockFakeDbServicoModel, mockFakeServicoModel } from '../../../../tests/mock/mock-servico';
+import {
+    mockFakeAddServicoParams,
+    mockFakeDbServicoModel,
+    mockFakeSaveServicoModel,
+    mockFakeServicoModel
+} from '../../../../tests/mock/mock-servico';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { throwError } from '../../../../tests/helper/test-helper';
 
@@ -25,6 +30,13 @@ describe('DbAddServico Use Case', () => {
         jest.spyOn(saveServicoRepositoryStub, 'save').mockImplementationOnce(throwError);
         const promise = sut.add(mockFakeServicoModel());
         await expect(promise).rejects.toThrow();
+    });
+
+    test('Deve chamar SaveServicoRepository com os valores corretos', async () => {
+        const { sut, saveServicoRepositoryStub } = makeSut();
+        const saveSpy = jest.spyOn(saveServicoRepositoryStub, 'save');
+        await sut.add(mockFakeAddServicoParams());
+        expect(saveSpy).toHaveBeenCalledWith(mockFakeSaveServicoModel());
     });
 });
 

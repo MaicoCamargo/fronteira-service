@@ -1,25 +1,38 @@
 import { DbServicoModel } from '../../src/data/models/db-servico-model';
 import { ServicoModel } from '../../src/domain/models/servico-model';
 import { mockFakeCarroModelList } from './mock-carro';
-import { mockFakeIncludedItemModelList } from './mock-included-itens';
+import { mockFakeAddItemParams, mockFakeIncludedItemModelList } from './mock-included-itens';
+import { AddServicoParams } from '../../src/domain/usecases/servico/add-servico';
+import { SaveServicoModel } from '../../src/data/protocols/db/servico/save-servico-repository';
+
+export const mockFakeAddServicoParams = (): AddServicoParams => ({
+    valor: 100,
+    descricao: 'any_descricao',
+    carro: mockFakeCarroModelList()[0],
+    itens: [mockFakeAddItemParams()],
+    quilometragem: 1000
+});
+
+export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
+    valor: 100,
+    carro_id: 1,
+    descricao: 'any_descricao',
+    quilometragem: 1000
+});
 
 export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
     {
         id_servico: 1,
         valor: 100,
-        data: new Date(),
         carro_id: 1,
         descricao: 'any_descricao',
-        last_updated: new Date(),
         quilometragem: 1000
     },
     {
         id_servico: 2,
         valor: 200,
-        data: new Date(),
         carro_id: 2,
         descricao: 'other_descricao',
-        last_updated: new Date(),
         quilometragem: 2000
     }
 ];

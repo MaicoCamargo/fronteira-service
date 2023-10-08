@@ -1,6 +1,8 @@
-import { ServicoModel } from '../../models/servico-model';
+import { IncludedItemModel, ServicoModel } from '../../models/servico-model';
 
-export type AddServicoParams = Omit<ServicoModel, 'id'>;
+export type AddItemParams = Omit<IncludedItemModel, 'id'>;
+
+export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' | 'itens'> & { itens: AddItemParams[] };
 
 export interface AddServico {
     add: (params: AddServicoParams) => Promise<ServicoModel>;
