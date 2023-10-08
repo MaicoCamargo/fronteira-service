@@ -10,7 +10,7 @@ import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
-import { DbIncludedItemModel } from '../../models/db-included-itens-model';
+import { DbIncludedItemModel } from '../../models/db-included-item-model';
 import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-included-itens';
 
 describe('DbLoadServicos Use Case', () => {

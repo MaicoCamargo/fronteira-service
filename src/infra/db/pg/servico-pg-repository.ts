@@ -11,7 +11,7 @@ import {
     UpdateServicoRepository
 } from '../../../data/protocols/db/servico/update-servico-repository';
 import { LoadIncludedItensRepository } from '../../../data/protocols/db/servico/included-item/load-included-itens-repository';
-import { DbIncludedItemModel } from '../../../data/models/db-included-itens-model';
+import { DbIncludedItemModel } from '../../../data/models/db-included-item-model';
 
 export class ServicoPgRepository
     implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository, LoadIncludedItensRepository

@@ -1,4 +1,4 @@
-import { DbIncludedItemModel } from '../../src/data/models/db-included-itens-model';
+import { DbIncludedItemModel } from '../../src/data/models/db-included-item-model';
 import { IncludedItemModel } from '../../src/domain/models/servico-model';
 
 export const mockFakeDbIncludedItemModelList = (): DbIncludedItemModel[] => [
@@ -8,7 +8,9 @@ export const mockFakeDbIncludedItemModelList = (): DbIncludedItemModel[] => [
         valor_por_unidade: 1,
         quantidade: 1,
         valor_total: 1,
-        id_servico_peca: 1
+        id_servico_peca: 1,
+        peca_id: 1,
+        servico_id: 1
     },
     {
         nome: 'outher_nome',
@@ -16,7 +18,9 @@ export const mockFakeDbIncludedItemModelList = (): DbIncludedItemModel[] => [
         valor_por_unidade: 10.5,
         quantidade: 2,
         valor_total: 21,
-        id_servico_peca: 2
+        id_servico_peca: 2,
+        peca_id: 2,
+        servico_id: 1
     }
 ];
 
