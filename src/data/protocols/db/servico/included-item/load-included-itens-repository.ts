@@ -1,4 +1,4 @@
-import { DbIncludedItemModel } from '../../../../models/db-included-itens-model';
+import { DbIncludedItemModel } from '../../../../models/db-included-item-model';
 
 export interface LoadIncludedItensRepository {
     loadIncludedItens: (servicoId: number) => Promise<DbIncludedItemModel[]>;
