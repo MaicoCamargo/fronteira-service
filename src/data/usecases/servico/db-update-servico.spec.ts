@@ -54,7 +54,7 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
 
 const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
     class LoadIncludedItensRepositoryStub implements LoadIncludedItensRepository {
-        async loadIncludedItens(servicoId: number): Promise<DbIncludedItemModel[]> {
+        async load(servicoId: number): Promise<DbIncludedItemModel[]> {
             return mockFakeDbIncludedItemModelList();
         }
     }
