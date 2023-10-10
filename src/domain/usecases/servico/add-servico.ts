@@ -1,6 +1,6 @@
 import { IncludedItemModel, ServicoModel } from '../../models/servico-model';
 
-export type AddItemParams = Omit<IncludedItemModel, 'id'>;
+export type AddItemParams = Required<IncludedItemModel>;
 
 export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' | 'itens'> & { itens: AddItemParams[] };
 
