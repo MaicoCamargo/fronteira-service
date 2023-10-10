@@ -1,6 +1,7 @@
 import { DbIncludedItemModel } from '../../src/data/models/db-included-item-model';
 import { IncludedItemModel } from '../../src/domain/models/servico-model';
 import { AddItemParams } from '../../src/domain/usecases/servico/add-servico';
+import { SaveIncludedItemModel } from '../../src/data/protocols/db/servico/included-item/save-included-itens-repository';
 
 export const mockFakeDbIncludedItemModelList = (): DbIncludedItemModel[] => [
     {
@@ -45,9 +46,20 @@ export const mockFakeIncludedItemModelList = (): IncludedItemModel[] => [
 ];
 
 export const mockFakeAddItemParams = (): AddItemParams => ({
+    id: mockFakeDbIncludedItemModelList()[0].peca_id,
     nome: mockFakeDbIncludedItemModelList()[0].nome,
     quantidade: mockFakeDbIncludedItemModelList()[0].quantidade,
     valor: mockFakeDbIncludedItemModelList()[0].valor_por_unidade,
     total: mockFakeDbIncludedItemModelList()[0].valor_total,
     marca: mockFakeDbIncludedItemModelList()[0].marca
 });
+
+export const mockFakeSaveIncludedItemModelList = (): SaveIncludedItemModel[] => [
+    {
+        peca_id: mockFakeDbIncludedItemModelList()[0].peca_id,
+        quantidade: mockFakeDbIncludedItemModelList()[0].quantidade,
+        valor_por_unidade: mockFakeDbIncludedItemModelList()[0].valor_por_unidade,
+        valor_total: mockFakeDbIncludedItemModelList()[0].valor_total,
+        servico_id: mockFakeDbIncludedItemModelList()[0].servico_id
+    }
+];
