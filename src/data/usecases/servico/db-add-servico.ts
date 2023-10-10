@@ -38,7 +38,7 @@ export class DbAddServico implements AddServico {
         const model: SaveIncludedItemModel[] = itens.map((item) => ({
             servico_id: idServico,
             peca_id: item.id,
-            valor_total: item.total,
+            valor_total: item.quantidade * item.valor,
             quantidade: item.quantidade,
             valor_por_unidade: item.valor
         }));
