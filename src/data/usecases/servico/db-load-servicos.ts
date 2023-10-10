@@ -43,7 +43,7 @@ export class DbLoadServicos implements LoadServicos {
     }
 
     async loadItens(servicoId: number): Promise<IncludedItemModel[]> {
-        const dbIncludedItens = await this.loadIncludedItensRepository.loadIncludedItens(servicoId);
+        const dbIncludedItens = await this.loadIncludedItensRepository.load(servicoId);
         return dbIncludedItens.map((item) => ({
             nome: item.nome,
             valor: item.valor_por_unidade,

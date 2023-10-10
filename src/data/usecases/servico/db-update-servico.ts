@@ -49,7 +49,7 @@ export class DbUpdateServico implements UpdateServico {
     }
 
     private async loadItens(servicoId: number): Promise<IncludedItemModel[]> {
-        const dbItemModels = await this.loadIncludedItensRepository.loadIncludedItens(servicoId);
+        const dbItemModels = await this.loadIncludedItensRepository.load(servicoId);
         return dbItemModels.map((dbItemModel) => ({
             nome: dbItemModel.nome,
             valor: dbItemModel.valor_por_unidade,
