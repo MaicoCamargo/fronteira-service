@@ -54,6 +54,13 @@ describe('DbAddServico Use Case', () => {
         await sut.add(mockFakeAddServicoParams());
         expect(saveSpy).toHaveBeenCalledWith(mockFakeSaveIncludedItemModelList());
     });
+
+    test('Deve lançar uma exceção se SaveIncludedItensRepository lançar uma exceção', async () => {
+        const { sut, saveIncludedItensRepositoryStub } = makeSut();
+        jest.spyOn(saveIncludedItensRepositoryStub, 'save').mockImplementationOnce(throwError);
+        const promise = sut.add(mockFakeAddServicoParams());
+        await expect(promise).rejects.toThrow();
+    });
 });
 
 interface SutTypes {
