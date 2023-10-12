@@ -10,6 +10,9 @@ import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 import { DbIncludedItemModel } from '../../models/db-included-item-model';
 import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-included-itens';
+import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
+import { DbClienteModel } from '../../models/db-cliente-model';
+import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -31,6 +34,7 @@ interface SutTypes {
     updateServicoRepositoryStub: UpdateServicoRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
     loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
+    loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     sut: DbUpdateServico;
 }
 
@@ -61,20 +65,32 @@ const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
     return new LoadIncludedItensRepositoryStub();
 };
 
+const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepository => {
+    class LoadClienteByIdServicoRepositoryStub implements LoadClienteByIdServicoRepository {
+        loadByIdServico(servicoId: number): Promise<DbClienteModel> {
+            return Promise.resolve(mockFakeDbClienteModel());
+        }
+    }
+    return new LoadClienteByIdServicoRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
     const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
+    const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadIncludedItensRepositoryStub
+        loadIncludedItensRepositoryStub,
+        loadClienteByIdServicoRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
+        loadClienteByIdServicoRepositoryStub,
         sut
     };
 };

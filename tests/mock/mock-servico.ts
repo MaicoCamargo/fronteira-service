@@ -4,13 +4,18 @@ import { mockFakeCarroModelList } from './mock-carro';
 import { mockFakeAddItemParams, mockFakeIncludedItemModelList } from './mock-included-itens';
 import { AddServicoParams } from '../../src/domain/usecases/servico/add-servico';
 import { SaveServicoModel } from '../../src/data/protocols/db/servico/save-servico-repository';
+import { mockFakeClienteModel } from './mock-cliente';
 
 export const mockFakeAddServicoParams = (): AddServicoParams => ({
     valor: 100,
     descricao: 'any_descricao',
     carro: mockFakeCarroModelList()[0],
     includedItens: [mockFakeAddItemParams()],
-    quilometragem: 1000
+    quilometragem: 1000,
+    cliente: {
+        id: mockFakeClienteModel().id,
+        nome: mockFakeClienteModel().nome
+    }
 });
 
 export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
@@ -48,7 +53,11 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         descricao: mockFakeDbServicoModelList()[0].descricao,
         lastUpdate: mockFakeDbServicoModelList()[0].last_updated,
         carro: mockFakeCarroModelList()[0],
-        itens: mockFakeIncludedItemModelList()
+        itens: mockFakeIncludedItemModelList(),
+        cliente: {
+            id: mockFakeClienteModel().id,
+            nome: mockFakeClienteModel().nome
+        }
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
@@ -58,7 +67,11 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         descricao: mockFakeDbServicoModelList()[1].descricao,
         lastUpdate: mockFakeDbServicoModelList()[1].last_updated,
         carro: mockFakeCarroModelList()[1],
-        itens: []
+        itens: [],
+        cliente: {
+            id: mockFakeClienteModel().id,
+            nome: mockFakeClienteModel().nome
+        }
     }
 ];
 
