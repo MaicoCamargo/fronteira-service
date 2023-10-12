@@ -12,6 +12,7 @@ import { AddClienteModel, SaveClienteRepository } from '../../../data/protocols/
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { PageFilter } from '../../../main/protocols/page-filter';
+import { LoadClienteByIdServicoRepository } from '../../../data/protocols/db/cliente/load-cliente-by-id-servico-repository';
 
 export class ClientePgRepository
     implements
@@ -19,7 +20,8 @@ export class ClientePgRepository
         LoadClienteByIdRepository,
         UpdateClienteRepository,
         DeleteClienteRepository,
-        SaveClienteRepository
+        SaveClienteRepository,
+        LoadClienteByIdServicoRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
         const query = knexInstance('cliente');
@@ -71,5 +73,14 @@ export class ClientePgRepository
 
     async delete(id: number): Promise<void> {
         await knexInstance('cliente').where({ id_cliente: id }).del();
+    }
+
+    async loadByIdServico(servicoId: number): Promise<DbClienteModel> {
+        const result = await knexInstance('servico')
+            .leftJoin('cliente_carro', 'servico.carro_id', 'cliente_carro.carro_id')
+            .leftJoin('cliente', 'cliente.id_cliente', 'cliente_carro.cliente_id')
+            .where({ id_servico: servicoId })
+            .select('cliente.*');
+        return mapper(result);
     }
 }

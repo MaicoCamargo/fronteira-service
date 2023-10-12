@@ -4,12 +4,14 @@ import { UpdateServicoModel, UpdateServicoRepository } from '../../protocols/db/
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
+import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
         private readonly updateServicoRepository: UpdateServicoRepository,
         private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
-        private readonly loadIncludedItensRepository: LoadIncludedItensRepository
+        private readonly loadIncludedItensRepository: LoadIncludedItensRepository,
+        private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -24,6 +26,7 @@ export class DbUpdateServico implements UpdateServico {
         const updated = await this.updateServicoRepository.update(model);
         const carro = await this.loadCarroById(updated.carro_id);
         const itens = await this.loadItens(updated.id_servico);
+        const cliente = await this.loadCliente(updated.id_servico);
         return {
             id: updated.id_servico,
             valor: updated.valor,
@@ -32,7 +35,8 @@ export class DbUpdateServico implements UpdateServico {
             data: updated.data,
             lastUpdate: updated.last_updated,
             carro,
-            itens
+            itens,
+            cliente
         };
     }
 
@@ -58,5 +62,14 @@ export class DbUpdateServico implements UpdateServico {
             quantidade: dbItemModel.quantidade,
             total: dbItemModel.valor_total
         }));
+    }
+
+    private async loadCliente(servicoId: number): Promise<{ nome: string; id: number }> {
+        const model = await this.loadClienteByIdServicoRepository.loadByIdServico(servicoId);
+        if (!model) return null;
+        return {
+            id: model.id_cliente,
+            nome: model.nome
+        };
     }
 }

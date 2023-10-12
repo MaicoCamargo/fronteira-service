@@ -30,7 +30,8 @@ export class DbAddServico implements AddServico {
             data: result.data,
             quilometragem: result.quilometragem,
             descricao: result.descricao,
-            carro: params.carro
+            carro: params.carro,
+            cliente: params.cliente
         };
     }
 
