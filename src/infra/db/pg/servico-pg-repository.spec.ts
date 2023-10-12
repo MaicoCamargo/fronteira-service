@@ -12,6 +12,7 @@ describe('Servico Postgres Repository', () => {
     beforeAll(async () => {
         await mockDateAdapter.set(new Date());
         await knexInstance('cliente_carro').del();
+        await knexInstance('servico_peca').del();
         await knexInstance('servico').del();
         await knexInstance('carro').del();
         servicos = await makePgServicoCreate();
@@ -19,9 +20,6 @@ describe('Servico Postgres Repository', () => {
 
     afterAll(async () => {
         await mockDateAdapter.reset();
-        await knexInstance('cliente_carro').del();
-        await knexInstance('servico').del();
-        await knexInstance('carro').del();
         await knexInstance.destroy();
     });
 

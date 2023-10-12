@@ -11,16 +11,15 @@ import { knexInstance } from '../../../infra/db/pg/helpers/knex-helper';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
 
-describe('DbAddCarro Usecase', () => {
+describe('DbAddCarro Use Case', () => {
     beforeAll(async () => {
+        await knexInstance('cliente_carro').del();
+        await knexInstance('servico_peca').del();
+        await knexInstance('servico').del();
         await knexInstance('carro').del();
     });
 
     afterAll(async () => {
-        await knexInstance('cliente_carro').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
         await knexInstance.destroy();
     });
 

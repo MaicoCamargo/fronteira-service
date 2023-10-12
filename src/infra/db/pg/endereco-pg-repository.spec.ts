@@ -13,8 +13,13 @@ const makeSut = () => {
     return new EnderecoPgRepository();
 };
 describe('Endereço Postgres Repository', function () {
-    afterAll(async () => {
+    beforeAll(async () => {
+        await knexInstance('cliente_carro').del();
+        await knexInstance('cliente').del();
         await knexInstance('endereco').del();
+    });
+
+    afterAll(async () => {
         await knexInstance.destroy();
     });
 

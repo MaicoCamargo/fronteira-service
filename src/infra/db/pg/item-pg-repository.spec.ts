@@ -11,6 +11,7 @@ import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
         await knexInstance('servico_peca').del();
+        await knexInstance('cliente_carro').del();
         await knexInstance('servico').del();
         await knexInstance('carro').del();
         await knexInstance('item').del();
@@ -18,10 +19,6 @@ describe('ItemPgRepository', () => {
     });
 
     afterAll(async () => {
-        await knexInstance('servico_peca').del();
-        await knexInstance('servico').del();
-        await knexInstance('carro').del();
-        await knexInstance('item').del();
         await knexInstance.destroy();
         mockDateAdapter.reset();
     });

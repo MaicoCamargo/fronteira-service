@@ -5,11 +5,10 @@ import { makePgCarroCreate } from './mock-db-carro';
 
 export const makePgServicoCreate = async (): Promise<DbServicoModel[]> => {
     const carros = await makePgCarroCreate();
-    const result = await knexInstance('servico')
+    return knexInstance('servico')
         .insert([
             { ...mockFakeDbServicoModelList()[0], carro_id: carros[0].id_carro },
             { ...mockFakeDbServicoModelList()[1], carro_id: carros[1].id_carro }
         ])
-        .returning('*');
-    return result;
+        .returning('*') as any;
 };
