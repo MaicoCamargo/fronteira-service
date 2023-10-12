@@ -1,4 +1,16 @@
 import { CarroModel } from './carro-model';
+import { ClienteModel } from './cliente-model';
+
+export interface IncludedItemModel {
+    id: number;
+    nome: string;
+    marca?: string;
+    valor: number;
+    quantidade: number;
+    total: number;
+}
+
+type Cliente = Omit<ClienteModel, 'carros' | 'endereco' | 'telefone' | 'lastUpdated' | 'cpf'>;
 
 export interface ServicoModel {
     id: number;
@@ -8,4 +20,6 @@ export interface ServicoModel {
     carro: CarroModel;
     quilometragem?: number;
     lastUpdate?: Date;
+    itens: IncludedItemModel[];
+    cliente: Cliente;
 }

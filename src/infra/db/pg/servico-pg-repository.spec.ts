@@ -10,16 +10,16 @@ describe('Servico Postgres Repository', () => {
     let servicos: DbServicoModel[];
 
     beforeAll(async () => {
-        mockDateAdapter.set(new Date());
+        await mockDateAdapter.set(new Date());
+        await knexInstance('cliente_carro').del();
+        await knexInstance('servico_peca').del();
         await knexInstance('servico').del();
         await knexInstance('carro').del();
         servicos = await makePgServicoCreate();
     });
 
     afterAll(async () => {
-        mockDateAdapter.reset();
-        await knexInstance('servico').del();
-        await knexInstance('carro').del();
+        await mockDateAdapter.reset();
         await knexInstance.destroy();
     });
 
@@ -63,7 +63,6 @@ describe('Servico Postgres Repository', () => {
             const result = await sut.save({
                 valor: 10,
                 descricao: 'any_descricao',
-                data: new Date(),
                 quilometragem: 100,
                 carro_id: carro.id_carro
             });

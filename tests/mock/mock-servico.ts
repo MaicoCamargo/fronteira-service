@@ -1,24 +1,43 @@
 import { DbServicoModel } from '../../src/data/models/db-servico-model';
 import { ServicoModel } from '../../src/domain/models/servico-model';
 import { mockFakeCarroModelList } from './mock-carro';
+import { mockFakeAddItemParams, mockFakeIncludedItemModelList } from './mock-included-itens';
+import { AddServicoParams } from '../../src/domain/usecases/servico/add-servico';
+import { SaveServicoModel } from '../../src/data/protocols/db/servico/save-servico-repository';
+import { mockFakeClienteModel } from './mock-cliente';
+
+export const mockFakeAddServicoParams = (): AddServicoParams => ({
+    valor: 100,
+    descricao: 'any_descricao',
+    carro: mockFakeCarroModelList()[0],
+    includedItens: [mockFakeAddItemParams()],
+    quilometragem: 1000,
+    cliente: {
+        id: mockFakeClienteModel().id,
+        nome: mockFakeClienteModel().nome
+    }
+});
+
+export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
+    valor: 100,
+    carro_id: 1,
+    descricao: 'any_descricao',
+    quilometragem: 1000
+});
 
 export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
     {
         id_servico: 1,
         valor: 100,
-        data: new Date(),
         carro_id: 1,
         descricao: 'any_descricao',
-        last_updated: new Date(),
         quilometragem: 1000
     },
     {
         id_servico: 2,
         valor: 200,
-        data: new Date(),
         carro_id: 2,
         descricao: 'other_descricao',
-        last_updated: new Date(),
         quilometragem: 2000
     }
 ];
@@ -33,7 +52,12 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         quilometragem: mockFakeDbServicoModelList()[0].quilometragem,
         descricao: mockFakeDbServicoModelList()[0].descricao,
         lastUpdate: mockFakeDbServicoModelList()[0].last_updated,
-        carro: mockFakeCarroModelList()[0]
+        carro: mockFakeCarroModelList()[0],
+        itens: mockFakeIncludedItemModelList(),
+        cliente: {
+            id: mockFakeClienteModel().id,
+            nome: mockFakeClienteModel().nome
+        }
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
@@ -42,7 +66,12 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         quilometragem: mockFakeDbServicoModelList()[1].quilometragem,
         descricao: mockFakeDbServicoModelList()[1].descricao,
         lastUpdate: mockFakeDbServicoModelList()[1].last_updated,
-        carro: mockFakeCarroModelList()[1]
+        carro: mockFakeCarroModelList()[1],
+        itens: [],
+        cliente: {
+            id: mockFakeClienteModel().id,
+            nome: mockFakeClienteModel().nome
+        }
     }
 ];
 

@@ -9,6 +9,12 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
+import { DbIncludedItemModel } from '../../models/db-included-item-model';
+import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-included-itens';
+import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
+import { DbClienteModel } from '../../models/db-cliente-model';
+import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -83,23 +89,52 @@ describe('DbLoadServicos Use Case', () => {
             expect(carro.content[0].carro).toBeNull();
         });
     });
+
+    describe('loadCliente()', () => {
+        test('Deve chamar LoadClienteByIdServicoRepository com valores corretos', async () => {
+            const { sut, loadClienteByIdServicoRepositoryStub } = makeSut();
+            const loadByIdSpy = jest.spyOn(loadClienteByIdServicoRepositoryStub, 'loadByIdServico');
+            await sut.load();
+            expect(loadByIdSpy).toHaveBeenCalledWith(mockFakeServicoModelList()[0].id);
+        });
+    });
 });
 
 interface SutTypes {
     sut: DbLoadServicos;
     loadServicosRepositoryStub: LoadServicosRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
+    loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
+    loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
 }
 
 const makeSut = (): SutTypes => {
     const loadServicosRepositoryStub = makeLoadServicosRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
-    const sut = new DbLoadServicos(loadServicosRepositoryStub, loadCarroByIdRepositoryStub);
+    const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
+    const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
+    const sut = new DbLoadServicos(
+        loadServicosRepositoryStub,
+        loadCarroByIdRepositoryStub,
+        loadIncludedItensRepositoryStub,
+        loadClienteByIdServicoRepositoryStub
+    );
     return {
         sut,
         loadServicosRepositoryStub,
-        loadCarroByIdRepositoryStub
+        loadCarroByIdRepositoryStub,
+        loadIncludedItensRepositoryStub,
+        loadClienteByIdServicoRepositoryStub
     };
+};
+
+const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
+    class LoadIncludedItensRepositoryStub implements LoadIncludedItensRepository {
+        async load(servicoId: number): Promise<DbIncludedItemModel[]> {
+            return mockFakeDbIncludedItemModelList();
+        }
+    }
+    return new LoadIncludedItensRepositoryStub();
 };
 
 const makeLoadServicosRepository = (): LoadServicosRepository => {
@@ -119,4 +154,13 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
         }
     }
     return new LoadCarroByIdRepositoryStub();
+};
+
+const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepository => {
+    class LoadClienteByIdServicoRepositoryStub implements LoadClienteByIdServicoRepository {
+        loadByIdServico(servicoId: number): Promise<DbClienteModel> {
+            return Promise.resolve(mockFakeDbClienteModel());
+        }
+    }
+    return new LoadClienteByIdServicoRepositoryStub();
 };

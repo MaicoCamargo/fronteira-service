@@ -9,7 +9,8 @@ export class LoadClientesController implements Controller {
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
             const pageFilter: PageFilter = { page: httpRequest.query?.page, size: httpRequest.query?.size };
-            return ok(await this.loadClientes.load(pageFilter));
+            if (pageFilter.page && pageFilter.size) return ok(await this.loadClientes.load(pageFilter));
+            return ok(await this.loadClientes.load());
         } catch (error) {
             return serverError(error);
         }

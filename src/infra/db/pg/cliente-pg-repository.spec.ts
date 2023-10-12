@@ -1,10 +1,11 @@
 import { knexInstance } from './helpers/knex-helper';
 import { DbClienteModel } from '../../../data/models/db-cliente-model';
 import { ClientePgRepository } from './cliente-pg-repository';
-import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
-import { mapper } from './helpers/mapper';
-import { DbCarroModel } from '../../../data/models/db-carro-model';
 import { PageFilter } from '../../../main/protocols/page-filter';
+import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
+import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
+import { makePgEnderecoCreate } from '../../../../tests/mock/mock-db-endereco';
+import { makePgCarroCreate } from '../../../../tests/mock/mock-db-carro';
 
 const makeSut = () => {
     return new ClientePgRepository();
@@ -12,6 +13,8 @@ const makeSut = () => {
 
 describe('Cliente Postgres Repository', () => {
     beforeAll(async () => {
+        await knexInstance('servico_peca').del();
+        await knexInstance('servico').del();
         await knexInstance('cliente_carro').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
@@ -19,16 +22,11 @@ describe('Cliente Postgres Repository', () => {
     });
 
     afterAll(async () => {
-        await knexInstance('cliente_carro').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
         await knexInstance.destroy();
     });
     describe('load()', () => {
         test('Deve retornar todos os clientes em caso de sucesso', async () => {
-            const endereco = await makePgEnderecoCreate();
-            const createdClientes = [await makePgClienteCreate(endereco), await makePgClienteCreate(endereco)];
+            const createdClientes = [await makePgClienteCreate(), await makePgClienteCreate()];
             const sut = makeSut();
             const wrapper = await sut.load();
             expect(wrapper).toBeTruthy();
@@ -49,13 +47,12 @@ describe('Cliente Postgres Repository', () => {
         });
 
         test('Deve retornar os dados paginados em caso de sucesso', async () => {
-            const endereco = await makePgEnderecoCreate();
             await Promise.all([
-                await makePgClienteCreate(endereco),
-                await makePgClienteCreate(endereco),
-                await makePgClienteCreate(endereco),
-                await makePgClienteCreate(endereco),
-                await makePgClienteCreate(endereco)
+                await makePgClienteCreate(),
+                await makePgClienteCreate(),
+                await makePgClienteCreate(),
+                await makePgClienteCreate(),
+                await makePgClienteCreate()
             ]);
 
             const sut = makeSut();
@@ -91,7 +88,7 @@ describe('Cliente Postgres Repository', () => {
 
     describe('loadById()', () => {
         test('Deve retornar um cliente pelo id', async () => {
-            const model = await makePgClienteCreate(await makePgEnderecoCreate());
+            const model = await makePgClienteCreate();
             const sut = makeSut();
             const cliente = await sut.loadById(model.id_cliente);
             expect(cliente).toEqual(model);
@@ -106,7 +103,7 @@ describe('Cliente Postgres Repository', () => {
 
     describe('update()', () => {
         test('Deve atualizar um cliente pelo id', async () => {
-            const model = await makePgClienteCreate(await makePgEnderecoCreate());
+            const model = await makePgClienteCreate();
             const sut = makeSut();
             const cliente = await sut.update({
                 id_cliente: model.id_cliente,
@@ -126,61 +123,22 @@ describe('Cliente Postgres Repository', () => {
 
     describe('delete()', () => {
         test('Deve deletar um cliente pelo id', async () => {
-            const model = await makePgClienteCreate(await makePgEnderecoCreate());
+            const model = await makePgClienteCreate();
             const sut = makeSut();
             await sut.delete(model.id_cliente);
             const cliente = await sut.loadById(model.id_cliente);
             expect(cliente).toBeNull();
         });
     });
+
+    describe('loadByIdServico()', () => {
+        test('Deve retornar um cliente pelo id do servico', async () => {
+            const servico = await makePgServicoCreate();
+
+            const sut = makeSut();
+            const cliente = await sut.loadByIdServico(servico[0].id_servico);
+            // todo -> realizar consultas pra validar se o cliente encontrado é o certo
+            expect(cliente.id_cliente).not.toBeNull();
+        });
+    });
 });
-
-const makePgClienteCreate = async (endereco: DbEnderecoModel): Promise<DbClienteModel> => {
-    const randomStr = (Math.random() + 1).toString(36).substring(7);
-
-    return mapper(
-        await knexInstance('cliente')
-            .insert({
-                nome: randomStr,
-                telefone: randomStr,
-                cpf: 'any_cpf',
-                endereco_id: endereco.id_endereco,
-                last_updated: new Date()
-            })
-            .returning(['nome', 'telefone', 'cpf', 'endereco_id', 'last_updated', 'id_cliente'])
-    );
-};
-const makePgCarroCreate = async (): Promise<DbCarroModel> => {
-    const result = mapper(
-        await knexInstance('carro')
-            .insert({
-                ano: 2023,
-                cor: 'any_cor',
-                quilometragem: 100,
-                modelo: 'any_modelo',
-                placa: 'any_placa'
-            })
-            .returning('*')
-    );
-    return {
-        id_carro: result.id_carro,
-        ano: result.ano,
-        cor: result.cor,
-        quilometragem: result.quilometragem,
-        modelo: result.modelo,
-        placa: result.placa
-    };
-};
-const makePgEnderecoCreate = async (): Promise<DbEnderecoModel> => {
-    return mapper(
-        await knexInstance('endereco')
-            .insert({
-                rua: 'any_rua',
-                cidade: 'any_cidade',
-                cep: 'any_cep',
-                numero: 'any_numero',
-                complemento: 'any_complemento'
-            })
-            .returning('*')
-    );
-};

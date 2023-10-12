@@ -1,7 +1,6 @@
 import { knexInstance } from './helpers/knex-helper';
 import { CarroPgRepository } from './carro-pg-repository';
 import { mockFakeAddCarroModel } from '../../../../tests/mock/mock-carro';
-import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
 import { DbClienteModel } from '../../../data/models/db-cliente-model';
 import { mapper } from './helpers/mapper';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
@@ -11,6 +10,8 @@ let cliente: DbClienteModel;
 describe('Carro Postgres Repository', () => {
     beforeAll(async () => {
         await knexInstance('cliente_carro').del();
+        await knexInstance('servico_peca').del();
+        await knexInstance('servico').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
         await knexInstance('carro').del();
@@ -18,10 +19,6 @@ describe('Carro Postgres Repository', () => {
     });
 
     afterAll(async () => {
-        await knexInstance('cliente_carro').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
         await knexInstance.destroy();
     });
 
