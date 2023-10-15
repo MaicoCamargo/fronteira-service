@@ -80,6 +80,9 @@ describe('ItemPgRepository', () => {
             expect(result.nome).toEqual(item.nome);
             expect(result.marca).toEqual(item.marca);
             expect(result.valor).toEqual(item.valor);
+
+            const dbItem = await knexInstance('item').where({ id_peca: item.id_peca }).first();
+            expect(dbItem.last_updated).toEqual(new Date());
         });
     });
 
