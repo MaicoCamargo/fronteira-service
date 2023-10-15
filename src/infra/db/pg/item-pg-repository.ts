@@ -24,7 +24,7 @@ export class ItemPgRepository
 
     async update(item: DbUpdateItemModel): Promise<DbItemModel> {
         const result = await knexInstance('item')
-            .update(item)
+            .update({ ...item, last_updated: new Date() })
             .where({ id_peca: item.id_peca })
             .returning(['id_peca', 'marca', 'valor', 'nome']);
         return mapper(result);
