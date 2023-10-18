@@ -6,9 +6,11 @@ import { DbIncludedItemModel } from '../../../data/models/db-included-item-model
 import { knexInstance } from './helpers/knex-helper';
 import { LoadIncludedItensRepository } from '../../../data/protocols/db/servico/included-item/load-included-itens-repository';
 
-export class IncludedItemPgRepository implements SaveIncludedItensRepository, LoadIncludedItensRepository {
+export class IncludedItemPgRepository
+    implements SaveIncludedItensRepository, LoadIncludedItensRepository, UpdateIncludedItemRepository
+{
     async save(itens: SaveIncludedItemModel[]): Promise<DbIncludedItemModel[]> {
-        return knexInstance('servico_peca').insert(itens).returning('*') as DbIncludedItemModel[];
+        return knexInstance('servico_peca').insert(itens).returning('*') as any;
     }
 
     async load(servicoId: number): Promise<DbIncludedItemModel[]> {
@@ -19,11 +21,10 @@ export class IncludedItemPgRepository implements SaveIncludedItensRepository, Lo
                 'id_servico_peca',
                 'quantidade',
                 'valor_por_unidade',
-                'valor_por_unidade',
                 'nome',
                 'marca',
                 'valor_total',
                 'peca_id'
-            ]) as DbIncludedItemModel[];
+            ]) as any;
     }
 }
