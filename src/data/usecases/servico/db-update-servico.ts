@@ -58,7 +58,7 @@ export class DbUpdateServico implements UpdateServico {
             nome: dbItemModel.nome,
             valor: dbItemModel.valor_por_unidade,
             marca: dbItemModel.marca,
-            id: dbItemModel.id_servico_peca,
+            id: dbItemModel.peca_id,
             quantidade: dbItemModel.quantidade,
             total: dbItemModel.valor_total
         }));

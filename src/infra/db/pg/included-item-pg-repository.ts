@@ -22,7 +22,8 @@ export class IncludedItemPgRepository implements SaveIncludedItensRepository, Lo
                 'valor_por_unidade',
                 'nome',
                 'marca',
-                'valor_total'
+                'valor_total',
+                'peca_id'
             ]) as DbIncludedItemModel[];
     }
 }

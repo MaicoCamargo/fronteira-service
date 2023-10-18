@@ -51,7 +51,7 @@ export class DbLoadServicos implements LoadServicos {
             nome: item.nome,
             valor: item.valor_por_unidade,
             marca: item.marca,
-            id: item.id_servico_peca,
+            id: item.peca_id,
             quantidade: item.quantidade,
             total: item.valor_total
         }));
