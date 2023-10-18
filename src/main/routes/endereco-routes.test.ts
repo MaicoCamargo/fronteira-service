@@ -13,10 +13,15 @@ const makeFakeRequest = (): HttpRequest => ({
     }
 });
 describe('POST /endereco', () => {
-    afterAll(async () => {
+    beforeAll(async () => {
+        await knexInstance('cliente').del();
         await knexInstance('endereco').del();
+    });
+
+    afterAll(async () => {
         await knexInstance.destroy();
     });
+
     test('Deve retornar 201 em caso de sucesso', async () => {
         await request(app).post('/service/endereco').send(makeFakeRequest().body).expect(201);
     });

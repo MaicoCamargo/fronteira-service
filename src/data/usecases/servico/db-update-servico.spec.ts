@@ -7,12 +7,15 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
-import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 import { DbIncludedItemModel } from '../../models/db-included-item-model';
-import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-included-itens';
+import { mockFakeDbIncludedItemModel } from '../../../../tests/mock/mock-included-itens';
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
+import {
+    UpdateIncludedItemModel,
+    UpdateIncludedItemRepository
+} from '../../protocols/db/servico/included-item/update-included-item-repository';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -33,8 +36,8 @@ describe('DbUpdateServico Use Case', () => {
 interface SutTypes {
     updateServicoRepositoryStub: UpdateServicoRepository;
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
-    loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
+    updateIncludedItemRepositoryStub: UpdateIncludedItemRepository;
     sut: DbUpdateServico;
 }
 
@@ -56,15 +59,6 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     return new LoadCarroByIdRepositoryStub();
 };
 
-const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
-    class LoadIncludedItensRepositoryStub implements LoadIncludedItensRepository {
-        async load(servicoId: number): Promise<DbIncludedItemModel[]> {
-            return mockFakeDbIncludedItemModelList();
-        }
-    }
-    return new LoadIncludedItensRepositoryStub();
-};
-
 const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepository => {
     class LoadClienteByIdServicoRepositoryStub implements LoadClienteByIdServicoRepository {
         loadByIdServico(servicoId: number): Promise<DbClienteModel> {
@@ -74,27 +68,54 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
     return new LoadClienteByIdServicoRepositoryStub();
 };
 
+const makeUpdateIncludedItemRepository = (): UpdateIncludedItemRepository => {
+    class UpdateIncludedItemRepositoryStub implements UpdateIncludedItemRepository {
+        async update(model: UpdateIncludedItemModel): Promise<DbIncludedItemModel> {
+            return makeFakeUpdatedDbIncludedItemModel();
+        }
+    }
+    return new UpdateIncludedItemRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
-    const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
+    const updateIncludedItemRepositoryStub = makeUpdateIncludedItemRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadIncludedItensRepositoryStub,
-        loadClienteByIdServicoRepositoryStub
+        loadClienteByIdServicoRepositoryStub,
+        updateIncludedItemRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
-        loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
+        updateIncludedItemRepositoryStub,
         sut
     };
 };
 
 const makeFakeUpdatedDbServicoModel = (): DbServicoModel => ({ ...mockFakeDbServicoModel(), descricao: 'updated' });
 
-const makeFakeUpdatedServicoModel = (): ServicoModel => ({ ...mockFakeServicoModel(), descricao: 'updated' });
+const makeFakeUpdatedServicoModel = (): ServicoModel => ({
+    ...mockFakeServicoModel(),
+    descricao: 'updated',
+    itens: [
+        {
+            nome: makeFakeUpdatedDbIncludedItemModel().nome,
+            valor: makeFakeUpdatedDbIncludedItemModel().valor_por_unidade,
+            total: makeFakeUpdatedDbIncludedItemModel().valor_total,
+            marca: makeFakeUpdatedDbIncludedItemModel().marca,
+            id: makeFakeUpdatedDbIncludedItemModel().peca_id,
+            quantidade: makeFakeUpdatedDbIncludedItemModel().quantidade
+        }
+    ]
+});
+
+const makeFakeUpdatedDbIncludedItemModel = (): DbIncludedItemModel => ({
+    ...mockFakeDbIncludedItemModel(),
+    quantidade: 100
+});

@@ -26,6 +26,10 @@ export const mockFakeDbIncludedItemModelList = (): DbIncludedItemModel[] => [
     }
 ];
 
+export const mockFakeDbIncludedItemModel = (): DbIncludedItemModel => ({
+    ...mockFakeDbIncludedItemModelList()[0]
+});
+
 export const mockFakeIncludedItemModelList = (): IncludedItemModel[] => [
     {
         nome: mockFakeDbIncludedItemModelList()[0].nome,
