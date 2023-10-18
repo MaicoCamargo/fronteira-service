@@ -10,5 +10,5 @@ export const makeDbUpdateServico = (): DbUpdateServico => {
     const clientePgRepository = new ClientePgRepository();
     const includedItemPgRepository = new IncludedItemPgRepository();
 
-    return new DbUpdateServico(servicoPgRepository, carroPgRepository, includedItemPgRepository, clientePgRepository);
+    return new DbUpdateServico(servicoPgRepository, carroPgRepository, clientePgRepository, includedItemPgRepository);
 };

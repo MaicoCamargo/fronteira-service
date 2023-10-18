@@ -5,6 +5,10 @@ import {
 import { DbIncludedItemModel } from '../../../data/models/db-included-item-model';
 import { knexInstance } from './helpers/knex-helper';
 import { LoadIncludedItensRepository } from '../../../data/protocols/db/servico/included-item/load-included-itens-repository';
+import {
+    UpdateIncludedItemModel,
+    UpdateIncludedItemRepository
+} from '../../../data/protocols/db/servico/included-item/update-included-item-repository';
 
 export class IncludedItemPgRepository
     implements SaveIncludedItensRepository, LoadIncludedItensRepository, UpdateIncludedItemRepository
@@ -26,5 +30,12 @@ export class IncludedItemPgRepository
                 'valor_total',
                 'peca_id'
             ]) as any;
+    }
+
+    async update(model: UpdateIncludedItemModel): Promise<DbIncludedItemModel> {
+        return knexInstance('servico_peca')
+            .update(model)
+            .where({ peca_id: model.peca_id, servico_id: model.servico_id })
+            .returning('*') as any;
     }
 }

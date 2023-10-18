@@ -35,7 +35,7 @@ export class ServicoPgRepository implements LoadServicosRepository, SaveServicoR
     async update(model: UpdateServicoModel): Promise<DbServicoModel> {
         const updated = await knexInstance('servico')
             .where({ id_servico: model.id_servico })
-            .update(model)
+            .update({ ...model, last_updated: new Date() })
             .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
         return mapper(updated);
     }
