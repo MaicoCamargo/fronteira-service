@@ -8,7 +8,10 @@ import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { DbIncludedItemModel } from '../../models/db-included-item-model';
-import { mockFakeDbIncludedItemModel } from '../../../../tests/mock/mock-included-itens';
+import {
+    mockFakeDbIncludedItemModel,
+    mockFakeDbIncludedItemModelList
+} from '../../../../tests/mock/mock-included-itens';
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
@@ -16,6 +19,12 @@ import {
     UpdateIncludedItemModel,
     UpdateIncludedItemRepository
 } from '../../protocols/db/servico/included-item/update-included-item-repository';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
+import {
+    SaveIncludedItemModel,
+    SaveIncludedItensRepository
+} from '../../protocols/db/servico/included-item/save-included-itens-repository';
+import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -38,6 +47,8 @@ interface SutTypes {
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     updateIncludedItemRepositoryStub: UpdateIncludedItemRepository;
+    loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
+    deleteIncludedItemRepositoryStub: DeleteIncludedItemRepository;
     sut: DbUpdateServico;
 }
 
@@ -77,23 +88,58 @@ const makeUpdateIncludedItemRepository = (): UpdateIncludedItemRepository => {
     return new UpdateIncludedItemRepositoryStub();
 };
 
+const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
+    class LoadIncludedItensRepositoryStub implements LoadIncludedItensRepository {
+        async load(servicoId: number): Promise<DbIncludedItemModel[]> {
+            return mockFakeDbIncludedItemModelList();
+        }
+    }
+    return new LoadIncludedItensRepositoryStub();
+};
+
+const makeSaveIncludedItensRepository = (): SaveIncludedItensRepository => {
+    class SaveIncludedItensRepositoryStub implements SaveIncludedItensRepository {
+        async save(itens: SaveIncludedItemModel[]): Promise<DbIncludedItemModel[]> {
+            return [mockFakeDbIncludedItemModel()];
+        }
+    }
+    return new SaveIncludedItensRepositoryStub();
+};
+
+const makeDeleteIncludedItemRepository = (): DeleteIncludedItemRepository => {
+    class DeleteIncludedItemRepositoryStub implements DeleteIncludedItemRepository {
+        async delete(id: number): Promise<void> {
+            return Promise.resolve();
+        }
+    }
+    return new DeleteIncludedItemRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
     const updateIncludedItemRepositoryStub = makeUpdateIncludedItemRepository();
+    const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
+    const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
+    const deleteIncludedItemRepositoryStub = makeDeleteIncludedItemRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
-        updateIncludedItemRepositoryStub
+        updateIncludedItemRepositoryStub,
+        loadIncludedItensRepositoryStub,
+        saveIncludedItensRepositoryStub,
+        deleteIncludedItemRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         updateIncludedItemRepositoryStub,
+        loadIncludedItensRepositoryStub,
+        deleteIncludedItemRepositoryStub,
         sut
     };
 };
