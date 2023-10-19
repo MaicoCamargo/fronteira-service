@@ -10,7 +10,7 @@ export const mockFakeAddServicoParams = (): AddServicoParams => ({
     valor: 100,
     descricao: 'any_descricao',
     carro: mockFakeCarroModelList()[0],
-    includedItens: [mockFakeAddItemParams()],
+    itens: [mockFakeAddItemParams()],
     quilometragem: 1000,
     cliente: {
         id: mockFakeClienteModel().id,

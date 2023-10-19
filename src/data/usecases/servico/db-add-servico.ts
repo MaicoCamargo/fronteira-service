@@ -1,5 +1,5 @@
 import { DbServicoModel } from '../../models/db-servico-model';
-import { AddItemParams, AddServico, AddServicoParams } from '../../../domain/usecases/servico/add-servico';
+import { AddServico, AddServicoParams } from '../../../domain/usecases/servico/add-servico';
 import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
 import { SaveServicoModel, SaveServicoRepository } from '../../protocols/db/servico/save-servico-repository';
 import {
@@ -35,7 +35,7 @@ export class DbAddServico implements AddServico {
         };
     }
 
-    private async saveIncludedItens(itens: AddItemParams[], idServico: number): Promise<IncludedItemModel[]> {
+    private async saveIncludedItens(itens: IncludedItemModel[], idServico: number): Promise<IncludedItemModel[]> {
         const model: SaveIncludedItemModel[] = itens.map((item) => ({
             servico_id: idServico,
             peca_id: item.id,
