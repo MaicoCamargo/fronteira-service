@@ -16,15 +16,9 @@ export class ServicoPgRepository
     implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository, DeleteServicoRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbServicoModel[]>> {
-        const query = knexInstance('servico').select([
-            'id_servico',
-            'valor',
-            'descricao',
-            'data',
-            'quilometragem',
-            'last_updated',
-            'carro_id'
-        ]);
+        const query = knexInstance('servico')
+            .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
+            .whereNull('dh_exclusion');
         return await knexPaginateAdapter(query, pageFilter);
     }
 
