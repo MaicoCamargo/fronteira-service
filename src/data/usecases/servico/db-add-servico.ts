@@ -22,7 +22,7 @@ export class DbAddServico implements AddServico {
         };
         const result: DbServicoModel = await this.saveServicoRepository.save(model);
 
-        const itens = await this.saveIncludedItens(params.includedItens, result.id_servico);
+        const itens = await this.saveIncludedItens(params.itens, result.id_servico);
         return {
             itens,
             id: result.id_servico,
