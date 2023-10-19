@@ -8,14 +8,19 @@ import {
     UpdateIncludedItemModel,
     UpdateIncludedItemRepository
 } from '../../protocols/db/servico/included-item/update-included-item-repository';
-import { DbIncludedItemModel } from '../../models/db-included-item-model';
+import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
+import { SaveIncludedItensRepository } from '../../protocols/db/servico/included-item/save-included-itens-repository';
+import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
         private readonly updateServicoRepository: UpdateServicoRepository,
         private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
-        private readonly updateIncludedItemRepository: UpdateIncludedItemRepository
+        private readonly updateIncludedItemRepository: UpdateIncludedItemRepository,
+        private readonly loadIncludedItensRepository: LoadIncludedItensRepository,
+        private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
+        private readonly deleteIncludedItemRepository: DeleteIncludedItemRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -63,26 +68,40 @@ export class DbUpdateServico implements UpdateServico {
         };
     }
 
-    private async updateIncludedItens(item: IncludedItemModel[], servicoId: number): Promise<IncludedItemModel[]> {
-        const promises: Array<Promise<DbIncludedItemModel>> = [];
-        item.forEach((item) => {
+    private async updateIncludedItens(itens: IncludedItemModel[], servicoId: number): Promise<IncludedItemModel[]> {
+        const currentItens = await this.loadIncludedItensRepository.load(servicoId);
+        const includedItemModelList: IncludedItemModel[] = [];
+        for (const item of itens) {
             const model: UpdateIncludedItemModel = {
                 peca_id: item.id,
                 servico_id: servicoId,
                 quantidade: item.quantidade,
                 valor_por_unidade: item.valor,
-                valor_total: item.total
+                valor_total: item.quantidade * item.valor
             };
-            promises.push(this.updateIncludedItemRepository.update(model));
-        });
+            const updated = await this.updateIncludedItemRepository.update(model);
+            if (!updated) {
+                const saved = await this.saveIncludedItensRepository.save([model]);
+                saved.map((item) =>
+                    includedItemModelList.push({
+                        valor: item.valor_por_unidade,
+                        total: item.valor_total,
+                        marca: item.marca,
+                        id: item.peca_id,
+                        nome: item.nome,
+                        quantidade: item.quantidade
+                    })
+                );
+            } else {
+                includedItemModelList.push(item);
+            }
+        }
+        for (const item of currentItens) {
+            if (!itens.find((find) => find.id === item.peca_id)) {
+                await this.deleteIncludedItemRepository.delete(item.peca_id, servicoId);
+            }
+        }
 
-        return (await Promise.all(promises)).map((item: DbIncludedItemModel) => ({
-            valor: item.valor_por_unidade,
-            total: item.valor_total,
-            marca: item.marca,
-            id: item.peca_id,
-            nome: item.nome,
-            quantidade: item.quantidade
-        }));
+        return includedItemModelList;
     }
 }

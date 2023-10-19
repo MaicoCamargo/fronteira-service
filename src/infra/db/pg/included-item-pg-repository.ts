@@ -9,9 +9,15 @@ import {
     UpdateIncludedItemModel,
     UpdateIncludedItemRepository
 } from '../../../data/protocols/db/servico/included-item/update-included-item-repository';
+import { mapper } from './helpers/mapper';
+import { DeleteIncludedItemRepository } from '../../../data/protocols/db/servico/included-item/delete-included-item-repository';
 
 export class IncludedItemPgRepository
-    implements SaveIncludedItensRepository, LoadIncludedItensRepository, UpdateIncludedItemRepository
+    implements
+        SaveIncludedItensRepository,
+        LoadIncludedItensRepository,
+        UpdateIncludedItemRepository,
+        DeleteIncludedItemRepository
 {
     async save(itens: SaveIncludedItemModel[]): Promise<DbIncludedItemModel[]> {
         return knexInstance('servico_peca').insert(itens).returning('*') as any;
@@ -21,6 +27,7 @@ export class IncludedItemPgRepository
         return knexInstance('servico_peca')
             .innerJoin('item', 'servico_peca.peca_id', 'item.id_peca')
             .where({ servico_id: servicoId })
+            .whereNull('servico_peca.dh_exclusion')
             .select([
                 'id_servico_peca',
                 'quantidade',
@@ -33,9 +40,17 @@ export class IncludedItemPgRepository
     }
 
     async update(model: UpdateIncludedItemModel): Promise<DbIncludedItemModel> {
-        return knexInstance('servico_peca')
-            .update(model)
+        const result = await knexInstance('servico_peca')
+            .update({ ...model, last_updated: new Date(), dh_exclusion: null })
             .where({ peca_id: model.peca_id, servico_id: model.servico_id })
-            .returning('*') as any;
+            .returning('*');
+
+        return mapper(result);
+    }
+
+    async delete(pecaId: number, servicoId: number): Promise<void> {
+        await knexInstance('servico_peca')
+            .update({ last_updated: new Date(), dh_exclusion: new Date() })
+            .where({ peca_id: pecaId, servico_id: servicoId });
     }
 }
