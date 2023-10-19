@@ -10,8 +10,11 @@ import {
     UpdateServicoModel,
     UpdateServicoRepository
 } from '../../../data/protocols/db/servico/update-servico-repository';
+import { DeleteServicoRepository } from '../../../data/protocols/db/servico/delete-servico-repository';
 
-export class ServicoPgRepository implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository {
+export class ServicoPgRepository
+    implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository, DeleteServicoRepository
+{
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbServicoModel[]>> {
         const query = knexInstance('servico').select([
             'id_servico',
@@ -38,5 +41,9 @@ export class ServicoPgRepository implements LoadServicosRepository, SaveServicoR
             .update({ ...model, last_updated: new Date() })
             .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
         return mapper(updated);
+    }
+
+    async delete(id: number): Promise<void> {
+        await knexInstance('servico').where({ id_servico: id }).update({ dh_exclusion: new Date() });
     }
 }
