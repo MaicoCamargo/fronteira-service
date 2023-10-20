@@ -1,6 +1,6 @@
 import { DeleteServicoRepository } from '../../protocols/db/servico/delete-servico-repository';
 
-export class DbDelServico {
+export class DbDeleteServico {
     constructor(private readonly deleteServicoRepository: DeleteServicoRepository) {}
 
     async delete(id: number): Promise<void> {
