@@ -1,7 +1,7 @@
-import { DbDelServico } from './db-del-servico';
+import { DbDeleteServico } from './db-delete-servico';
 import { DeleteServicoRepository } from '../../protocols/db/servico/delete-servico-repository';
 
-describe('DbDelServico Use Case', () => {
+describe('DbDeleteServico Use Case', () => {
     test('Deve chamar o DeleteServicoRepository com os valores corretos', async () => {
         const { sut, deleteServicoRepositoryStub } = makeSut();
         const id = 1;
@@ -20,7 +20,7 @@ describe('DbDelServico Use Case', () => {
 });
 
 type SutTypes = {
-    sut: DbDelServico;
+    sut: DbDeleteServico;
     deleteServicoRepositoryStub: DeleteServicoRepository;
 };
 
@@ -35,7 +35,7 @@ const makeDeleteServicoRepositoryStub = (): DeleteServicoRepository => {
 
 const makeSut = (): SutTypes => {
     const deleteServicoRepositoryStub = makeDeleteServicoRepositoryStub();
-    const sut = new DbDelServico(deleteServicoRepositoryStub);
+    const sut = new DbDeleteServico(deleteServicoRepositoryStub);
     return {
         sut,
         deleteServicoRepositoryStub
