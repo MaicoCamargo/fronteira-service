@@ -93,6 +93,17 @@ describe('Servico Postgres Repository', () => {
             expect(result.carro_id).toEqual(servicos[0].carro_id);
         });
     });
+
+    describe('delete()', () => {
+        test('Deve deletar em caso de sucesso', async () => {
+            const sut = makeSut();
+            await sut.delete(servicos[0].id_servico);
+            const servico = await knexInstance('servico').where({ id_servico: servicos[0].id_servico }).first();
+            expect(servico).toBeTruthy();
+            expect(servico.dh_exclusion).toBeTruthy();
+            expect(servico.dh_exclusion).not.toBeNull();
+        });
+    });
 });
 
 const makeSut = (): ServicoPgRepository => {

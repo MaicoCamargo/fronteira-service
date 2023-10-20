@@ -10,15 +10,14 @@ import { AddClienteModel } from '../../data/protocols/db/cliente/save-cliente-re
 
 describe('/clientes', () => {
     beforeAll(async () => {
+        await knexInstance('cliente_carro').del();
+        await knexInstance('servico').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();
         await knexInstance('carro').del();
     });
 
     afterAll(async () => {
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
         await knexInstance.destroy();
     });
 

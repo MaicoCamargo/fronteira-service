@@ -10,8 +10,8 @@ export class UpdateServicoController implements Controller {
         try {
             const { id } = httpRequest.params;
             const body: UpdateServicoParams = httpRequest.body;
-            if (id) return badRequest(new MissingParamError('query param id'));
-            if (id !== body.id) return badRequest(new InvalidParamError('id'));
+            if (!id) return badRequest(new MissingParamError('query param id'));
+            if (parseInt(id) !== body.id) return badRequest(new InvalidParamError('id'));
             const servico = await this.updateServico.update(body);
             return ok(servico);
         } catch (err) {

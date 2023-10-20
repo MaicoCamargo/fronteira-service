@@ -1,4 +1,4 @@
-import { makeAddEnderecoController } from '../factories/controller/add-endereco-controller-factory';
+import { makeAddEnderecoController } from '../factories/controller/endereco/add-endereco-controller-factory';
 import { Router } from 'express';
 import { expressRouterAdapter } from '../adapters/express-router-adapter';
 
