@@ -11,8 +11,7 @@ export const mockFakeDbClienteModel = (): DbClienteModel => ({
     nome: 'any_nome',
     cpf: 'any_cpf',
     telefone: 'any_telefone',
-    endereco_id: 1,
-    last_updated: new Date('2021-02-28 00:00:00')
+    endereco_id: 1
 });
 
 export const mockFakeClienteModel = (): ClienteModel => ({
@@ -21,8 +20,7 @@ export const mockFakeClienteModel = (): ClienteModel => ({
     cpf: 'any_cpf',
     telefone: 'any_telefone',
     carros: [mockFakeCarroModel()],
-    endereco: makeFakeEnderecoModel(),
-    lastUpdated: new Date('2021-02-28 00:00:00')
+    endereco: makeFakeEnderecoModel()
 });
 
 export const mockFakeUpdateClienteParams = (): UpdateClienteParams => ({
