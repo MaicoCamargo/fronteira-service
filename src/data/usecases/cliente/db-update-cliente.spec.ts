@@ -19,6 +19,7 @@ import { ClienteModel } from '../../../domain/models/cliente-model';
 import { CarroModel } from '../../../domain/models/carro-model';
 import { LoadCarroByClienteId } from '../../../domain/usecases/carro/load-carro-by-cliente-id';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
+import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
 
 describe('DbUpdateCliente Use Case', () => {
     test('Deve chamar UpdateClienteRepository com valores corretos', async () => {
@@ -71,9 +72,10 @@ describe('DbUpdateCliente Use Case', () => {
         });
     });
 
-    test('Deve remover um carro se um carro for removido', async () => {
-        const { sut, loadCarroByClienteIdRepositoryStub } = makeSut();
+    test('Deve remover um carro se um carro nao tiver na lista de carros enviados', async () => {
+        const { sut, deleteCarroRepositoryStub } = makeSut();
         const clienteWithOutCar: UpdateClienteParams = { ...mockFakeUpdateClienteParams(), carros: [] };
+        const deleteSpy = jest.spyOn(deleteCarroRepositoryStub, 'delete');
         const cliente = await sut.update(clienteWithOutCar);
         const updated: ClienteModel = mockFakeClienteModel();
         // todo quando atualizar endereco remover {...}
@@ -84,6 +86,8 @@ describe('DbUpdateCliente Use Case', () => {
             carros: clienteWithOutCar.carros,
             nome: updated.nome
         });
+        expect(deleteSpy).toHaveBeenCalledWith(mockFakeDbCarroModelList()[0].id_carro);
+        expect(deleteSpy).toHaveBeenCalledWith(mockFakeDbCarroModelList()[1].id_carro);
     });
 
     test('Deve chamar UpdateCarroRepository com valores corretos', async () => {
@@ -130,12 +134,22 @@ const makeLoadCarroByClienteIdRepositoryStubStub = (): LoadCarroByClienteIdRepos
     return new LoadCarroByClienteIdStub();
 };
 
+const makeDeleteCarroRepositoryStub = (): DeleteCarroRepository => {
+    class DeleteCarroRepositoryStub implements DeleteCarroRepository {
+        delete(id: number): Promise<void> {
+            return Promise.resolve();
+        }
+    }
+    return new DeleteCarroRepositoryStub();
+};
+
 interface SutTypes {
     sut: DbUpdateCliente;
     updateClienteRepositoryStub: UpdateClienteRepository;
     updateCarroRepositoryStub: UpdateCarroRepository;
     saveCarroRepositoryStub: SaveCarroRepository;
     loadCarroByClienteIdRepositoryStub: LoadCarroByClienteIdRepository;
+    deleteCarroRepositoryStub: DeleteCarroRepository;
 }
 
 const makeSut = (): SutTypes => {
@@ -143,18 +157,21 @@ const makeSut = (): SutTypes => {
     const updateCarroRepositoryStub = makeUpdateCarroRepositoryStub();
     const saveCarroRepositoryStub = makeSaveCarroRepositoryStub();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStubStub();
+    const deleteCarroRepositoryStub = makeDeleteCarroRepositoryStub();
     const sut = new DbUpdateCliente(
         updateClienteRepositoryStub,
         updateCarroRepositoryStub,
         saveCarroRepositoryStub,
-        loadCarroByClienteIdRepositoryStub
+        loadCarroByClienteIdRepositoryStub,
+        deleteCarroRepositoryStub
     );
     return {
         sut,
         updateClienteRepositoryStub,
         updateCarroRepositoryStub,
         saveCarroRepositoryStub,
-        loadCarroByClienteIdRepositoryStub
+        loadCarroByClienteIdRepositoryStub,
+        deleteCarroRepositoryStub
     };
 };
 
