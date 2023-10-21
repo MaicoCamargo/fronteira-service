@@ -1,7 +1,7 @@
 import { CarroModel } from '../../models/carro-model';
 
 export interface UpdateCarroParams {
-    id: number;
+    id?: number;
     modelo: string;
     placa: string;
     ano: number;

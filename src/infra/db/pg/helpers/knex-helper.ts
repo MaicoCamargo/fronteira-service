@@ -13,5 +13,6 @@ const connection = {
 attachPaginate();
 export const knexInstance = knex({
     client: 'pg',
-    connection
+    connection,
+    debug: ENV.DB_POSTGRES.DEBUG
 });

@@ -93,6 +93,16 @@ describe('Carro Postgres Repository', () => {
             expect(carrosLoaded).toEqual([]);
         });
     });
+
+    describe('delete()', () => {
+        test('Deve deletar um carro em caso de sucesso', async () => {
+            const sut = makeSut();
+            const carro = await sut.save(mockFakeAddCarroModel(), cliente.id_cliente);
+            await sut.delete(carro.id_carro);
+            const carroLoaded = await sut.loadById(carro.id_carro);
+            expect(carroLoaded).toBeFalsy();
+        });
+    });
 });
 
 const makeSut = (): CarroPgRepository => {

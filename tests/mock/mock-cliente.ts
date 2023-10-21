@@ -1,7 +1,7 @@
 import { DbClienteModel } from '../../src/data/models/db-cliente-model';
 import { ClienteModel } from '../../src/domain/models/cliente-model';
 import { UpdateClienteParams } from '../../src/domain/usecases/cliente/update-cliente';
-import { mockFakeAddCarroParams, mockFakeCarroModel } from './mock-carro';
+import { mockFakeAddCarroParams, mockFakeCarroModel, mockFakeUpdateCarroParams } from './mock-carro';
 import { AddClienteParams } from '../../src/domain/usecases/cliente/add-cliente';
 import { makeFakeEnderecoModel, mockFakeAddEnderecoParams } from './mock-endereco';
 import { AddClienteModel } from '../../src/data/protocols/db/cliente/save-cliente-repository';
@@ -11,8 +11,7 @@ export const mockFakeDbClienteModel = (): DbClienteModel => ({
     nome: 'any_nome',
     cpf: 'any_cpf',
     telefone: 'any_telefone',
-    endereco_id: 1,
-    last_updated: new Date('2021-02-28 00:00:00')
+    endereco_id: 1
 });
 
 export const mockFakeClienteModel = (): ClienteModel => ({
@@ -21,15 +20,15 @@ export const mockFakeClienteModel = (): ClienteModel => ({
     cpf: 'any_cpf',
     telefone: 'any_telefone',
     carros: [mockFakeCarroModel()],
-    endereco: makeFakeEnderecoModel(),
-    lastUpdated: new Date('2021-02-28 00:00:00')
+    endereco: makeFakeEnderecoModel()
 });
 
 export const mockFakeUpdateClienteParams = (): UpdateClienteParams => ({
     cpf: 'any_cpf',
     telefone: 'any_telefone',
     nome: 'any_nome',
-    id: 1
+    id: 1,
+    carros: [mockFakeUpdateCarroParams()]
 });
 
 export const mockFakeAddClienteParams = (): AddClienteParams => ({

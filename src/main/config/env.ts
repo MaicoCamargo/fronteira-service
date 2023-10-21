@@ -9,6 +9,7 @@ export const ENV = {
         PORT: process.env.DB_POSTGRES_PORT || 5432,
         USER: process.env.DB_POSTGRES_USER || 'postgres',
         PASSWORD: process.env.DB_POSTGRES_PASSWORD,
-        DATABASE: process.env.DB_POSTGRES_DATABASE || 'fronteira'
+        DATABASE: process.env.DB_POSTGRES_DATABASE || 'fronteira',
+        DEBUG: process.env.DB_POSTGRES_DEBUG === 'false' || false
     }
 };

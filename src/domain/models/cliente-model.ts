@@ -8,5 +8,5 @@ export interface ClienteModel {
     cpf: string;
     carros?: CarroModel[];
     endereco?: EnderecoModel;
-    lastUpdated: Date;
+    lastUpdated?: Date;
 }
