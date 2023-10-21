@@ -10,6 +10,6 @@ export const makeDbUpdateCliente = (): DbUpdateCliente => {
         carroPgRepository,
         carroPgRepository,
         carroPgRepository,
-        clientePgRepository
+        carroPgRepository
     );
 };
