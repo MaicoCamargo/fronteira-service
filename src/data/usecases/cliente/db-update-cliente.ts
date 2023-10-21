@@ -36,7 +36,14 @@ export class DbUpdateCliente implements UpdateCliente {
     }
 
     async updateCarros(models: UpdateCarroParams[], clienteId: number): Promise<CarroModel[]> {
-        const updated: CarroModel[] = [];
+        const currentCarros = await this.loadCarroByClienteIdRepository.loadByClienteId(clienteId);
+        for (const carro of currentCarros) {
+            if (!models.find((find) => find.id === carro.id_carro)) {
+                await this.deleteCarroRepository.delete(carro.id_carro);
+            }
+        }
+        const carroModels: CarroModel[] = [];
+        if (!models || models.length === 0) return carroModels;
         for (const carro of models) {
             if (carro.id) {
                 const result = await this.updateCarroRepository.update({
@@ -47,7 +54,7 @@ export class DbUpdateCliente implements UpdateCliente {
                     placa: carro.placa,
                     quilometragem: carro.quilometragem
                 });
-                updated.push({
+                carroModels.push({
                     cor: result.cor,
                     ano: result.ano,
                     modelo: result.modelo,
@@ -66,7 +73,7 @@ export class DbUpdateCliente implements UpdateCliente {
                     },
                     clienteId
                 );
-                updated.push({
+                carroModels.push({
                     cor: result.cor,
                     ano: result.ano,
                     modelo: result.modelo,
@@ -76,13 +83,7 @@ export class DbUpdateCliente implements UpdateCliente {
                 });
             }
         }
-        const currentCarros = await this.loadCarroByClienteIdRepository.loadByClienteId(clienteId);
-        for (const carro of currentCarros) {
-            if (!models.find((find) => find.id === carro.id_carro)) {
-                await this.deleteCarroRepository.delete(carro.id_carro);
-            }
-        }
 
-        return updated;
+        return carroModels;
     }
 }
