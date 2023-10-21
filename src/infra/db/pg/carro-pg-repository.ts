@@ -5,9 +5,15 @@ import { mapper } from './helpers/mapper';
 import { LoadCarroByIdRepository } from '../../../data/protocols/db/carro/load-carro-by-id-repository';
 import { UpdateCarroModel, UpdateCarroRepository } from '../../../data/protocols/db/carro/update-carro-repository';
 import { LoadCarroByClienteIdRepository } from '../../../data/protocols/db/carro/load-carro-by-cliente-id-repository';
+import { DeleteCarroRepository } from '../../../data/protocols/db/carro/delete-carro-repository';
 
 export class CarroPgRepository
-    implements SaveCarroRepository, LoadCarroByIdRepository, UpdateCarroRepository, LoadCarroByClienteIdRepository
+    implements
+        SaveCarroRepository,
+        LoadCarroByIdRepository,
+        UpdateCarroRepository,
+        LoadCarroByClienteIdRepository,
+        DeleteCarroRepository
 {
     async save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
         const result: any = await knexInstance('carro').insert(model).returning('*');
@@ -31,5 +37,10 @@ export class CarroPgRepository
             .leftJoin('cliente_carro', 'carro.id_carro', 'cliente_carro.carro_id')
             .where({ 'cliente_carro.cliente_id': id })
             .select(['carro.id_carro', 'placa', 'modelo', 'ano', 'cor', 'quilometragem']) as any;
+    }
+
+    async delete(id: number): Promise<void> {
+        await knexInstance('cliente_carro').where({ carro_id: id }).del();
+        await knexInstance('carro').where({ id_carro: id }).del();
     }
 }
