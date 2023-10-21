@@ -7,13 +7,15 @@ import { CarroModel } from '../../../domain/models/carro-model';
 import { SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
 import { UpdateCarroParams } from '../../../domain/usecases/carro/update-carro';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
+import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
 
 export class DbUpdateCliente implements UpdateCliente {
     constructor(
         private readonly updateClienteRepository: UpdateClienteRepository,
         private readonly updateCarroRepository: UpdateCarroRepository,
         private readonly saveCarroRepository: SaveCarroRepository,
-        private readonly loadCarroByClienteIdRepository: LoadCarroByClienteIdRepository
+        private readonly loadCarroByClienteIdRepository: LoadCarroByClienteIdRepository,
+        private readonly deleteCarroRepository: DeleteCarroRepository
     ) {}
 
     async update(model: UpdateClienteParams): Promise<Wrapper<ClienteModel>> {
@@ -77,7 +79,7 @@ export class DbUpdateCliente implements UpdateCliente {
         const currentCarros = await this.loadCarroByClienteIdRepository.loadByClienteId(clienteId);
         for (const carro of currentCarros) {
             if (!models.find((find) => find.id === carro.id_carro)) {
-                console.log('deletar');
+                await this.deleteCarroRepository.delete(carro.id_carro);
             }
         }
 
