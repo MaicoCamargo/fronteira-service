@@ -8,11 +8,17 @@ import {
 } from '../../../../tests/mock/mock-cliente';
 import { UpdateCarroModel, UpdateCarroRepository } from '../../protocols/db/carro/update-carro-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
-import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import {
+    mockFakeCarroModelList,
+    mockFakeDbCarroModel,
+    mockFakeDbCarroModelList
+} from '../../../../tests/mock/mock-carro';
 import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
 import { UpdateClienteParams } from '../../../domain/usecases/cliente/update-cliente';
 import { ClienteModel } from '../../../domain/models/cliente-model';
 import { CarroModel } from '../../../domain/models/carro-model';
+import { LoadCarroByClienteId } from '../../../domain/usecases/carro/load-carro-by-cliente-id';
+import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 
 describe('DbUpdateCliente Use Case', () => {
     test('Deve chamar UpdateClienteRepository com valores corretos', async () => {
@@ -65,11 +71,26 @@ describe('DbUpdateCliente Use Case', () => {
         });
     });
 
+    test('Deve remover um carro se um carro for removido', async () => {
+        const { sut, loadCarroByClienteIdRepositoryStub } = makeSut();
+        const clienteWithOutCar: UpdateClienteParams = { ...mockFakeUpdateClienteParams(), carros: [] };
+        const cliente = await sut.update(clienteWithOutCar);
+        const updated: ClienteModel = mockFakeClienteModel();
+        // todo quando atualizar endereco remover {...}
+        expect(cliente.content).toEqual({
+            id: updated.id,
+            telefone: updated.telefone,
+            cpf: updated.cpf,
+            carros: clienteWithOutCar.carros,
+            nome: updated.nome
+        });
+    });
+
     test('Deve chamar UpdateCarroRepository com valores corretos', async () => {
-        const { sut, updateCarroRepositoryStub } = makeSut();
-        const updateSpy = jest.spyOn(updateCarroRepositoryStub, 'update');
+        const { sut, loadCarroByClienteIdRepositoryStub } = makeSut();
+        const updateSpy = jest.spyOn(loadCarroByClienteIdRepositoryStub, 'loadByClienteId');
         await sut.update(mockFakeUpdateClienteParams());
-        expect(updateSpy).toHaveBeenCalledWith(mockFakeDbCarroModel());
+        expect(updateSpy).toHaveBeenCalledWith(mockFakeUpdateClienteParams().id);
     });
 });
 
@@ -100,23 +121,40 @@ const makeSaveCarroRepositoryStub = (): SaveCarroRepository => {
     return new SaveCarroRepositoryStub();
 };
 
+const makeLoadCarroByClienteIdRepositoryStubStub = (): LoadCarroByClienteIdRepository => {
+    class LoadCarroByClienteIdStub implements LoadCarroByClienteIdRepository {
+        loadByClienteId(id: number): Promise<DbCarroModel[]> {
+            return Promise.resolve(mockFakeDbCarroModelList());
+        }
+    }
+    return new LoadCarroByClienteIdStub();
+};
+
 interface SutTypes {
     sut: DbUpdateCliente;
     updateClienteRepositoryStub: UpdateClienteRepository;
     updateCarroRepositoryStub: UpdateCarroRepository;
     saveCarroRepositoryStub: SaveCarroRepository;
+    loadCarroByClienteIdRepositoryStub: LoadCarroByClienteIdRepository;
 }
 
 const makeSut = (): SutTypes => {
     const updateClienteRepositoryStub = makeUpdateClienteRepository();
     const updateCarroRepositoryStub = makeUpdateCarroRepositoryStub();
     const saveCarroRepositoryStub = makeSaveCarroRepositoryStub();
-    const sut = new DbUpdateCliente(updateClienteRepositoryStub, updateCarroRepositoryStub, saveCarroRepositoryStub);
+    const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStubStub();
+    const sut = new DbUpdateCliente(
+        updateClienteRepositoryStub,
+        updateCarroRepositoryStub,
+        saveCarroRepositoryStub,
+        loadCarroByClienteIdRepositoryStub
+    );
     return {
         sut,
         updateClienteRepositoryStub,
         updateCarroRepositoryStub,
-        saveCarroRepositoryStub
+        saveCarroRepositoryStub,
+        loadCarroByClienteIdRepositoryStub
     };
 };
 
