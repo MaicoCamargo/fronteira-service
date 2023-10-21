@@ -1,13 +1,21 @@
 import { DeleteItemRepository } from '../../protocols/db/item/delete-item-repository';
 import { DbDeleteItem } from './db-delete-item';
+import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbDeleteItem Use Case', () => {
-    test('Deve chamar DeleteItemRepository com valor correto', () => {
+    test('Deve chamar DeleteItemRepository com valor correto', async () => {
         const { sut, deleteItemRepositoryStub } = makeSut();
         const deleteSpy = jest.spyOn(deleteItemRepositoryStub, 'delete');
         const id = 1;
-        sut.delete(id);
+        await sut.delete(id);
         expect(deleteSpy).toHaveBeenCalledWith(id);
+    });
+
+    test('Deve lançar exceção se DeleteItemRepository lançar exceção', async () => {
+        const { sut, deleteItemRepositoryStub } = makeSut();
+        jest.spyOn(deleteItemRepositoryStub, 'delete').mockImplementationOnce(throwError);
+        const promise = sut.delete(1);
+        await expect(promise).rejects.toThrow();
     });
 });
 
