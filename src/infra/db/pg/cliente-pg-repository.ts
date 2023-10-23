@@ -79,8 +79,6 @@ export class ClientePgRepository
             .leftJoin('cliente_carro', 'servico.carro_id', 'cliente_carro.carro_id')
             .leftJoin('cliente', 'cliente.id_cliente', 'cliente_carro.cliente_id')
             .where({ id_servico: servicoId })
-            .whereNull('cliente.dh_exclusion')
-            .whereNull('cliente_carro.dh_exclusion')
             .select('cliente.*');
         return mapper(result);
     }
