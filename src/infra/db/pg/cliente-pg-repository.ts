@@ -24,7 +24,7 @@ export class ClientePgRepository
         LoadClienteByIdServicoRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
-        const query = knexInstance('cliente');
+        const query = knexInstance('cliente').whereNull('dh_exclusion');
         return await knexPaginateAdapter(query, pageFilter);
     }
 
@@ -42,7 +42,7 @@ export class ClientePgRepository
     }
 
     async loadById(id: number): Promise<DbClienteModel> {
-        const result: any = await knexInstance('cliente').where({ id_cliente: id });
+        const result: any = await knexInstance('cliente').where({ id_cliente: id }).whereNull('dh_exclusion');
         if (result.length === 0) return null;
         const map = mapper(result);
         return {
@@ -58,7 +58,7 @@ export class ClientePgRepository
     async update(model: UpdateClienteModel): Promise<DbClienteModel> {
         const result: any = await knexInstance('cliente')
             .where({ id_cliente: model.id_cliente })
-            .update(model)
+            .update({ ...model, last_updated: new Date() })
             .returning('*');
         const map = mapper(result);
         return {
@@ -66,13 +66,12 @@ export class ClientePgRepository
             cpf: map.cpf,
             nome: map.nome,
             telefone: map.telefone,
-            last_updated: map.last_updated,
             endereco_id: map.endereco_id
         };
     }
 
     async delete(id: number): Promise<void> {
-        await knexInstance('cliente').where({ id_cliente: id }).del();
+        await knexInstance('cliente').where({ id_cliente: id }).update({ dh_exclusion: new Date() });
     }
 
     async loadByIdServico(servicoId: number): Promise<DbClienteModel> {
@@ -80,6 +79,8 @@ export class ClientePgRepository
             .leftJoin('cliente_carro', 'servico.carro_id', 'cliente_carro.carro_id')
             .leftJoin('cliente', 'cliente.id_cliente', 'cliente_carro.cliente_id')
             .where({ id_servico: servicoId })
+            .whereNull('cliente.dh_exclusion')
+            .whereNull('cliente_carro.dh_exclusion')
             .select('cliente.*');
         return mapper(result);
     }
