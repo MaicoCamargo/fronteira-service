@@ -24,7 +24,7 @@ export class ClientePgRepository
         LoadClienteByIdServicoRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
-        const query = knexInstance('cliente');
+        const query = knexInstance('cliente').whereNull('dh_exclusion');
         return await knexPaginateAdapter(query, pageFilter);
     }
 
@@ -42,7 +42,7 @@ export class ClientePgRepository
     }
 
     async loadById(id: number): Promise<DbClienteModel> {
-        const result: any = await knexInstance('cliente').where({ id_cliente: id });
+        const result: any = await knexInstance('cliente').where({ id_cliente: id }).whereNull('dh_exclusion');
         if (result.length === 0) return null;
         const map = mapper(result);
         return {
@@ -58,21 +58,13 @@ export class ClientePgRepository
     async update(model: UpdateClienteModel): Promise<DbClienteModel> {
         const result: any = await knexInstance('cliente')
             .where({ id_cliente: model.id_cliente })
-            .update(model)
-            .returning('*');
-        const map = mapper(result);
-        return {
-            id_cliente: map.id_cliente,
-            cpf: map.cpf,
-            nome: map.nome,
-            telefone: map.telefone,
-            last_updated: map.last_updated,
-            endereco_id: map.endereco_id
-        };
+            .update({ last_updated: new Date(), cpf: model.cpf, nome: model.nome, telefone: model.telefone })
+            .returning(['id_cliente', 'cpf', 'nome', 'telefone', 'endereco_id']);
+        return mapper(result);
     }
 
     async delete(id: number): Promise<void> {
-        await knexInstance('cliente').where({ id_cliente: id }).del();
+        await knexInstance('cliente').where({ id_cliente: id }).update({ dh_exclusion: new Date() });
     }
 
     async loadByIdServico(servicoId: number): Promise<DbClienteModel> {

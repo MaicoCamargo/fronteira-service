@@ -1,5 +1,10 @@
 import { DbCarroModel } from '../../../models/db-carro-model';
 
+export interface LoadCarroByIdParams {
+    id_carro: number;
+    dh_exclusion?: Date;
+}
+
 export interface LoadCarroByIdRepository {
-    loadById: (id: number) => Promise<DbCarroModel>;
+    loadById: (params: LoadCarroByIdParams) => Promise<DbCarroModel>;
 }

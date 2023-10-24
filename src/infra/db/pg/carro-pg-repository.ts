@@ -2,7 +2,10 @@ import { AddCarroModel, SaveCarroRepository } from '../../../data/protocols/db/c
 import { DbCarroModel } from '../../../data/models/db-carro-model';
 import { knexInstance } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
-import { LoadCarroByIdRepository } from '../../../data/protocols/db/carro/load-carro-by-id-repository';
+import {
+    LoadCarroByIdParams,
+    LoadCarroByIdRepository
+} from '../../../data/protocols/db/carro/load-carro-by-id-repository';
 import { UpdateCarroModel, UpdateCarroRepository } from '../../../data/protocols/db/carro/update-carro-repository';
 import { LoadCarroByClienteIdRepository } from '../../../data/protocols/db/carro/load-carro-by-cliente-id-repository';
 import { DeleteCarroRepository } from '../../../data/protocols/db/carro/delete-carro-repository';
@@ -22,8 +25,10 @@ export class CarroPgRepository
         return Object.assign({}, map, { id: map.id_carro, quilometragem: map.quilometragem });
     }
 
-    async loadById(id: number): Promise<DbCarroModel> {
-        return (await knexInstance('carro').where({ id_carro: id }).whereNull('dh_exclusion').first()) as DbCarroModel;
+    async loadById(params: LoadCarroByIdParams): Promise<DbCarroModel> {
+        return (await knexInstance('carro')
+            .where({ ...params })
+            .first()) as DbCarroModel;
     }
 
     async update(model: UpdateCarroModel): Promise<DbCarroModel> {

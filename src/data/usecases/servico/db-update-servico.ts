@@ -48,7 +48,7 @@ export class DbUpdateServico implements UpdateServico {
     }
 
     private async loadCarroById(id: number): Promise<CarroModel> {
-        const model = await this.loadCarroByIdRepository.loadById(id);
+        const model = await this.loadCarroByIdRepository.loadById({ id_carro: id });
         return {
             id: model.id_carro,
             modelo: model.modelo,

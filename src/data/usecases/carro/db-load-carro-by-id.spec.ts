@@ -1,17 +1,16 @@
-import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
-import { CarroModel } from '../../../domain/models/carro-model';
+import { LoadCarroByIdParams, LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { mockFakeCarroModel, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbLoadCarroById } from './db-load-carro-by-id';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { DbCarroModel } from '../../models/db-carro-model';
 
-describe('DbLoadCarroById Usecase', () => {
+describe('DbLoadCarroById Use Case', () => {
     test('Deve chamar LoadCarroByIdRepository com valores corretos', async () => {
         const { sut, loadCarroByIdRepositoryStub } = makeSut();
         const id = 1;
         const loadByIdSpy = jest.spyOn(loadCarroByIdRepositoryStub, 'loadById');
         await sut.loadById(id);
-        expect(loadByIdSpy).toBeCalledWith(id);
+        expect(loadByIdSpy).toBeCalledWith({ id_carro: id });
     });
 
     test('Deve lançar exceção se LoadCarroByIdRepository lançar exceção', async () => {
@@ -44,7 +43,7 @@ const makeSut = (): SutTypes => {
 
 const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
-        loadById(id: number): Promise<DbCarroModel> {
+        loadById(params: LoadCarroByIdParams): Promise<DbCarroModel> {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }

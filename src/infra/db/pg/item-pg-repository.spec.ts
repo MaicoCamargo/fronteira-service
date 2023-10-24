@@ -7,6 +7,7 @@ import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { DbUpdateItemModel } from '../../../data/protocols/db/item/update-item-repository';
 import { DbServicoModel } from '../../../data/models/db-servico-model';
 import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
+import { makePgItemCreate } from '../../../../tests/mock/mock-db-item';
 
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
@@ -109,23 +110,18 @@ describe('ItemPgRepository', () => {
             expect(result[0].valor).toEqual(createdItens[0].valor);
         });
     });
+
+    describe('delete()', () => {
+        test('Deve deletar um item em caso de sucesso', async () => {
+            const created: DbItemModel[] = await makePgItemCreate();
+            const sut = makeSut();
+            await sut.delete(created[0].id_peca);
+            const dbItem = await knexInstance('item').where({ id_peca: created[0].id_peca }).first();
+            expect(dbItem).toBeUndefined();
+        });
+    });
 });
 
 const makeSut = (): ItemPgRepository => {
     return new ItemPgRepository();
-};
-
-const makePgItemCreate = async (): Promise<DbItemModel[]> => {
-    const result = await knexInstance('item')
-        .insert([
-            mockFakeSaveItemModel(),
-            {
-                nome: 'other_nome',
-                marca: 'other_marca',
-                valor: 11,
-                last_updated: new Date()
-            }
-        ])
-        .returning('*');
-    return result;
 };

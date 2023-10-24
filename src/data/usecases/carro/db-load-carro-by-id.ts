@@ -6,7 +6,7 @@ export class DbLoadCarroById implements LoadCarroById {
     constructor(private readonly loadCarroByIdRepository: LoadCarroByIdRepository) {}
 
     async loadById(id: number): Promise<CarroModel> {
-        const carro = await this.loadCarroByIdRepository.loadById(id);
+        const carro = await this.loadCarroByIdRepository.loadById({ id_carro: id });
         return {
             id: carro.id_carro,
             modelo: carro.modelo,

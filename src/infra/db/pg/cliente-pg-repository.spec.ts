@@ -107,17 +107,20 @@ describe('Cliente Postgres Repository', () => {
             const sut = makeSut();
             const cliente = await sut.update({
                 id_cliente: model.id_cliente,
-                nome: 'outher_nome',
-                telefone: 'outher_telefone',
+                nome: 'other_nome',
+                telefone: 'other_telefone',
                 cpf: 'any_cpf'
             });
             expect(cliente).toBeTruthy();
             expect(cliente.id_cliente).toEqual(model.id_cliente);
             expect(cliente.cpf).toEqual('any_cpf');
-            expect(cliente.nome).toEqual('outher_nome');
+            expect(cliente.nome).toEqual('other_nome');
             expect(cliente.endereco_id).toEqual(model.endereco_id);
-            expect(cliente.telefone).toEqual('outher_telefone');
-            expect(cliente.last_updated).toBeTruthy();
+            expect(cliente.telefone).toEqual('other_telefone');
+
+            const clienteDb = await knexInstance('cliente').where({ id_cliente: model.id_cliente }).first();
+            expect(clienteDb.last_updated).not.toBeNull();
+            expect(clienteDb.dh_exclusion).toBeNull();
         });
     });
 

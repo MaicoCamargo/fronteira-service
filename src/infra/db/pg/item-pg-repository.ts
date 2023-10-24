@@ -8,9 +8,15 @@ import { SaveItemModel, SaveItemRepository } from '../../../data/protocols/db/it
 import { mapper } from './helpers/mapper';
 import { DbUpdateItemModel, UpdateItemRepository } from '../../../data/protocols/db/item/update-item-repository';
 import { LoadItensByServicoRepository } from '../../../data/protocols/db/item/load-itens-by-servico-repository';
+import { DeleteItemRepository } from '../../../data/protocols/db/item/delete-item-repository';
 
 export class ItemPgRepository
-    implements LoadItensRepository, SaveItemRepository, UpdateItemRepository, LoadItensByServicoRepository
+    implements
+        LoadItensRepository,
+        SaveItemRepository,
+        UpdateItemRepository,
+        LoadItensByServicoRepository,
+        DeleteItemRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
         const query = knexInstance('item').returning(['id_peca', 'marca', 'valor', 'nome']);
@@ -36,5 +42,9 @@ export class ItemPgRepository
             .where({ servico_id: servicoId })
             .returning(['id_peca', 'marca', 'valor', 'nome']);
         return result;
+    }
+
+    async delete(id: number): Promise<void> {
+        await knexInstance('item').where({ id_peca: id }).del();
     }
 }
