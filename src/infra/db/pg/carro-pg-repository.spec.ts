@@ -45,7 +45,7 @@ describe('Carro Postgres Repository', () => {
         test('Deve retornar um carro em caso de sucesso', async () => {
             const sut = makeSut();
             const carro = await sut.save(mockFakeAddCarroModel(), cliente.id_cliente);
-            const carroLoaded = await sut.loadById(carro.id_carro);
+            const carroLoaded = await sut.loadById({ id_carro: carro.id_carro });
             expect(carroLoaded).toBeTruthy();
             expect(carroLoaded.id_carro).toBeTruthy();
             expect(carroLoaded.modelo).toEqual(mockFakeAddCarroModel().modelo);
@@ -99,7 +99,7 @@ describe('Carro Postgres Repository', () => {
             const sut = makeSut();
             const carro = await sut.save(mockFakeAddCarroModel(), cliente.id_cliente);
             await sut.delete(carro.id_carro);
-            const carroLoaded = await sut.loadById(carro.id_carro);
+            const carroLoaded = await sut.loadById({ id_carro: carro.id_carro, dh_exclusion: null });
             expect(carroLoaded).toBeFalsy();
         });
     });

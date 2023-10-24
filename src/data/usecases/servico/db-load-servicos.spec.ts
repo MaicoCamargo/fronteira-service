@@ -66,7 +66,7 @@ describe('DbLoadServicos Use Case', () => {
             const { sut, loadCarroByIdRepositoryStub } = makeSut();
             const loadByIdSpy = jest.spyOn(loadCarroByIdRepositoryStub, 'loadById');
             await sut.load();
-            expect(loadByIdSpy).toHaveBeenCalledWith(mockFakeServicoModelList()[0].carro.id);
+            expect(loadByIdSpy).toHaveBeenCalledWith({ id_carro: mockFakeServicoModelList()[0].carro.id });
         });
 
         test('Deve lançar exceção de LoadCarroByIdRepository caso ocorra exceção', async () => {
@@ -149,7 +149,7 @@ const makeLoadServicosRepository = (): LoadServicosRepository => {
 
 const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
-        loadById(id: number): Promise<DbCarroModel> {
+        loadById({ id_carro: number }): Promise<DbCarroModel> {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }

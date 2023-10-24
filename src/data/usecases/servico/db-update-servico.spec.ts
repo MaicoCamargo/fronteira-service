@@ -63,7 +63,7 @@ const makeUpdateServicoRepository = (): UpdateServicoRepository => {
 
 const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
     class LoadCarroByIdRepositoryStub implements LoadCarroByIdRepository {
-        async loadById(id: number): Promise<DbCarroModel> {
+        async loadById({ id_carro: number }): Promise<DbCarroModel> {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }
