@@ -33,7 +33,7 @@ export class DbLoadServicos implements LoadServicos {
     }
 
     private async loadCarroById(id: number): Promise<CarroModel> {
-        const model = await this.loadCarroByIdRepository.loadById(id);
+        const model = await this.loadCarroByIdRepository.loadById({ id_carro: id });
         if (!model) return null;
         return {
             id: model.id_carro,

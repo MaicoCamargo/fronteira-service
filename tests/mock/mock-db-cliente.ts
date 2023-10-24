@@ -13,8 +13,7 @@ export const makePgClienteCreate = async (): Promise<DbClienteModel> => {
                 nome: randomStr,
                 telefone: randomStr,
                 cpf: 'any_cpf',
-                endereco_id: endereco.id_endereco,
-                last_updated: new Date()
+                endereco_id: endereco.id_endereco
             })
             .returning(['nome', 'telefone', 'cpf', 'endereco_id', 'last_updated', 'id_cliente'])
     );

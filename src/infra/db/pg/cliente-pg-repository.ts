@@ -58,16 +58,9 @@ export class ClientePgRepository
     async update(model: UpdateClienteModel): Promise<DbClienteModel> {
         const result: any = await knexInstance('cliente')
             .where({ id_cliente: model.id_cliente })
-            .update({ ...model, last_updated: new Date() })
-            .returning('*');
-        const map = mapper(result);
-        return {
-            id_cliente: map.id_cliente,
-            cpf: map.cpf,
-            nome: map.nome,
-            telefone: map.telefone,
-            endereco_id: map.endereco_id
-        };
+            .update({ last_updated: new Date(), cpf: model.cpf, nome: model.nome, telefone: model.telefone })
+            .returning(['id_cliente', 'cpf', 'nome', 'telefone', 'endereco_id']);
+        return mapper(result);
     }
 
     async delete(id: number): Promise<void> {
