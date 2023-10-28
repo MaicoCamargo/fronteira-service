@@ -1,4 +1,4 @@
-import { LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
+import { LoadServicosDbFilter, LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { DbLoadServicos } from './db-load-servicos';
 import { mockFakeDbServicoModelList, mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
 import { PageFilter } from '../../../main/protocols/page-filter';
@@ -15,6 +15,7 @@ import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-inc
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
+import { Filter } from '../../../main/protocols/filter';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -44,7 +45,7 @@ describe('DbLoadServicos Use Case', () => {
         const { sut, loadServicosRepositoryStub } = makeSut();
         const loadSpy = jest.spyOn(loadServicosRepositoryStub, 'load');
         await sut.load(pageFilter);
-        expect(loadSpy).toHaveBeenCalledWith(pageFilter);
+        expect(loadSpy).toHaveBeenCalledWith({ pageFilter });
     });
 
     test('Deve lançar exceção de LoadServicosRepository caso ocorra exceção', async () => {
@@ -139,7 +140,7 @@ const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
 
 const makeLoadServicosRepository = (): LoadServicosRepository => {
     class LoadServicosRepositoryStub implements LoadServicosRepository {
-        async load(pageFilter: PageFilter): Promise<Wrapper<DbServicoModel[]>> {
+        load(filters: Filter<LoadServicosDbFilter> | undefined): Promise<Wrapper<DbServicoModel[]>> {
             const wrapper: Wrapper<DbServicoModel[]> = { content: mockFakeDbServicoModelList() };
             return Promise.resolve(wrapper);
         }

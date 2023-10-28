@@ -5,6 +5,9 @@ import { DbCarroModel } from '../../../data/models/db-carro-model';
 import { mapper } from './helpers/mapper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { PageFilter } from '../../../main/protocols/page-filter';
+import any = jasmine.any;
+import { Filter } from '../../../main/protocols/filter';
+import { LoadServicosDbFilter } from '../../../data/protocols/db/servico/load-servicos-repository';
 
 describe('Servico Postgres Repository', () => {
     let servicos: DbServicoModel[];
@@ -42,7 +45,7 @@ describe('Servico Postgres Repository', () => {
         test('Deve retornar uma lista de serviços paginada em caso de sucesso', async () => {
             const sut = makeSut();
             const pageFilter: PageFilter = { page: 1, size: 2 };
-            const wrapper = await sut.load(pageFilter);
+            const wrapper = await sut.load({ pageFilter });
             expect(servicos).toEqual(wrapper.content);
             expect(servicos.length).toEqual(wrapper.content.length);
             expect(wrapper.pagination.total).toEqual(servicos.length);
@@ -53,6 +56,24 @@ describe('Servico Postgres Repository', () => {
             expect(wrapper.pagination.from).toEqual(0);
             expect(wrapper.pagination.to).toEqual(servicos.length);
             expect(wrapper.pagination.lastPage).toEqual(1);
+        });
+
+        test('Deve retornar uma lista de serviços filtros por um range de datas', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 5 };
+            const today = new Date();
+
+            const filters: Filter<LoadServicosDbFilter> = {
+                params: {
+                    startDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1),
+                    endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+                },
+                pageFilter
+            };
+            const wrapper = await sut.load(filters);
+            expect(servicos).toEqual(wrapper.content);
+            expect(servicos.length).toEqual(wrapper.content.length);
+            expect(wrapper.pagination.total).toEqual(servicos.length);
         });
     });
 
