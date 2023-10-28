@@ -17,7 +17,7 @@ export class DbLoadServicos implements LoadServicos {
     ) {}
 
     async load(pageFilter?: PageFilter): Promise<Wrapper<ServicoModel[]>> {
-        const loaded = await this.loadServicosRepository.load(pageFilter);
+        const loaded = await this.loadServicosRepository.load({ pageFilter });
         const servicos: Array<Promise<ServicoModel>> = loaded.content.map(async (item) => ({
             lastUpdate: item.last_updated,
             id: item.id_servico,

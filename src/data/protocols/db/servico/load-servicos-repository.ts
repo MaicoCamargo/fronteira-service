@@ -1,7 +1,13 @@
 import { DbServicoModel } from '../../../models/db-servico-model';
 import { Wrapper } from '../../../../main/protocols/http-wrapper';
-import { PageFilter } from '../../../../main/protocols/page-filter';
+import { Filter } from '../../../../main/protocols/filter';
+
+export interface LoadServicosDbFilter {
+    clientes?: number[];
+    startDate?: Date;
+    endDate?: Date;
+}
 
 export interface LoadServicosRepository {
-    load: (pageFilter?: PageFilter) => Promise<Wrapper<DbServicoModel[]>>;
+    load: (filters?: Filter<LoadServicosDbFilter>) => Promise<Wrapper<DbServicoModel[]>>;
 }

@@ -1,5 +1,7 @@
-import { LoadServicosRepository } from '../../../data/protocols/db/servico/load-servicos-repository';
-import { PageFilter } from '../../../main/protocols/page-filter';
+import {
+    LoadServicosDbFilter,
+    LoadServicosRepository
+} from '../../../data/protocols/db/servico/load-servicos-repository';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { DbServicoModel } from '../../../data/models/db-servico-model';
 import { knexInstance } from './helpers/knex-helper';
@@ -11,15 +13,32 @@ import {
     UpdateServicoRepository
 } from '../../../data/protocols/db/servico/update-servico-repository';
 import { DeleteServicoRepository } from '../../../data/protocols/db/servico/delete-servico-repository';
+import { Filter } from '../../../main/protocols/filter';
 
 export class ServicoPgRepository
     implements LoadServicosRepository, SaveServicoRepository, UpdateServicoRepository, DeleteServicoRepository
 {
-    async load(pageFilter?: PageFilter): Promise<Wrapper<DbServicoModel[]>> {
-        const query = knexInstance('servico')
-            .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
-            .whereNull('dh_exclusion');
-        return await knexPaginateAdapter(query, pageFilter);
+    async load(filters?: Filter<LoadServicosDbFilter>): Promise<Wrapper<DbServicoModel[]>> {
+        let query: any;
+        if (filters?.params) {
+            query = knexInstance('servico')
+                .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
+                .whereNull('dh_exclusion');
+            if (filters.params.startDate) query.andWhere('data', '>=', filters.params.startDate);
+            if (filters.params.endDate) query.andWhere('data', '<=', filters.params.endDate);
+            if (filters.params.clientes) {
+                const carroQuery = knexInstance('cliente_carro')
+                    .whereIn('cliente_id', filters?.params?.clientes)
+                    .whereNull('dh_exclusion')
+                    .returning('carro_id');
+                query.andWhere('carro_id', 'in', carroQuery);
+            }
+        } else {
+            query = knexInstance('servico')
+                .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
+                .whereNull('dh_exclusion');
+        }
+        return await knexPaginateAdapter(query, filters?.pageFilter);
     }
 
     async save(model: SaveServicoModel): Promise<DbServicoModel> {
