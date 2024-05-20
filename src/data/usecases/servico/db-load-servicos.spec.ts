@@ -1,7 +1,6 @@
 import { LoadServicosDbFilter, LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { DbLoadServicos } from './db-load-servicos';
 import { mockFakeDbServicoModelList, mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
-import { PageFilter } from '../../../main/protocols/page-filter';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { DbServicoModel } from '../../models/db-servico-model';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
@@ -16,6 +15,7 @@ import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/loa
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { Filter } from '../../../main/protocols/filter';
+import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -41,11 +41,26 @@ describe('DbLoadServicos Use Case', () => {
     });
 
     test('Deve chamar LoadServicosRepository com valores corretos', async () => {
-        const pageFilter: PageFilter = { page: 1, size: 10 };
+        const params: LoadServicosParams = {
+            page: 1,
+            size: 10,
+            modelo: 'opala',
+            cliente: 'cliente'
+        } as LoadServicosParams;
+        const dbFilter: Filter<LoadServicosDbFilter> = {
+            pageFilter: {
+                page: params.page,
+                size: params.size
+            },
+            params: {
+                modelo: params.modelo,
+                cliente: params.cliente
+            }
+        };
         const { sut, loadServicosRepositoryStub } = makeSut();
         const loadSpy = jest.spyOn(loadServicosRepositoryStub, 'load');
-        await sut.load(pageFilter);
-        expect(loadSpy).toHaveBeenCalledWith({ pageFilter });
+        await sut.load(params);
+        expect(loadSpy).toHaveBeenCalledWith(dbFilter);
     });
 
     test('Deve lançar exceção de LoadServicosRepository caso ocorra exceção', async () => {

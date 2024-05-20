@@ -33,6 +33,27 @@ export class ServicoPgRepository
                     .returning('carro_id');
                 query.andWhere('carro_id', 'in', carroQuery);
             }
+            if (filters.params.cliente) {
+                const clienteQuery = knexInstance('cliente')
+                    .rightJoin('cliente_carro', 'cliente_id', '=', 'id_cliente')
+                    .andWhereILike('nome', `%${filters.params.cliente}%`)
+                    .select('cliente_carro.carro_id as carro_id');
+                query.andWhere('carro_id', 'in', clienteQuery);
+            }
+            if (filters.params.placa) {
+                const carroQuery = knexInstance('carro')
+                    .rightJoin('cliente_carro', 'id_carro', '=', 'carro_id')
+                    .andWhereILike('placa', `%${filters.params.placa}%`)
+                    .select('id_carro');
+                query.andWhere('carro_id', 'in', carroQuery);
+            }
+            if (filters.params.modelo) {
+                const carroQuery = knexInstance('carro')
+                    .rightJoin('cliente_carro', 'id_carro', '=', 'carro_id')
+                    .andWhereILike('modelo', `%${filters.params.modelo}%`)
+                    .select('id_carro');
+                query.andWhere('carro_id', 'in', carroQuery);
+            }
         } else {
             query = knexInstance('servico')
                 .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
