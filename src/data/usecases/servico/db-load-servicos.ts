@@ -1,12 +1,12 @@
-import { LoadServicos } from '../../../domain/usecases/servico/load-servicos';
+import { LoadServicos, LoadServicosParams } from '../../../domain/usecases/servico/load-servicos';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
-import { LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
-import { PageFilter } from '../../../main/protocols/page-filter';
+import { LoadServicosDbFilter, LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '../../../domain/models/carro-model';
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
+import { Filter } from '@/main/protocols/filter';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
@@ -16,8 +16,17 @@ export class DbLoadServicos implements LoadServicos {
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository
     ) {}
 
-    async load(pageFilter?: PageFilter): Promise<Wrapper<ServicoModel[]>> {
-        const loaded = await this.loadServicosRepository.load({ pageFilter });
+    async load(params?: LoadServicosParams): Promise<Wrapper<ServicoModel[]>> {
+        const filters: Filter<LoadServicosDbFilter> = {};
+        if (params) {
+            const { page, size, ...paramsWithoutPageFilter } = params;
+            filters.params = paramsWithoutPageFilter;
+            if (page && size) {
+                filters.pageFilter = { page, size };
+            }
+        }
+
+        const loaded = await this.loadServicosRepository.load(filters);
         const servicos: Array<Promise<ServicoModel>> = loaded.content.map(async (item) => ({
             lastUpdate: item.last_updated,
             id: item.id_servico,

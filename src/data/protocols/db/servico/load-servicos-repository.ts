@@ -6,6 +6,9 @@ export interface LoadServicosDbFilter {
     clientes?: number[];
     startDate?: Date;
     endDate?: Date;
+    modelo?: string;
+    placa?: string;
+    cliente?: string;
 }
 
 export interface LoadServicosRepository {
