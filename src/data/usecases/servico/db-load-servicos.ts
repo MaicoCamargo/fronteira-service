@@ -7,13 +7,15 @@ import { CarroModel } from '../../../domain/models/carro-model';
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { Filter } from '@/main/protocols/filter';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
         private readonly loadServicosRepository: LoadServicosRepository,
         private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
         private readonly loadIncludedItensRepository: LoadIncludedItensRepository,
-        private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository
+        private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
+        private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository
     ) {}
 
     async load(params?: LoadServicosParams): Promise<Wrapper<ServicoModel[]>> {
@@ -36,7 +38,8 @@ export class DbLoadServicos implements LoadServicos {
             quilometragem: item.quilometragem,
             carro: await this.loadCarroById(item.carro_id),
             itens: await this.loadItens(item.id_servico),
-            cliente: await this.loadCliente(item.id_servico)
+            cliente: await this.loadCliente(item.id_servico),
+            nota: await this.hasNota(item.id_servico)
         }));
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }
@@ -73,5 +76,9 @@ export class DbLoadServicos implements LoadServicos {
             id: model.id_cliente,
             nome: model.nome
         };
+    }
+
+    private async hasNota(idServico: number): Promise<boolean> {
+        return this.loadNotaFiscalByIdServicoRepository.load(idServico);
     }
 }

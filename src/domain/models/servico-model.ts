@@ -22,4 +22,5 @@ export interface ServicoModel {
     lastUpdate?: Date;
     itens: IncludedItemModel[];
     cliente: Cliente;
+    nota?: boolean;
 }
