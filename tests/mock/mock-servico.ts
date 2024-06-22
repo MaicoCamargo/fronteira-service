@@ -57,7 +57,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         cliente: {
             id: mockFakeClienteModel().id,
             nome: mockFakeClienteModel().nome
-        }
+        },
+        nota: false
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
@@ -71,7 +72,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         cliente: {
             id: mockFakeClienteModel().id,
             nome: mockFakeClienteModel().nome
-        }
+        },
+        nota: false
     }
 ];
 

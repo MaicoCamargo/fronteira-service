@@ -16,6 +16,7 @@ import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { Filter } from '../../../main/protocols/filter';
 import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -122,6 +123,7 @@ interface SutTypes {
     loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
     loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
+    loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
 }
 
 const makeSut = (): SutTypes => {
@@ -129,18 +131,21 @@ const makeSut = (): SutTypes => {
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
     const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
+    const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
-        loadClienteByIdServicoRepositoryStub
+        loadClienteByIdServicoRepositoryStub,
+        loadNotaFiscalByIdServicoRepositoryStub
     );
     return {
         sut,
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
-        loadClienteByIdServicoRepositoryStub
+        loadClienteByIdServicoRepositoryStub,
+        loadNotaFiscalByIdServicoRepositoryStub
     };
 };
 
@@ -179,4 +184,13 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
         }
     }
     return new LoadClienteByIdServicoRepositoryStub();
+};
+
+const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
+    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
+        load(idServico: number): boolean {
+            return false;
+        }
+    }
+    return new LoadNotaFiscalByIdServicoRepositoryStub();
 };
