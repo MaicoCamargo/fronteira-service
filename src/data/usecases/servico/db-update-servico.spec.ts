@@ -25,6 +25,7 @@ import {
     SaveIncludedItensRepository
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
 import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -49,6 +50,7 @@ interface SutTypes {
     updateIncludedItemRepositoryStub: UpdateIncludedItemRepository;
     loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
     deleteIncludedItemRepositoryStub: DeleteIncludedItemRepository;
+    loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     sut: DbUpdateServico;
 }
 
@@ -115,6 +117,15 @@ const makeDeleteIncludedItemRepository = (): DeleteIncludedItemRepository => {
     return new DeleteIncludedItemRepositoryStub();
 };
 
+const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
+    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
+        load(idServico: number): Promise<boolean> {
+            return Promise.resolve(false);
+        }
+    }
+    return new LoadNotaFiscalByIdServicoRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
@@ -123,6 +134,7 @@ const makeSut = (): SutTypes => {
     const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
     const deleteIncludedItemRepositoryStub = makeDeleteIncludedItemRepository();
+    const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
@@ -131,7 +143,8 @@ const makeSut = (): SutTypes => {
         updateIncludedItemRepositoryStub,
         loadIncludedItensRepositoryStub,
         saveIncludedItensRepositoryStub,
-        deleteIncludedItemRepositoryStub
+        deleteIncludedItemRepositoryStub,
+        loadNotaFiscalByIdServicoRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
@@ -140,6 +153,7 @@ const makeSut = (): SutTypes => {
         updateIncludedItemRepositoryStub,
         loadIncludedItensRepositoryStub,
         deleteIncludedItemRepositoryStub,
+        loadNotaFiscalByIdServicoRepositoryStub,
         sut
     };
 };
