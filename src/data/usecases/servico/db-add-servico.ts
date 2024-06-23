@@ -6,11 +6,13 @@ import {
     SaveIncludedItemModel,
     SaveIncludedItensRepository
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 
 export class DbAddServico implements AddServico {
     constructor(
         private readonly saveServicoRepository: SaveServicoRepository,
-        private readonly saveIncludedItensRepository: SaveIncludedItensRepository
+        private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
+        private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -31,7 +33,8 @@ export class DbAddServico implements AddServico {
             quilometragem: result.quilometragem,
             descricao: result.descricao,
             carro: params.carro,
-            cliente: params.cliente
+            cliente: params.cliente,
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico)
         };
     }
 
