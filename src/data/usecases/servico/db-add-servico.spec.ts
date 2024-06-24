@@ -19,6 +19,7 @@ import {
     mockFakeSaveIncludedItemModelList
 } from '../../../../tests/mock/mock-included-itens';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -69,6 +70,7 @@ interface SutTypes {
     saveServicoRepositoryStub: SaveServicoRepository;
     saveIncludedItensRepositoryStub: SaveIncludedItensRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
+    saveNotaFiscalRepositoryStub: SaveNotaFiscalRepository;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -98,19 +100,31 @@ const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRep
     return new LoadNotaFiscalByIdServicoRepositoryStub();
 };
 
+const makeSaveNotaFiscalByIdServicoRepository = (): SaveNotaFiscalRepository => {
+    class SaveNotaFiscalRepositoryStub implements SaveNotaFiscalRepository {
+        save(idServico: number): Promise<void> {
+            return;
+        }
+    }
+    return new SaveNotaFiscalRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const saveServicoRepositoryStub = makeSaveServicoRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
+    const saveNotaFiscalRepositoryStub = makeSaveNotaFiscalByIdServicoRepository();
     const sut = new DbAddServico(
         saveServicoRepositoryStub,
         saveIncludedItensRepositoryStub,
-        loadNotaFiscalByIdServicoRepositoryStub
+        loadNotaFiscalByIdServicoRepositoryStub,
+        saveNotaFiscalRepositoryStub
     );
     return {
         sut,
         saveServicoRepositoryStub,
         saveIncludedItensRepositoryStub,
-        loadNotaFiscalByIdServicoRepositoryStub
+        loadNotaFiscalByIdServicoRepositoryStub,
+        saveNotaFiscalRepositoryStub
     };
 };
