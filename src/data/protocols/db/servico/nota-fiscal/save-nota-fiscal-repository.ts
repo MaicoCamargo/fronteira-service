@@ -1,3 +1,3 @@
 export interface SaveNotaFiscalRepository {
-    save: (idServico: number) => Promise<void>;
+    save: (idServico: number, status: boolean) => Promise<void>;
 }

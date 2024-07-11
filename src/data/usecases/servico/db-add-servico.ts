@@ -25,9 +25,7 @@ export class DbAddServico implements AddServico {
             carro_id: params.carro.id
         };
         const result: DbServicoModel = await this.saveServicoRepository.save(model);
-        if (params.nota) {
-            await this.saveNotaFiscalRepository.save(result.id_servico);
-        }
+        await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);
 
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
         return {

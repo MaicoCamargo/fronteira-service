@@ -20,6 +20,7 @@ export const makeDbUpdateServico = (): DbUpdateServico => {
         includedItemPgRepository,
         includedItemPgRepository,
         includedItemPgRepository,
+        notaFiscalPgRepository,
         notaFiscalPgRepository
     );
 };
