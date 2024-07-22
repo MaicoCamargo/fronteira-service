@@ -5,7 +5,6 @@ import { DbCarroModel } from '../../../data/models/db-carro-model';
 import { mapper } from './helpers/mapper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { PageFilter } from '../../../main/protocols/page-filter';
-import any = jasmine.any;
 import { Filter } from '../../../main/protocols/filter';
 import { LoadServicosDbFilter } from '../../../data/protocols/db/servico/load-servicos-repository';
 
@@ -16,6 +15,7 @@ describe('Servico Postgres Repository', () => {
         await mockDateAdapter.set(new Date());
         await knexInstance('cliente_carro').del();
         await knexInstance('servico_peca').del();
+        await knexInstance('nota_fiscal').del();
         await knexInstance('servico').del();
         await knexInstance('carro').del();
         servicos = await makePgServicoCreate();
