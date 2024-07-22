@@ -25,6 +25,10 @@ export class NotaFiscalPgRepository
             .where({ servico_id: idServico })
             .update({ dh_exclusion: status ? null : new Date(), updated_at: new Date() })
             .returning('*');
+        if (!result[0]) {
+            const saved = this.save(idServico, status);
+            return !!saved[0];
+        }
         return !!result[0];
     }
 }
