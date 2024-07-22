@@ -1,12 +1,12 @@
 import { ServicoPgRepository } from './servico-pg-repository';
-import { DbServicoModel } from '../../../data/models/db-servico-model';
+import { DbServicoModel } from '@/data/models/db-servico-model';
 import { knexInstance } from './helpers/knex-helper';
-import { DbCarroModel } from '../../../data/models/db-carro-model';
+import { DbCarroModel } from '@/data/models/db-carro-model';
 import { mapper } from './helpers/mapper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
-import { PageFilter } from '../../../main/protocols/page-filter';
-import { Filter } from '../../../main/protocols/filter';
-import { LoadServicosDbFilter } from '../../../data/protocols/db/servico/load-servicos-repository';
+import { PageFilter } from '@/main/protocols/page-filter';
+import { Filter } from '@/main/protocols/filter';
+import { LoadServicosDbFilter } from '@/data/protocols/db/servico/load-servicos-repository';
 
 describe('Servico Postgres Repository', () => {
     let servicos: DbServicoModel[];
