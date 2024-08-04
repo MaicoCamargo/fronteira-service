@@ -1,7 +1,11 @@
-import { DbClienteModel } from '../../../models/db-cliente-model';
-import { Wrapper } from '../../../../main/protocols/http-wrapper';
-import { PageFilter } from '../../../../main/protocols/page-filter';
+import { DbClienteModel } from '@/data/models/db-cliente-model';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { Filter } from '@/main/protocols/filter';
+
+export interface LoadClientesDbFilter {
+    nome?: string;
+}
 
 export interface LoadClientesRepository {
-    load: (pageFilter?: PageFilter) => Promise<Wrapper<DbClienteModel[]>>;
+    load: (filters?: Filter<LoadClientesDbFilter>) => Promise<Wrapper<DbClienteModel[]>>;
 }

@@ -1,18 +1,15 @@
-import { LoadClientesRepository } from '../../../data/protocols/db/cliente/load-clientes-repository';
-import { DbClienteModel } from '../../../data/models/db-cliente-model';
+import { LoadClientesDbFilter, LoadClientesRepository } from '@/data/protocols/db/cliente/load-clientes-repository';
+import { DbClienteModel } from '@/data/models/db-cliente-model';
 import { knexInstance } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
-import { LoadClienteByIdRepository } from '../../../data/protocols/db/cliente/load-cliente-by-id-repository';
-import {
-    UpdateClienteModel,
-    UpdateClienteRepository
-} from '../../../data/protocols/db/cliente/update-cliente-repository';
-import { DeleteClienteRepository } from '../../../data/protocols/db/cliente/delete-cliente-repository';
-import { AddClienteModel, SaveClienteRepository } from '../../../data/protocols/db/cliente/save-cliente-repository';
+import { LoadClienteByIdRepository } from '@/data/protocols/db/cliente/load-cliente-by-id-repository';
+import { UpdateClienteModel, UpdateClienteRepository } from '@/data/protocols/db/cliente/update-cliente-repository';
+import { DeleteClienteRepository } from '@/data/protocols/db/cliente/delete-cliente-repository';
+import { AddClienteModel, SaveClienteRepository } from '@/data/protocols/db/cliente/save-cliente-repository';
 import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
 import { Wrapper } from '../../../main/protocols/http-wrapper';
-import { PageFilter } from '../../../main/protocols/page-filter';
-import { LoadClienteByIdServicoRepository } from '../../../data/protocols/db/cliente/load-cliente-by-id-servico-repository';
+import { LoadClienteByIdServicoRepository } from '@/data/protocols/db/cliente/load-cliente-by-id-servico-repository';
+import { Filter } from '@/main/protocols/filter';
 
 export class ClientePgRepository
     implements
@@ -23,9 +20,14 @@ export class ClientePgRepository
         SaveClienteRepository,
         LoadClienteByIdServicoRepository
 {
-    async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
-        const query = knexInstance('cliente').whereNull('dh_exclusion');
-        return await knexPaginateAdapter(query, pageFilter);
+    async load(filters?: Filter<LoadClientesDbFilter>): Promise<Wrapper<DbClienteModel[]>> {
+        const query = await knexInstance('cliente').whereNull('dh_exclusion');
+        if (filters?.params) {
+            if (filters.params.nome) {
+                query.andWhereILike('nome', `%${filters.params.nome}%`);
+            }
+        }
+        return await knexPaginateAdapter(query, filters?.pageFilter);
     }
 
     async save(model: AddClienteModel): Promise<DbClienteModel> {

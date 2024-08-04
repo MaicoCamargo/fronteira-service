@@ -1,7 +1,11 @@
-import { ClienteModel } from '../../models/cliente-model';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
-import { PageFilter } from '../../../main/protocols/page-filter';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { PageFilter } from '@/main/protocols/page-filter';
+import { ClienteModel } from '@/domain/models/cliente-model';
+
+export interface LoadClientesParams extends PageFilter {
+    nome: string;
+}
 
 export interface LoadClientes {
-    load: (pageFilter?: PageFilter) => Promise<Wrapper<ClienteModel[]>>;
+    load: (params?: LoadClientesParams) => Promise<Wrapper<ClienteModel[]>>;
 }
