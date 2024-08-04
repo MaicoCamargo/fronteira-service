@@ -39,7 +39,7 @@ export class DbLoadServicos implements LoadServicos {
             carro: await this.loadCarroById(item.carro_id),
             itens: await this.loadItens(item.id_servico),
             cliente: await this.loadCliente(item.id_servico),
-            nota: await this.hasNota(item.id_servico)
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(item.id_servico)
         }));
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }
@@ -76,9 +76,5 @@ export class DbLoadServicos implements LoadServicos {
             id: model.id_cliente,
             nome: model.nome
         };
-    }
-
-    private async hasNota(idServico: number): Promise<boolean> {
-        return this.loadNotaFiscalByIdServicoRepository.load(idServico);
     }
 }

@@ -3,12 +3,14 @@ import { ServicoPgRepository } from '../../../../infra/db/pg/servico-pg-reposito
 import { CarroPgRepository } from '../../../../infra/db/pg/carro-pg-repository';
 import { ClientePgRepository } from '../../../../infra/db/pg/cliente-pg-repository';
 import { IncludedItemPgRepository } from '../../../../infra/db/pg/included-item-pg-repository';
+import { NotaFiscalPgRepository } from '@/infra/db/pg/nota-fiscal-pg-repository';
 
 export const makeDbUpdateServico = (): DbUpdateServico => {
     const servicoPgRepository = new ServicoPgRepository();
     const carroPgRepository = new CarroPgRepository();
     const clientePgRepository = new ClientePgRepository();
     const includedItemPgRepository = new IncludedItemPgRepository();
+    const notaFiscalPgRepository = new NotaFiscalPgRepository();
 
     return new DbUpdateServico(
         servicoPgRepository,
@@ -17,6 +19,8 @@ export const makeDbUpdateServico = (): DbUpdateServico => {
         includedItemPgRepository,
         includedItemPgRepository,
         includedItemPgRepository,
-        includedItemPgRepository
+        includedItemPgRepository,
+        notaFiscalPgRepository,
+        notaFiscalPgRepository
     );
 };

@@ -11,6 +11,8 @@ import {
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 import { SaveIncludedItensRepository } from '../../protocols/db/servico/included-item/save-included-itens-repository';
 import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/update-nota-fiscal-repository';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
@@ -20,7 +22,9 @@ export class DbUpdateServico implements UpdateServico {
         private readonly updateIncludedItemRepository: UpdateIncludedItemRepository,
         private readonly loadIncludedItensRepository: LoadIncludedItensRepository,
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
-        private readonly deleteIncludedItemRepository: DeleteIncludedItemRepository
+        private readonly deleteIncludedItemRepository: DeleteIncludedItemRepository,
+        private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
+        private readonly updateNotaFiscalRepository: UpdateNotaFiscalRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -33,6 +37,7 @@ export class DbUpdateServico implements UpdateServico {
         };
         const itens = await this.updateIncludedItens(params.itens, params.id);
         const updated = await this.updateServicoRepository.update(model);
+        await this.updateNotaFiscalRepository.update(model.id_servico, params.nota);
         const carro = await this.loadCarroById(updated.carro_id);
         const cliente = await this.loadCliente(updated.id_servico);
         return {
@@ -43,7 +48,8 @@ export class DbUpdateServico implements UpdateServico {
             data: updated.data,
             carro,
             itens,
-            cliente
+            cliente,
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(updated.id_servico)
         };
     }
 

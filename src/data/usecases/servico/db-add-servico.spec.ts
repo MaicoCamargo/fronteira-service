@@ -18,6 +18,8 @@ import {
     mockFakeDbIncludedItemModelList,
     mockFakeSaveIncludedItemModelList
 } from '../../../../tests/mock/mock-included-itens';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -67,6 +69,8 @@ interface SutTypes {
     sut: DbAddServico;
     saveServicoRepositoryStub: SaveServicoRepository;
     saveIncludedItensRepositoryStub: SaveIncludedItensRepository;
+    loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
+    saveNotaFiscalRepositoryStub: SaveNotaFiscalRepository;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -87,13 +91,40 @@ const makeSaveIncludedItensRepository = (): SaveIncludedItensRepository => {
     return new SaveIncludedItensRepositoryStub();
 };
 
+const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
+    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
+        load(idServico: number): Promise<boolean> {
+            return Promise.resolve(false);
+        }
+    }
+    return new LoadNotaFiscalByIdServicoRepositoryStub();
+};
+
+const makeSaveNotaFiscalByIdServicoRepository = (): SaveNotaFiscalRepository => {
+    class SaveNotaFiscalRepositoryStub implements SaveNotaFiscalRepository {
+        save(idServico: number): Promise<void> {
+            return;
+        }
+    }
+    return new SaveNotaFiscalRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const saveServicoRepositoryStub = makeSaveServicoRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
-    const sut = new DbAddServico(saveServicoRepositoryStub, saveIncludedItensRepositoryStub);
+    const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
+    const saveNotaFiscalRepositoryStub = makeSaveNotaFiscalByIdServicoRepository();
+    const sut = new DbAddServico(
+        saveServicoRepositoryStub,
+        saveIncludedItensRepositoryStub,
+        loadNotaFiscalByIdServicoRepositoryStub,
+        saveNotaFiscalRepositoryStub
+    );
     return {
         sut,
         saveServicoRepositoryStub,
-        saveIncludedItensRepositoryStub
+        saveIncludedItensRepositoryStub,
+        loadNotaFiscalByIdServicoRepositoryStub,
+        saveNotaFiscalRepositoryStub
     };
 };

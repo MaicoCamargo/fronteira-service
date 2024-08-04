@@ -6,11 +6,15 @@ import {
     SaveIncludedItemModel,
     SaveIncludedItensRepository
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
+import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
 
 export class DbAddServico implements AddServico {
     constructor(
         private readonly saveServicoRepository: SaveServicoRepository,
-        private readonly saveIncludedItensRepository: SaveIncludedItensRepository
+        private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
+        private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
+        private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -21,6 +25,7 @@ export class DbAddServico implements AddServico {
             carro_id: params.carro.id
         };
         const result: DbServicoModel = await this.saveServicoRepository.save(model);
+        await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);
 
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
         return {
@@ -31,7 +36,8 @@ export class DbAddServico implements AddServico {
             quilometragem: result.quilometragem,
             descricao: result.descricao,
             carro: params.carro,
-            cliente: params.cliente
+            cliente: params.cliente,
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico)
         };
     }
 

@@ -188,8 +188,8 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
 
 const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
     class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
-        load(idServico: number): boolean {
-            return false;
+        load(idServico: number): Promise<boolean> {
+            return Promise.resolve(false);
         }
     }
     return new LoadNotaFiscalByIdServicoRepositoryStub();

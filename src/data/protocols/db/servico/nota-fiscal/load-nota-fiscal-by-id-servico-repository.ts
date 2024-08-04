@@ -1,3 +1,3 @@
 export interface LoadNotaFiscalByIdServicoRepository {
-    load: (idServico: number) => boolean;
+    load: (idServico: number) => Promise<boolean>;
 }
