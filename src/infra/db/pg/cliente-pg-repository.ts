@@ -21,11 +21,14 @@ export class ClientePgRepository
         LoadClienteByIdServicoRepository
 {
     async load(filters?: Filter<LoadClientesDbFilter>): Promise<Wrapper<DbClienteModel[]>> {
-        const query = await knexInstance('cliente').whereNull('dh_exclusion');
+        let query: any;
         if (filters?.params) {
+            query = knexInstance('cliente').whereNull('dh_exclusion');
             if (filters.params.nome) {
                 query.andWhereILike('nome', `%${filters.params.nome}%`);
             }
+        } else {
+            query = knexInstance('cliente').whereNull('dh_exclusion');
         }
         return await knexPaginateAdapter(query, filters?.pageFilter);
     }

@@ -1,5 +1,5 @@
 import { DbLoadClientes } from './db-load-clientes';
-import { LoadClientesRepository } from '../../protocols/db/cliente/load-clientes-repository';
+import { LoadClientesDbFilter, LoadClientesRepository } from '../../protocols/db/cliente/load-clientes-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
@@ -12,11 +12,13 @@ import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapte
 import { Wrapper } from '../../../main/protocols/http-wrapper';
 import { PageFilter } from '../../../main/protocols/page-filter';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
+import { Filter } from '@/main/protocols/filter';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {
-        async load(pageFilter?: PageFilter): Promise<Wrapper<DbClienteModel[]>> {
-            return await knexPaginateAdapter(makeFakeDbClienteModelList(), pageFilter);
+        async load(filters?: Filter<LoadClientesDbFilter>): Promise<Wrapper<DbClienteModel[]>> {
+            const wrapper: Wrapper<DbClienteModel[]> = { content: makeFakeLoadClienteModelList() };
+            return Promise.resolve(wrapper);
         }
     }
     return new LoadClienteRepositoryStub();

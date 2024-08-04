@@ -1,7 +1,7 @@
 import { knexInstance } from './helpers/knex-helper';
 import { DbClienteModel } from '../../../data/models/db-cliente-model';
 import { ClientePgRepository } from './cliente-pg-repository';
-import { PageFilter } from '../../../main/protocols/page-filter';
+import { PageFilter } from '@/main/protocols/page-filter';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
 import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
 import { makePgEnderecoCreate } from '../../../../tests/mock/mock-db-endereco';
@@ -57,10 +57,28 @@ describe('Cliente Postgres Repository', () => {
 
             const sut = makeSut();
             const pageFilter: PageFilter = { page: 1, size: 6 };
-            const wrapper = await sut.load(pageFilter);
+            const wrapper = await sut.load({ pageFilter });
             expect(wrapper).toBeTruthy();
             expect(wrapper.content.length).toEqual(pageFilter.size);
             expect(wrapper.pagination.perPage).toEqual(pageFilter.size);
+        });
+
+        test('Deve retornar todos os clientes filtrado pelo nome', async () => {
+            const createdClientes = [await makePgClienteCreate(), await makePgClienteCreate()];
+            const sut = makeSut();
+            const wrapper = await sut.load({
+                params: {
+                    nome: createdClientes[0].nome
+                }
+            });
+            expect(wrapper).toBeTruthy();
+            expect(wrapper.content.length).toEqual(1);
+            expect(wrapper.content[0].id_cliente).toEqual(createdClientes[0].id_cliente);
+            expect(wrapper.content[0].cpf).toEqual(createdClientes[0].cpf);
+            expect(wrapper.content[0].nome).toEqual(createdClientes[0].nome);
+            expect(wrapper.content[0].endereco_id).toEqual(createdClientes[0].endereco_id);
+            expect(wrapper.content[0].telefone).toEqual(createdClientes[0].telefone);
+            expect(wrapper.content[0].last_updated).toEqual(createdClientes[0].last_updated);
         });
     });
 
