@@ -1,14 +1,11 @@
-import { AddCarroModel, SaveCarroRepository } from '../../../data/protocols/db/carro/save-carro-repository';
-import { DbCarroModel } from '../../../data/models/db-carro-model';
+import { AddCarroModel, SaveCarroRepository } from '@/data/protocols/db/carro/save-carro-repository';
+import { DbCarroModel } from '@/data/models/db-carro-model';
 import { knexInstance } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
-import {
-    LoadCarroByIdParams,
-    LoadCarroByIdRepository
-} from '../../../data/protocols/db/carro/load-carro-by-id-repository';
-import { UpdateCarroModel, UpdateCarroRepository } from '../../../data/protocols/db/carro/update-carro-repository';
-import { LoadCarroByClienteIdRepository } from '../../../data/protocols/db/carro/load-carro-by-cliente-id-repository';
-import { DeleteCarroRepository } from '../../../data/protocols/db/carro/delete-carro-repository';
+import { LoadCarroByIdParams, LoadCarroByIdRepository } from '@/data/protocols/db/carro/load-carro-by-id-repository';
+import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';
+import { DeleteCarroRepository } from '@/data/protocols/db/carro/delete-carro-repository';
 
 export class CarroPgRepository
     implements
