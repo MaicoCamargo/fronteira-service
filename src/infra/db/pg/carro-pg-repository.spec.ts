@@ -1,7 +1,7 @@
 import { knexInstance } from './helpers/knex-helper';
 import { CarroPgRepository } from './carro-pg-repository';
 import { mockFakeAddCarroModel } from '../../../../tests/mock/mock-carro';
-import { DbClienteModel } from '../../../data/models/db-cliente-model';
+import { DbClienteModel } from '@/data/models/db-cliente-model';
 import { mapper } from './helpers/mapper';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
 
@@ -9,6 +9,7 @@ let cliente: DbClienteModel;
 
 describe('Carro Postgres Repository', () => {
     beforeAll(async () => {
+        await knexInstance('nota_fiscal').del();
         await knexInstance('cliente_carro').del();
         await knexInstance('servico_peca').del();
         await knexInstance('servico').del();
@@ -101,6 +102,29 @@ describe('Carro Postgres Repository', () => {
             await sut.delete(carro.id_carro);
             const carroLoaded = await sut.loadById({ id_carro: carro.id_carro, dh_exclusion: null });
             expect(carroLoaded).toBeFalsy();
+        });
+    });
+
+    describe('transferir()', () => {
+        test('Deve transferir o(s) carro(s) para o novo cliente', async () => {
+            const sut = makeSut();
+            const fusca = await sut.save(mockFakeAddCarroModel(), cliente.id_cliente);
+            const opala = await sut.save(mockFakeAddCarroModel(), cliente.id_cliente);
+            expect(fusca).toBeTruthy();
+            expect(fusca.id_carro).toBeTruthy();
+            expect(opala).toBeTruthy();
+            expect(opala.id_carro).toBeTruthy();
+            const currentCarros = await sut.loadByClienteId(cliente.id_cliente);
+            expect(currentCarros).toBeTruthy();
+            expect(currentCarros.length).toBeGreaterThan(2);
+
+            const newClient = await makePgClienteCreate();
+            const carros = await sut.transferir([opala], newClient.id_cliente);
+            expect(carros.length).toEqual(1);
+
+            const currentCarsOldClient = await sut.loadByClienteId(cliente.id_cliente);
+            const find = currentCarsOldClient.find((carro) => carro.id_carro === cliente.id_cliente);
+            expect(find).toBeFalsy();
         });
     });
 });
