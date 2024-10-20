@@ -6,6 +6,7 @@ import { LoadCarroByIdParams, LoadCarroByIdRepository } from '@/data/protocols/d
 import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';
 import { DeleteCarroRepository } from '@/data/protocols/db/carro/delete-carro-repository';
+import { TransferirCarrosRepository } from '@/data/protocols/db/carro/transferir-carros-repository';
 
 export class CarroPgRepository
     implements
@@ -13,7 +14,8 @@ export class CarroPgRepository
         LoadCarroByIdRepository,
         UpdateCarroRepository,
         LoadCarroByClienteIdRepository,
-        DeleteCarroRepository
+        DeleteCarroRepository,
+        TransferirCarrosRepository
 {
     async save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
         const result: any = await knexInstance('carro').insert(model).returning('*');
@@ -49,5 +51,12 @@ export class CarroPgRepository
     async delete(id: number): Promise<void> {
         await knexInstance('cliente_carro').where({ carro_id: id }).update({ dh_exclusion: new Date() });
         await knexInstance('carro').where({ id_carro: id }).update({ dh_exclusion: new Date() });
+    }
+
+    async transferir(carros: UpdateCarroModel[], clienteId: number): Promise<DbCarroModel[]> {
+        for (const carro of carros) {
+            await knexInstance('cliente_carro').where({ carro_id: carro.id_carro }).update({ cliente_id: clienteId });
+        }
+        return await this.loadByClienteId(clienteId);
     }
 }
