@@ -10,6 +10,6 @@ export const ENV = {
         USER: process.env.DB_POSTGRES_USER || 'postgres',
         PASSWORD: process.env.DB_POSTGRES_PASSWORD,
         DATABASE: process.env.DB_POSTGRES_DATABASE || 'fronteira',
-        DEBUG: process.env.DB_POSTGRES_DEBUG === 'false' || false
+        DEBUG: process.env.DB_POSTGRES_DEBUG !== 'false' || false
     }
 };
