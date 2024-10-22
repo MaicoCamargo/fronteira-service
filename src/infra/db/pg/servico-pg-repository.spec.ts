@@ -30,7 +30,7 @@ describe('Servico Postgres Repository', () => {
         test('Deve retornar uma lista de serviços em caso de sucesso', async () => {
             const sut = makeSut();
             const wrapper = await sut.load();
-            expect(servicos).toEqual(wrapper.content);
+            expect(sortByLatestDate(servicos)).toEqual(wrapper.content);
             expect(servicos.length).toEqual(wrapper.content.length);
         });
 
@@ -46,7 +46,7 @@ describe('Servico Postgres Repository', () => {
             const sut = makeSut();
             const pageFilter: PageFilter = { page: 1, size: 2 };
             const wrapper = await sut.load({ pageFilter });
-            expect(servicos).toEqual(wrapper.content);
+            expect(sortByLatestDate(servicos)).toEqual(wrapper.content);
             expect(servicos.length).toEqual(wrapper.content.length);
             expect(wrapper.pagination.total).toEqual(servicos.length);
             expect(wrapper.pagination.perPage).toEqual(pageFilter.size);
@@ -71,7 +71,7 @@ describe('Servico Postgres Repository', () => {
                 pageFilter
             };
             const wrapper = await sut.load(filters);
-            expect(servicos).toEqual(wrapper.content);
+            expect(sortByLatestDate(servicos)).toEqual(wrapper.content);
             expect(servicos.length).toEqual(wrapper.content.length);
             expect(wrapper.pagination.total).toEqual(servicos.length);
         });
@@ -126,6 +126,17 @@ describe('Servico Postgres Repository', () => {
         });
     });
 });
+
+/**
+ * ordena lista de serviços
+ * @param servicos
+ * @return serviços ordenados pela data mais recente
+ */
+const sortByLatestDate = (servicos: DbServicoModel[]): DbServicoModel[] => {
+    return servicos.sort((a, b) => {
+        return b.data.getTime() - a.data.getTime(); // Ordena pela data
+    });
+};
 
 const makeSut = (): ServicoPgRepository => {
     return new ServicoPgRepository();
