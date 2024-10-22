@@ -1,14 +1,15 @@
-import { AddCarroModel, SaveCarroRepository } from '../../../data/protocols/db/carro/save-carro-repository';
-import { DbCarroModel } from '../../../data/models/db-carro-model';
+import { AddCarroModel, SaveCarroRepository } from '@/data/protocols/db/carro/save-carro-repository';
+import { DbCarroModel } from '@/data/models/db-carro-model';
 import { knexInstance } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
+import { LoadCarroByIdParams, LoadCarroByIdRepository } from '@/data/protocols/db/carro/load-carro-by-id-repository';
+import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';
+import { DeleteCarroRepository } from '@/data/protocols/db/carro/delete-carro-repository';
 import {
-    LoadCarroByIdParams,
-    LoadCarroByIdRepository
-} from '../../../data/protocols/db/carro/load-carro-by-id-repository';
-import { UpdateCarroModel, UpdateCarroRepository } from '../../../data/protocols/db/carro/update-carro-repository';
-import { LoadCarroByClienteIdRepository } from '../../../data/protocols/db/carro/load-carro-by-cliente-id-repository';
-import { DeleteCarroRepository } from '../../../data/protocols/db/carro/delete-carro-repository';
+    TransferirCarrosModel,
+    TransferirCarrosRepository
+} from '@/data/protocols/db/carro/transferir-carros-repository';
 
 export class CarroPgRepository
     implements
@@ -16,7 +17,8 @@ export class CarroPgRepository
         LoadCarroByIdRepository,
         UpdateCarroRepository,
         LoadCarroByClienteIdRepository,
-        DeleteCarroRepository
+        DeleteCarroRepository,
+        TransferirCarrosRepository
 {
     async save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
         const result: any = await knexInstance('carro').insert(model).returning('*');
@@ -52,5 +54,12 @@ export class CarroPgRepository
     async delete(id: number): Promise<void> {
         await knexInstance('cliente_carro').where({ carro_id: id }).update({ dh_exclusion: new Date() });
         await knexInstance('carro').where({ id_carro: id }).update({ dh_exclusion: new Date() });
+    }
+
+    async transferir(carros: TransferirCarrosModel[], clienteId: number): Promise<DbCarroModel[]> {
+        for (const carro of carros) {
+            await knexInstance('cliente_carro').where({ carro_id: carro.id }).update({ cliente_id: clienteId });
+        }
+        return await this.loadByClienteId(clienteId);
     }
 }
