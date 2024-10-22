@@ -119,7 +119,7 @@ describe('Carro Postgres Repository', () => {
             expect(currentCarros.length).toBeGreaterThan(2);
 
             const newClient = await makePgClienteCreate();
-            const carros = await sut.transferir([opala], newClient.id_cliente);
+            const carros = await sut.transferir([{ id: opala.id_carro }], newClient.id_cliente);
             expect(carros.length).toEqual(1);
 
             const currentCarsOldClient = await sut.loadByClienteId(cliente.id_cliente);
