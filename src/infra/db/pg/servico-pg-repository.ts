@@ -59,6 +59,7 @@ export class ServicoPgRepository
                 .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
                 .whereNull('dh_exclusion');
         }
+        query.orderBy('data', 'desc');
         return await knexPaginateAdapter(query, filters?.pageFilter);
     }
 
