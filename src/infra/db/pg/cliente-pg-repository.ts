@@ -30,6 +30,7 @@ export class ClientePgRepository
         } else {
             query = knexInstance('cliente').whereNull('dh_exclusion');
         }
+        query.orderBy('nome');
         return await knexPaginateAdapter(query, filters?.pageFilter);
     }
 
