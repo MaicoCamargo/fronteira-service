@@ -19,7 +19,7 @@ export class ItemPgRepository
         DeleteItemRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
-        const query = knexInstance('item').returning(['id_peca', 'marca', 'valor', 'nome']);
+        const query = knexInstance('item').returning(['id_peca', 'marca', 'valor', 'nome']).orderBy('nome');
         return await knexPaginateAdapter(query, pageFilter);
     }
 
@@ -37,11 +37,11 @@ export class ItemPgRepository
     }
 
     async loadByServico(servicoId: number): Promise<DbItemModel[]> {
-        const result = await knexInstance('item')
+        return await knexInstance('item')
             .innerJoin('servico_peca', 'item.id_peca', 'servico_peca.peca_id')
             .where({ servico_id: servicoId })
-            .returning(['id_peca', 'marca', 'valor', 'nome']);
-        return result;
+            .returning(['id_peca', 'marca', 'valor', 'nome'])
+            .orderBy('nome');
     }
 
     async delete(id: number): Promise<void> {
