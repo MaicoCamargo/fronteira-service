@@ -28,6 +28,7 @@ export class IncludedItemPgRepository
             .innerJoin('item', 'servico_peca.peca_id', 'item.id_peca')
             .where({ servico_id: servicoId })
             .whereNull('servico_peca.dh_exclusion')
+            .orderBy('nome')
             .select([
                 'id_servico_peca',
                 'quantidade',
