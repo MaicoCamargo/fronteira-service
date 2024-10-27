@@ -1,16 +1,16 @@
 import {
     SaveIncludedItemModel,
     SaveIncludedItensRepository
-} from '../../../data/protocols/db/servico/included-item/save-included-itens-repository';
-import { DbIncludedItemModel } from '../../../data/models/db-included-item-model';
-import { knexInstance } from './helpers/knex-helper';
-import { LoadIncludedItensRepository } from '../../../data/protocols/db/servico/included-item/load-included-itens-repository';
+} from '@/data/protocols/db/servico/included-item/save-included-itens-repository';
+import { DbIncludedItemModel } from '@/data/models/db-included-item-model';
+import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { LoadIncludedItensRepository } from '@/data/protocols/db/servico/included-item/load-included-itens-repository';
 import {
     UpdateIncludedItemModel,
     UpdateIncludedItemRepository
-} from '../../../data/protocols/db/servico/included-item/update-included-item-repository';
-import { mapper } from './helpers/mapper';
-import { DeleteIncludedItemRepository } from '../../../data/protocols/db/servico/included-item/delete-included-item-repository';
+} from '@/data/protocols/db/servico/included-item/update-included-item-repository';
+import { mapper } from '@/infra/db/pg/helpers/mapper';
+import { DeleteIncludedItemRepository } from '@/data/protocols/db/servico/included-item/delete-included-item-repository';
 
 export class IncludedItemPgRepository
     implements
