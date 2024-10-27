@@ -1,14 +1,14 @@
-import { LoadItensRepository } from '@/data/protocols/db/item/load-itens-repository';
-import { PageFilter } from '@/main/protocols/page-filter';
-import { Wrapper } from '@/main/protocols/http-wrapper';
-import { DbItemModel } from '@/data/models/db-item-model';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
-import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
-import { SaveItemModel, SaveItemRepository } from '@/data/protocols/db/item/save-item-repository';
-import { mapper } from '@/infra/db/pg/helpers/mapper';
-import { DbUpdateItemModel, UpdateItemRepository } from '@/data/protocols/db/item/update-item-repository';
-import { LoadItensByServicoRepository } from '@/data/protocols/db/item/load-itens-by-servico-repository';
-import { DeleteItemRepository } from '@/data/protocols/db/item/delete-item-repository';
+import { LoadItensRepository } from '../../../data/protocols/db/item/load-itens-repository';
+import { PageFilter } from '../../../main/protocols/page-filter';
+import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { DbItemModel } from '../../../data/models/db-item-model';
+import { knexInstance } from './helpers/knex-helper';
+import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
+import { SaveItemModel, SaveItemRepository } from '../../../data/protocols/db/item/save-item-repository';
+import { mapper } from './helpers/mapper';
+import { DbUpdateItemModel, UpdateItemRepository } from '../../../data/protocols/db/item/update-item-repository';
+import { LoadItensByServicoRepository } from '../../../data/protocols/db/item/load-itens-by-servico-repository';
+import { DeleteItemRepository } from '../../../data/protocols/db/item/delete-item-repository';
 
 export class ItemPgRepository
     implements
