@@ -26,7 +26,9 @@ describe('Cliente Postgres Repository', () => {
     });
     describe('load()', () => {
         test('Deve retornar todos os clientes em caso de sucesso', async () => {
-            const createdClientes = [await makePgClienteCreate(), await makePgClienteCreate()];
+            const createdClientes = [await makePgClienteCreate(), await makePgClienteCreate()].sort((a, b) =>
+                a.nome.localeCompare(b.nome)
+            );
             const sut = makeSut();
             const wrapper = await sut.load();
             expect(wrapper).toBeTruthy();
