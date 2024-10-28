@@ -24,8 +24,16 @@ export class ServicoPgRepository
             query = knexInstance('servico')
                 .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
                 .whereNull('dh_exclusion');
-            if (filters.params.startDate) query.andWhere('data', '>=', filters.params.startDate);
-            if (filters.params.endDate) query.andWhere('data', '<=', filters.params.endDate);
+            if (filters.params.startDate) {
+                const startDate = new Date(filters.params.startDate);
+                const startOfDay = new Date(startDate.setHours(0, 0, 0));
+                query.andWhere('data', '>=', startOfDay);
+            }
+            if (filters.params.endDate) {
+                const endDate = new Date(filters.params.endDate);
+                const endOfDay = new Date(endDate.setHours(23, 59, 59));
+                query.andWhere('data', '<=', endOfDay);
+            }
             if (filters.params.clientes) {
                 const carroQuery = knexInstance('cliente_carro')
                     .whereIn('cliente_id', filters?.params?.clientes)
