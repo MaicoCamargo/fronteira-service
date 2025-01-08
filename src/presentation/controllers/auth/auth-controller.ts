@@ -1,16 +1,17 @@
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { ok, serverError } from '@/presentation/helpers/http';
-import { LoadAuthDetail } from '@/domain/usecases/auth/load-auth-detail';
+import { LoadAuth } from '@/domain/usecases/auth/load-auth';
 
-export class AuthDetailController implements Controller {
-    constructor(private readonly loadAuthDetail: LoadAuthDetail) {}
+export class AuthController implements Controller {
+    constructor(private readonly loadAuth: LoadAuth) {}
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const jwt = httpRequest.headers.authorization;
-            const detail = await this.loadAuthDetail.load(jwt);
+            const credential = httpRequest.body;
+            const detail = await this.loadAuth.auth(credential);
             return ok(detail);
         } catch (err) {
+            console.error('An error occurred', err);
             return serverError(err);
         }
     }
