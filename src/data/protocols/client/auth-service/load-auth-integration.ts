@@ -1,7 +1,7 @@
 import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export interface CredencialModel {
-    username: string;
+    login: string;
     password: string;
 }
 

@@ -6,7 +6,6 @@ export class IntegrationLoadAuth implements LoadAuth {
     constructor(private readonly loadAuthIntegration: LoadAuthIntegration) {}
 
     async auth(credencial: CredencialParams): Promise<Wrapper<string>> {
-        const jwt = await this.loadAuthIntegration.auth(credencial);
-        return { content: jwt };
+        return await this.loadAuthIntegration.auth({ login: credencial.username, password: credencial.password });
     }
 }
