@@ -15,10 +15,13 @@ module.exports = {
         '!<rootDir>/tests/**'
     ],
     coverageDirectory: 'coverage',
-    coverageProvider: 'v8',
+    coverageProvider: 'babel',
     testEnvironment: 'node',
     transform: {
         '.+\\.ts$': 'ts-jest'
     },
-    preset: '@shelf/jest-mongodb'
-};
+    preset: '@shelf/jest-mongodb',
+    moduleNameMapper: {
+        '@/(.*)':'<rootDir>/src/$1'
+    }
+}
