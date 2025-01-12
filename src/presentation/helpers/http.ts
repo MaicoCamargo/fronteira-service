@@ -34,3 +34,11 @@ export const created = (data: any): HttpResponse => {
 export const noContent = (): HttpResponse => {
     return { statusCode: 204, body: null };
 };
+
+export const unauthorized = (data: any): HttpResponse => {
+    return { statusCode: 401, body: data };
+};
+
+export const forbidden = (data: any): HttpResponse => {
+    return { statusCode: 403, body: data };
+};

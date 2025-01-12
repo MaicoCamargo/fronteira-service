@@ -6,12 +6,13 @@ import { makeSaveClienteController } from '../factories/controller/cliente/save-
 import { makeUpdateClienteController } from '../factories/controller/cliente/update-cliente-controller-factory';
 import { makeDeleteClienteController } from '../factories/controller/cliente/delete-cliente-controlle-factory';
 import { makeTransferirCarrosController } from '@/main/factories/controller/cliente/transferir-carros-controller-factory';
+import { adminRole } from '@/main/middlewares/role-admin-middleware';
 
 export default (router: Router): void => {
-    router.get('/clientes', expressRouterAdapter(makeLoadClientesController()));
-    router.get('/clientes/:id', expressRouterAdapter(makeLoadClienteByIdController()));
-    router.post('/clientes', expressRouterAdapter(makeSaveClienteController()));
-    router.put('/clientes/:id', expressRouterAdapter(makeUpdateClienteController()));
-    router.delete('/clientes/:id', expressRouterAdapter(makeDeleteClienteController()));
-    router.post('/clientes/:id/carros/transferir', expressRouterAdapter(makeTransferirCarrosController()));
+    router.get('/clientes', adminRole, expressRouterAdapter(makeLoadClientesController()));
+    router.get('/clientes/:id', adminRole, expressRouterAdapter(makeLoadClienteByIdController()));
+    router.post('/clientes', adminRole, expressRouterAdapter(makeSaveClienteController()));
+    router.put('/clientes/:id', adminRole, expressRouterAdapter(makeUpdateClienteController()));
+    router.delete('/clientes/:id', adminRole, expressRouterAdapter(makeDeleteClienteController()));
+    router.post('/clientes/:id/carros/transferir', adminRole, expressRouterAdapter(makeTransferirCarrosController()));
 };
