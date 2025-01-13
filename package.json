@@ -60,6 +60,6 @@
         "validator": "^13.7.0"
     },
     "_moduleAliases": {
-        "@": "src"
+        "@": "dist"
     }
 }
