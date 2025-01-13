@@ -1,6 +1,5 @@
 import { knex } from 'knex';
-import { ENV } from '../../../../main/config/env';
-import { attachPaginate } from 'knex-paginate';
+import { ENV } from '@/main/config/env';
 
 const connection = {
     host: ENV.DB_POSTGRES.HOST,
@@ -10,7 +9,6 @@ const connection = {
     database: ENV.DB_POSTGRES.DATABASE
 };
 
-attachPaginate();
 export const knexInstance = knex({
     client: 'pg',
     connection,
