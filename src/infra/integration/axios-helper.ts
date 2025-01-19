@@ -1,6 +1,5 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
-import { Wrapper } from '@/main/protocols/http-wrapper';
-import { forbidden, unauthorized } from '@/presentation/helpers/http';
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import { IntegrationError } from '@/presentation/errors/integration-error';
 
 export const AxiosHelper = {
     instance: null as AxiosInstance,
@@ -14,26 +13,28 @@ export const AxiosHelper = {
                 'Content-Type': 'application/json'
             }
         });
+
+        // Adicionando interceptores, se necessário
+        this.instance.interceptors.response.use(
+            (response: AxiosResponse) => {
+                // Manipulação de resposta
+                return response.data;
+            },
+            async (error: AxiosError) => {
+                // Manipulação de erro
+                console.error(error);
+                throw await Promise.reject(
+                    new IntegrationError(error.response.status, error.stack, error.response.data)
+                );
+            }
+        );
     },
 
     async get(url: string, config?: any): Promise<any> {
-        try {
-            const response = await this.instance.get(url, config);
-            if (response.data) return response.data;
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                if (error.status === 401) {
-                    return unauthorized('unauthorized');
-                }
-                if (error.status === 403) {
-                    return forbidden('denied access');
-                }
-            }
-        }
+        return this.instance.get(url, config);
     },
 
-    async post(url: string, data: any, config?: any): Promise<Wrapper<any>> {
-        const response = await this.instance.post(url, data, config);
-        if (response.data) return response.data;
+    async post(url: string, data: any, config?: any): Promise<any> {
+        return this.instance.post(url, data, config);
     }
 };
