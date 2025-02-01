@@ -1,4 +1,4 @@
 export interface DbMechanicModel {
-    id_mechanic: number;
-    name: string;
+    id_mecanico: number;
+    nome: string;
 }
