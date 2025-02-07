@@ -5,6 +5,7 @@ import { mockFakeAddItemParams, mockFakeIncludedItemModelList } from './mock-inc
 import { AddServicoParams } from '../../src/domain/usecases/servico/add-servico';
 import { SaveServicoModel } from '../../src/data/protocols/db/servico/save-servico-repository';
 import { mockFakeClienteModel } from './mock-cliente';
+import { mockFakeMechanicModelList } from './mock-mechanic';
 
 export const mockFakeAddServicoParams = (): AddServicoParams => ({
     valor: 100,
@@ -15,7 +16,8 @@ export const mockFakeAddServicoParams = (): AddServicoParams => ({
     cliente: {
         id: mockFakeClienteModel().id,
         nome: mockFakeClienteModel().nome
-    }
+    },
+    mecanicos: []
 });
 
 export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
@@ -58,7 +60,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
             id: mockFakeClienteModel().id,
             nome: mockFakeClienteModel().nome
         },
-        nota: false
+        nota: false,
+        mecanicos: mockFakeMechanicModelList()
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
@@ -73,7 +76,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
             id: mockFakeClienteModel().id,
             nome: mockFakeClienteModel().nome
         },
-        nota: false
+        nota: false,
+        mecanicos: []
     }
 ];
 

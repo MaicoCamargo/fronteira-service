@@ -20,6 +20,10 @@ import {
 } from '../../../../tests/mock/mock-included-itens';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
+import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { DbMechanicModel } from '@/data/models/db-mechanic-model';
+import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -63,6 +67,13 @@ describe('DbAddServico Use Case', () => {
         const promise = sut.add(mockFakeAddServicoParams());
         await expect(promise).rejects.toThrow();
     });
+
+    test('Deve chamar LoadMechanicsByIdServicoRepository com os valores corretos', async () => {
+        const { sut, loadMechanicsByIdServicoRepositoryStub } = makeSut();
+        const saveSpy = jest.spyOn(loadMechanicsByIdServicoRepositoryStub, 'loadByIdServico');
+        await sut.add(mockFakeAddServicoParams());
+        expect(saveSpy).toHaveBeenCalledWith(mockFakeServicoModel().id);
+    });
 });
 
 interface SutTypes {
@@ -71,6 +82,7 @@ interface SutTypes {
     saveIncludedItensRepositoryStub: SaveIncludedItensRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     saveNotaFiscalRepositoryStub: SaveNotaFiscalRepository;
+    loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -109,22 +121,36 @@ const makeSaveNotaFiscalByIdServicoRepository = (): SaveNotaFiscalRepository => 
     return new SaveNotaFiscalRepositoryStub();
 };
 
+const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepository => {
+    class LoadMechanicsByIdServicoRepositoryStub implements LoadMechanicsByIdServicoRepository {
+        async loadByIdServico(servico: number): Promise<Wrapper<DbMechanicModel[]>> {
+            return {
+                content: mockFakeDbMechanicModelList()
+            };
+        }
+    }
+    return new LoadMechanicsByIdServicoRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const saveServicoRepositoryStub = makeSaveServicoRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const saveNotaFiscalRepositoryStub = makeSaveNotaFiscalByIdServicoRepository();
+    const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
     const sut = new DbAddServico(
         saveServicoRepositoryStub,
         saveIncludedItensRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        saveNotaFiscalRepositoryStub
+        saveNotaFiscalRepositoryStub,
+        loadMechanicsByIdServicoRepositoryStub
     );
     return {
         sut,
         saveServicoRepositoryStub,
         saveIncludedItensRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        saveNotaFiscalRepositoryStub
+        saveNotaFiscalRepositoryStub,
+        loadMechanicsByIdServicoRepositoryStub
     };
 };

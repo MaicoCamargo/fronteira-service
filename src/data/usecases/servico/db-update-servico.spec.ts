@@ -27,6 +27,10 @@ import {
 import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/update-nota-fiscal-repository';
+import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { DbMechanicModel } from '@/data/models/db-mechanic-model';
+import { mockFakeDbMechanicModelList, mockFakeMechanicModelList } from '../../../../tests/mock/mock-mechanic';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -62,6 +66,7 @@ interface SutTypes {
     deleteIncludedItemRepositoryStub: DeleteIncludedItemRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     updateNotaFiscalRepositoryStub: UpdateNotaFiscalRepository;
+    loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
     sut: DbUpdateServico;
 }
 
@@ -146,6 +151,17 @@ const makeUpdateNotaFiscalRepository = (): UpdateNotaFiscalRepository => {
     return new UpdateNotaFiscalRepositoryStub();
 };
 
+const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepository => {
+    class LoadMechanicsByIdServicoRepositoryStub implements LoadMechanicsByIdServicoRepository {
+        async loadByIdServico(servico: number): Promise<Wrapper<DbMechanicModel[]>> {
+            return {
+                content: mockFakeDbMechanicModelList()
+            };
+        }
+    }
+    return new LoadMechanicsByIdServicoRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
@@ -156,6 +172,7 @@ const makeSut = (): SutTypes => {
     const deleteIncludedItemRepositoryStub = makeDeleteIncludedItemRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const updateNotaFiscalRepositoryStub = makeUpdateNotaFiscalRepository();
+    const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
@@ -166,7 +183,8 @@ const makeSut = (): SutTypes => {
         saveIncludedItensRepositoryStub,
         deleteIncludedItemRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        updateNotaFiscalRepositoryStub
+        updateNotaFiscalRepositoryStub,
+        loadMechanicsByIdServicoRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
@@ -177,6 +195,7 @@ const makeSut = (): SutTypes => {
         deleteIncludedItemRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         updateNotaFiscalRepositoryStub,
+        loadMechanicsByIdServicoRepositoryStub,
         sut
     };
 };
@@ -196,7 +215,8 @@ const makeFakeUpdatedServicoModel = (): ServicoModel => ({
             quantidade: makeFakeUpdatedDbIncludedItemModel().quantidade
         }
     ],
-    nota: false
+    nota: false,
+    mecanicos: mockFakeMechanicModelList()
 });
 
 const makeFakeUpdatedDbIncludedItemModel = (): DbIncludedItemModel => ({
