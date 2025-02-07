@@ -35,6 +35,17 @@ describe('Mechanic Pg Repository', () => {
             expect(wrapper.content[0].nome).toEqual(mecanicos[0].nome);
         });
     });
+
+    describe('load()', () => {
+        test('Deve retornar todos os mecânicos em caso de sucesso', async () => {
+            const sut = makeSut();
+            const wrapper = await sut.load();
+            expect(wrapper).toBeTruthy();
+            expect(wrapper.content.length).toEqual(mecanicos.length);
+            expect(wrapper.content[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
+            expect(wrapper.content[0].nome).toEqual(mecanicos[0].nome);
+        });
+    });
 });
 
 const makeSut = () => {
