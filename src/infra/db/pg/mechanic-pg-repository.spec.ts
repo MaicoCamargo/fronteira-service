@@ -7,18 +7,22 @@ import { MechanicPgRepository } from '@/infra/db/pg/mechanic-pg-repository';
 describe('Mechanic Pg Repository', () => {
     let servicos: DbServicoModel[];
     let mecanicos: DbMechanicModel[];
+
+    beforeAll(async () => {
+        await knexInstance('servico_mecanico').del();
+        await knexInstance('servico_peca').del();
+        await knexInstance('servico').del();
+        await knexInstance('mecanico').del();
+        mecanicos = await makePgMechanicCreate();
+    });
+
+    afterAll(async () => {
+        await knexInstance.destroy();
+    });
+
     describe('loadByIdServico()', () => {
         beforeAll(async () => {
-            await knexInstance('servico_mecanico').del();
-            await knexInstance('servico_peca').del();
-            await knexInstance('servico').del();
-            await knexInstance('mecanico').del();
             servicos = await makePgServicoCreate();
-            mecanicos = await makePgMechanicCreate();
-        });
-
-        afterAll(async () => {
-            await knexInstance.destroy();
         });
 
         test('Deve retornar todos os mecânicos de um serviço em caso de sucesso', async () => {
