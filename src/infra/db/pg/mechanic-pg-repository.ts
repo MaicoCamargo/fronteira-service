@@ -16,7 +16,7 @@ export class MechanicPgRepository implements LoadMechanicsRepository, LoadMechan
         const result = await knexInstance('mecanico')
             .leftJoin('servico_mecanico', 'mecanico.id_mecanico', 'servico_mecanico.mecanico_id')
             .where({ servico_id: servico })
-            .whereNull('dh_exclusion');
+            .whereNull('servico_mecanico.dh_exclusion');
         const mechanics: DbMechanicModel[] = result.map((row) => ({ nome: row.nome, id_mecanico: row.id_mecanico }));
         return { content: mechanics };
     }

@@ -25,12 +25,13 @@ describe('Mechanic Pg Repository', () => {
             servicos = await makePgServicoCreate();
         });
 
-        test('Deve retornar todos os mecânicos de um serviço em caso de sucesso', async () => {
+        test('Deve retornar todos os mecânicos "ativos" de um serviço em caso de sucesso', async () => {
             await makePgServicoMecanicoCreate(servicos, mecanicos);
             const sut = makeSut();
             const wrapper = await sut.loadByIdServico(servicos[0].id_servico);
             expect(wrapper).toBeTruthy();
             expect(wrapper.content.length).toEqual(1);
+            expect(wrapper.content[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
             expect(wrapper.content[0].nome).toEqual(mecanicos[0].nome);
         });
     });
@@ -42,13 +43,14 @@ const makeSut = () => {
 
 const makePgMechanicCreate = async (): Promise<DbMechanicModel[]> => {
     return knexInstance('mecanico')
-        .insert([{ nome: 'any_nome' }, { nome: 'other_nome' }])
+        .insert([{ nome: 'any_nome' }, { nome: 'other_nome', dh_exclusion: new Date() }])
         .returning('*');
 };
 
 const makePgServicoMecanicoCreate = async (servicos: DbServicoModel[], mechanics: DbMechanicModel[]): Promise<void> => {
     await knexInstance('servico_mecanico').insert([
         { servico_id: servicos[0].id_servico, mecanico_id: mechanics[0].id_mecanico },
+        { servico_id: servicos[0].id_servico, mecanico_id: mechanics[1].id_mecanico, dh_exclusion: new Date() },
         { servico_id: servicos[1].id_servico, mecanico_id: mechanics[0].id_mecanico }
     ]);
 };
