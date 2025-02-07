@@ -8,13 +8,16 @@ import {
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
+import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import { MechanicModel } from '@/domain/models/mechanic-model';
 
 export class DbAddServico implements AddServico {
     constructor(
         private readonly saveServicoRepository: SaveServicoRepository,
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
-        private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository
+        private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
+        private readonly loadMechanicsByIdServicoRepository: LoadMechanicsByIdServicoRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -37,7 +40,8 @@ export class DbAddServico implements AddServico {
             descricao: result.descricao,
             carro: params.carro,
             cliente: params.cliente,
-            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico)
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
+            mecanicos: await this.loadMechanics(result.id_servico)
         };
     }
 
@@ -57,6 +61,14 @@ export class DbAddServico implements AddServico {
             valor: item.valor_por_unidade,
             nome: item.nome,
             quantidade: item.quantidade
+        }));
+    }
+
+    private async loadMechanics(servicoId: number): Promise<MechanicModel[]> {
+        const wrapper = await this.loadMechanicsByIdServicoRepository.loadByIdServico(servicoId);
+        return wrapper.content.map((db) => ({
+            id: db.id_mecanico,
+            name: db.nome
         }));
     }
 }

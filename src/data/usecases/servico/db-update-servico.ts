@@ -13,6 +13,8 @@ import { SaveIncludedItensRepository } from '../../protocols/db/servico/included
 import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/update-nota-fiscal-repository';
+import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import { MechanicModel } from '@/domain/models/mechanic-model';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
@@ -24,7 +26,8 @@ export class DbUpdateServico implements UpdateServico {
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
         private readonly deleteIncludedItemRepository: DeleteIncludedItemRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
-        private readonly updateNotaFiscalRepository: UpdateNotaFiscalRepository
+        private readonly updateNotaFiscalRepository: UpdateNotaFiscalRepository,
+        private readonly loadMechanicsByIdServicoRepository: LoadMechanicsByIdServicoRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -49,7 +52,8 @@ export class DbUpdateServico implements UpdateServico {
             carro,
             itens,
             cliente,
-            nota: await this.loadNotaFiscalByIdServicoRepository.load(updated.id_servico)
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(updated.id_servico),
+            mecanicos: await this.loadMechanics(updated.id_servico)
         };
     }
 
@@ -109,5 +113,13 @@ export class DbUpdateServico implements UpdateServico {
         }
 
         return includedItemModelList;
+    }
+
+    private async loadMechanics(servicoId: number): Promise<MechanicModel[]> {
+        const wrapper = await this.loadMechanicsByIdServicoRepository.loadByIdServico(servicoId);
+        return wrapper.content.map((value) => ({
+            id: value.id_mecanico,
+            name: value.nome
+        }));
     }
 }
