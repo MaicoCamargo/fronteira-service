@@ -44,6 +44,18 @@ export class MechanicPgRepository
     }
 
     async update(servico: number, mechanics: AddMechanicsModel): Promise<DbMechanicModel[]> {
+        if (mechanics && mechanics.length > 0) {
+            for (const mechanic of mechanics) {
+                const found = await knexInstance('servico_mecanico').where({
+                    servico_id: servico,
+                    mecanico_id: mechanic
+                });
+                if (found.length === 0) {
+                    await knexInstance('servico_mecanico').insert({ servico_id: servico, mecanico_id: mechanic });
+                }
+            }
+        }
+
         await knexInstance('servico_mecanico')
             .update({ dh_exclusion: null, updated_at: new Date() })
             .whereIn('mecanico_id', mechanics)

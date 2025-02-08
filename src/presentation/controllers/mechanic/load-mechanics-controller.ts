@@ -9,7 +9,6 @@ export class LoadMechanicsController implements Controller {
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
             const pageFilter: PageFilter = httpRequest.query;
-            console.log('pageFilter', pageFilter);
             return ok(await this.loadMechanics.load(pageFilter));
         } catch (error) {
             return serverError(error);
