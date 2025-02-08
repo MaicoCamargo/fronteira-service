@@ -1,6 +1,6 @@
 import { DbServicoModel } from '../../models/db-servico-model';
-import { AddServico, AddServicoParams } from '../../../domain/usecases/servico/add-servico';
-import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
+import { AddServico, AddServicoParams } from '@/domain/usecases/servico/add-servico';
+import { IncludedItemModel, ServicoModel } from '@/domain/models/servico-model';
 import { SaveServicoModel, SaveServicoRepository } from '../../protocols/db/servico/save-servico-repository';
 import {
     SaveIncludedItemModel,
