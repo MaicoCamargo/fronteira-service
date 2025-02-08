@@ -8,8 +8,8 @@ import {
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
-import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { MechanicModel } from '@/domain/models/mechanic-model';
+import { SaveServiceMechanicsRepository } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -17,7 +17,7 @@ export class DbAddServico implements AddServico {
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
-        private readonly loadMechanicsByIdServicoRepository: LoadMechanicsByIdServicoRepository
+        private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -41,7 +41,7 @@ export class DbAddServico implements AddServico {
             carro: params.carro,
             cliente: params.cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
-            mecanicos: await this.loadMechanics(result.id_servico)
+            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics)
         };
     }
 
@@ -64,9 +64,9 @@ export class DbAddServico implements AddServico {
         }));
     }
 
-    private async loadMechanics(servicoId: number): Promise<MechanicModel[]> {
-        const wrapper = await this.loadMechanicsByIdServicoRepository.loadByIdServico(servicoId);
-        return wrapper.content.map((db) => ({
+    private async saveMechanics(servicoId: number, mechanics: number[]): Promise<MechanicModel[]> {
+        const dbMechanicModels = await this.saveServiceMechanicsRepository.save(servicoId, mechanics);
+        return dbMechanicModels.map((db) => ({
             id: db.id_mecanico,
             name: db.nome
         }));
