@@ -9,9 +9,14 @@ import {
     AddMechanicsModel,
     SaveServiceMechanicsRepository
 } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
+import { UpdateServiceMechanicsRepository } from '@/data/protocols/db/mechanic/update-service-mechanics-repository';
 
 export class MechanicPgRepository
-    implements LoadMechanicsRepository, LoadMechanicsByIdServicoRepository, SaveServiceMechanicsRepository
+    implements
+        LoadMechanicsRepository,
+        LoadMechanicsByIdServicoRepository,
+        SaveServiceMechanicsRepository,
+        UpdateServiceMechanicsRepository
 {
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbMechanicModel[]>> {
         const queryBuilder = knexInstance('mecanico').returning('*');
@@ -33,6 +38,19 @@ export class MechanicPgRepository
             mecanico_id: mechanic
         }));
         await knexInstance('servico_mecanico').insert(batch);
+        const wrapper = await this.loadByIdServico(servico);
+        return wrapper.content;
+    }
+
+    async update(servico: number, mechanics: AddMechanicsModel): Promise<DbMechanicModel[]> {
+        await knexInstance('servico_mecanico')
+            .update({ dh_exclusion: null, updated_at: new Date() })
+            .whereIn('mecanico_id', mechanics)
+            .where({ servico_id: servico });
+        await knexInstance('servico_mecanico')
+            .update({ dh_exclusion: new Date(), updated_at: new Date() })
+            .whereNotIn('mecanico_id', mechanics)
+            .where({ servico_id: servico });
         const wrapper = await this.loadByIdServico(servico);
         return wrapper.content;
     }
