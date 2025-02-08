@@ -63,6 +63,12 @@ describe('Mechanic Pg Repository', () => {
             expect(mechanics[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
             expect(mechanics[1].id_mecanico).toEqual(mecanicos[1].id_mecanico);
         });
+
+        test('Deve retornar uma lista vazia se null for enviado na lista de mecânicos', async () => {
+            const sut = makeSut();
+            const dbMechanicModels = await sut.save(servicos[0].id_servico, null);
+            expect(dbMechanicModels.length).toEqual(0);
+        });
     });
 
     describe('update()', () => {
