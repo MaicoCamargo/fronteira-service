@@ -64,6 +64,24 @@ describe('Mechanic Pg Repository', () => {
             expect(mechanics[1].id_mecanico).toEqual(mecanicos[1].id_mecanico);
         });
     });
+
+    describe('update()', () => {
+        beforeAll(async () => {
+            await knexInstance('servico_mecanico').del();
+        });
+
+        test('Deve atualizar os mecânicos de um serviço e trazer os mecânicos atuais', async () => {
+            await knexInstance('servico_mecanico').insert([
+                { servico_id: servicos[0].id_servico, mecanico_id: mecanicos[0].id_mecanico },
+                { servico_id: servicos[0].id_servico, mecanico_id: mecanicos[1].id_mecanico }
+            ]);
+
+            const sut = makeSut();
+            const mechanicModels = await sut.update(servicos[0].id_servico, [mecanicos[0].id_mecanico]);
+            expect(mechanicModels.length).toEqual(1);
+            expect(mechanicModels[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
+        });
+    });
 });
 
 const makeSut = () => {
