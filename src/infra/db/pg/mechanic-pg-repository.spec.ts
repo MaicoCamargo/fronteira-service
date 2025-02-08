@@ -11,6 +11,7 @@ describe('Mechanic Pg Repository', () => {
     beforeAll(async () => {
         await knexInstance('servico_mecanico').del();
         await knexInstance('servico_peca').del();
+        await knexInstance('nota_fiscal').del();
         await knexInstance('servico').del();
         await knexInstance('mecanico').del();
         mecanicos = await makePgMechanicCreate();
@@ -44,6 +45,23 @@ describe('Mechanic Pg Repository', () => {
             expect(wrapper.content.length).toEqual(mecanicos.length);
             expect(wrapper.content[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
             expect(wrapper.content[0].nome).toEqual(mecanicos[0].nome);
+        });
+    });
+
+    describe('save()', () => {
+        beforeAll(async () => {
+            await knexInstance('servico_mecanico').del();
+        });
+
+        test('Deve salvar e retornar os mecânicos atuais de um serviço', async () => {
+            const sut = makeSut();
+            const mechanics = await sut.save(
+                servicos[0].id_servico,
+                mecanicos.map((mechanic) => mechanic.id_mecanico)
+            );
+            expect(mechanics.length).toEqual(mecanicos.length);
+            expect(mechanics[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
+            expect(mechanics[1].id_mecanico).toEqual(mecanicos[1].id_mecanico);
         });
     });
 });

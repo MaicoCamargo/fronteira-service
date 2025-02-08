@@ -17,7 +17,7 @@ export const mockFakeAddServicoParams = (): AddServicoParams => ({
         id: mockFakeClienteModel().id,
         nome: mockFakeClienteModel().nome
     },
-    mecanicos: []
+    mechanics: []
 });
 
 export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
