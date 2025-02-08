@@ -5,8 +5,14 @@ import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
 import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 import { PageFilter } from '@/main/protocols/page-filter';
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import {
+    AddMechanicsModel,
+    SaveServiceMechanicsRepository
+} from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
 
-export class MechanicPgRepository implements LoadMechanicsRepository, LoadMechanicsByIdServicoRepository {
+export class MechanicPgRepository
+    implements LoadMechanicsRepository, LoadMechanicsByIdServicoRepository, SaveServiceMechanicsRepository
+{
     async load(pageFilter?: PageFilter): Promise<Wrapper<DbMechanicModel[]>> {
         const queryBuilder = knexInstance('mecanico').returning('*');
         return await knexPaginateAdapter(queryBuilder, pageFilter);
@@ -19,5 +25,15 @@ export class MechanicPgRepository implements LoadMechanicsRepository, LoadMechan
             .whereNull('servico_mecanico.dh_exclusion');
         const mechanics: DbMechanicModel[] = result.map((row) => ({ nome: row.nome, id_mecanico: row.id_mecanico }));
         return { content: mechanics };
+    }
+
+    async save(servico: number, mechanics: AddMechanicsModel): Promise<DbMechanicModel[]> {
+        const batch = mechanics.map((mechanic) => ({
+            servico_id: servico,
+            mecanico_id: mechanic
+        }));
+        await knexInstance('servico_mecanico').insert(batch);
+        const wrapper = await this.loadByIdServico(servico);
+        return wrapper.content;
     }
 }
