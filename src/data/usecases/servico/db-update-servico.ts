@@ -1,7 +1,6 @@
 import { UpdateServico, UpdateServicoParams } from '@/domain/usecases/servico/update-servico';
 import { IncludedItemModel, ServicoModel } from '@/domain/models/servico-model';
 import { UpdateServicoModel, UpdateServicoRepository } from '../../protocols/db/servico/update-servico-repository';
-import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
 import { CarroModel } from '@/domain/models/carro-model';
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import {
@@ -15,11 +14,11 @@ import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico
 import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/update-nota-fiscal-repository';
 import { MechanicModel } from '@/domain/models/mechanic-model';
 import { UpdateServiceMechanicsRepository } from '@/data/protocols/db/mechanic/update-service-mechanics-repository';
+import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
         private readonly updateServicoRepository: UpdateServicoRepository,
-        private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
         private readonly updateIncludedItemRepository: UpdateIncludedItemRepository,
         private readonly loadIncludedItensRepository: LoadIncludedItensRepository,
@@ -27,7 +26,8 @@ export class DbUpdateServico implements UpdateServico {
         private readonly deleteIncludedItemRepository: DeleteIncludedItemRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly updateNotaFiscalRepository: UpdateNotaFiscalRepository,
-        private readonly updateServiceMechanicsRepository: UpdateServiceMechanicsRepository
+        private readonly updateServiceMechanicsRepository: UpdateServiceMechanicsRepository,
+        private readonly updateCarroRepository: UpdateCarroRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -41,7 +41,7 @@ export class DbUpdateServico implements UpdateServico {
         const itens = await this.updateIncludedItens(params.itens, params.id);
         const updated = await this.updateServicoRepository.update(model);
         await this.updateNotaFiscalRepository.update(model.id_servico, params.nota);
-        const carro = await this.loadCarroById(updated.carro_id);
+        const carro = await this.quilometragem(model.carro_id, model.quilometragem);
         const cliente = await this.loadCliente(updated.id_servico);
         return {
             id: updated.id_servico,
@@ -57,8 +57,9 @@ export class DbUpdateServico implements UpdateServico {
         };
     }
 
-    private async loadCarroById(id: number): Promise<CarroModel> {
-        const model = await this.loadCarroByIdRepository.loadById({ id_carro: id });
+    private async quilometragem(carro: number, quilometragem: number): Promise<CarroModel> {
+        const model = await this.updateCarroRepository.update({ id_carro: carro, quilometragem });
+        console.log(model);
         return {
             id: model.id_carro,
             modelo: model.modelo,
