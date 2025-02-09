@@ -31,6 +31,7 @@ import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList, mockFakeMechanicModelList } from '../../../../tests/mock/mock-mechanic';
 import { UpdateServiceMechanicsRepository } from '@/data/protocols/db/mechanic/update-service-mechanics-repository';
 import { AddMechanicsModel } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
+import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
@@ -43,8 +44,12 @@ describe('DbUpdateServico Use Case', () => {
 
     test('Deve editar um servico em caso de sucesso', async () => {
         const { sut } = makeSut();
-        const promise = await sut.update(makeFakeUpdatedServicoModel());
-        expect(promise).toEqual(makeFakeUpdatedServicoModel());
+        const servico = await sut.update(makeFakeUpdatedServicoModel());
+        const servicoQuilometragemCarroUpdated = {
+            ...servico,
+            carro: { ...servico.carro, quilometragem: servico.quilometragem }
+        };
+        expect(servico).toEqual(servicoQuilometragemCarroUpdated);
     });
 
     test('Deve chamar UpdateNotaFiscalRepository com valores corretos', async () => {
@@ -54,12 +59,21 @@ describe('DbUpdateServico Use Case', () => {
         expect(spy).toHaveBeenCalledWith(makeFakeUpdatedServicoModel().id, makeFakeUpdatedServicoModel().nota);
     });
 
+    test('Deve chamar UpdateCarroRepository com valores corretos', async () => {
+        const { sut, updateCarroRepositoryStub } = makeSut();
+        const spy = jest.spyOn(updateCarroRepositoryStub, 'update');
+        await sut.update(makeFakeUpdatedServicoModel());
+        expect(spy).toHaveBeenCalledWith({
+            id_carro: makeFakeUpdatedServicoModel().carro.id,
+            quilometragem: makeFakeUpdatedServicoModel().quilometragem
+        });
+    });
+
     // @TODO criar teste para validar se ocorreu update da nota fiscal
 });
 
 interface SutTypes {
     updateServicoRepositoryStub: UpdateServicoRepository;
-    loadCarroByIdRepositoryStub: LoadCarroByIdRepository;
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     updateIncludedItemRepositoryStub: UpdateIncludedItemRepository;
     loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
@@ -67,6 +81,7 @@ interface SutTypes {
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     updateNotaFiscalRepositoryStub: UpdateNotaFiscalRepository;
     updateServiceMechanicsRepositoryStub: UpdateServiceMechanicsRepository;
+    updateCarroRepositoryStub: UpdateCarroRepository;
     sut: DbUpdateServico;
 }
 
@@ -160,9 +175,20 @@ const makeUpdateServiceMechanicsRepository = (): UpdateServiceMechanicsRepositor
     return new UpdateServiceMechanicsRepositoryStub();
 };
 
+const makeUpdateCarroRepository = (): UpdateCarroRepository => {
+    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
+        async update(model: UpdateCarroModel): Promise<DbCarroModel> {
+            return Promise.resolve({
+                ...mockFakeDbCarroModel(),
+                quilometragem: makeFakeUpdatedServicoModel().quilometragem
+            });
+        }
+    }
+    return new UpdateCarroRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
-    const loadCarroByIdRepositoryStub = makeLoadCarroByIdRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
     const updateIncludedItemRepositoryStub = makeUpdateIncludedItemRepository();
     const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
@@ -171,10 +197,10 @@ const makeSut = (): SutTypes => {
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const updateNotaFiscalRepositoryStub = makeUpdateNotaFiscalRepository();
     const updateServiceMechanicsRepositoryStub = makeUpdateServiceMechanicsRepository();
+    const updateCarroRepositoryStub = makeUpdateCarroRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
-        loadCarroByIdRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         updateIncludedItemRepositoryStub,
         loadIncludedItensRepositoryStub,
@@ -182,11 +208,11 @@ const makeSut = (): SutTypes => {
         deleteIncludedItemRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         updateNotaFiscalRepositoryStub,
-        updateServiceMechanicsRepositoryStub
+        updateServiceMechanicsRepositoryStub,
+        updateCarroRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
-        loadCarroByIdRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         updateIncludedItemRepositoryStub,
         loadIncludedItensRepositoryStub,
@@ -194,6 +220,7 @@ const makeSut = (): SutTypes => {
         loadNotaFiscalByIdServicoRepositoryStub,
         updateNotaFiscalRepositoryStub,
         updateServiceMechanicsRepositoryStub,
+        updateCarroRepositoryStub,
         sut
     };
 };
