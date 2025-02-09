@@ -12,6 +12,7 @@ describe('Carro Postgres Repository', () => {
         await knexInstance('nota_fiscal').del();
         await knexInstance('cliente_carro').del();
         await knexInstance('servico_peca').del();
+        await knexInstance('servico_mecanico').del();
         await knexInstance('servico').del();
         await knexInstance('cliente').del();
         await knexInstance('endereco').del();

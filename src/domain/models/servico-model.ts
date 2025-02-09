@@ -1,5 +1,6 @@
 import { CarroModel } from './carro-model';
 import { ClienteModel } from './cliente-model';
+import { MechanicModel } from '@/domain/models/mechanic-model';
 
 export interface IncludedItemModel {
     id: number;
@@ -23,4 +24,5 @@ export interface ServicoModel {
     itens: IncludedItemModel[];
     cliente: Cliente;
     nota?: boolean;
+    mecanicos: MechanicModel[];
 }

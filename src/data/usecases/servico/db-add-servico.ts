@@ -1,6 +1,6 @@
 import { DbServicoModel } from '../../models/db-servico-model';
-import { AddServico, AddServicoParams } from '../../../domain/usecases/servico/add-servico';
-import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
+import { AddServico, AddServicoParams } from '@/domain/usecases/servico/add-servico';
+import { IncludedItemModel, ServicoModel } from '@/domain/models/servico-model';
 import { SaveServicoModel, SaveServicoRepository } from '../../protocols/db/servico/save-servico-repository';
 import {
     SaveIncludedItemModel,
@@ -8,13 +8,16 @@ import {
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
+import { MechanicModel } from '@/domain/models/mechanic-model';
+import { SaveServiceMechanicsRepository } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
 
 export class DbAddServico implements AddServico {
     constructor(
         private readonly saveServicoRepository: SaveServicoRepository,
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
-        private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository
+        private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
+        private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -37,7 +40,8 @@ export class DbAddServico implements AddServico {
             descricao: result.descricao,
             carro: params.carro,
             cliente: params.cliente,
-            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico)
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
+            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics)
         };
     }
 
@@ -57,6 +61,14 @@ export class DbAddServico implements AddServico {
             valor: item.valor_por_unidade,
             nome: item.nome,
             quantidade: item.quantidade
+        }));
+    }
+
+    private async saveMechanics(servicoId: number, mechanics: number[]): Promise<MechanicModel[]> {
+        const dbMechanicModels = await this.saveServiceMechanicsRepository.save(servicoId, mechanics);
+        return dbMechanicModels.map((db) => ({
+            id: db.id_mecanico,
+            name: db.nome
         }));
     }
 }

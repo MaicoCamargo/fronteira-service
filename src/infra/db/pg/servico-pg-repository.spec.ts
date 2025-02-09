@@ -14,6 +14,7 @@ describe('Servico Postgres Repository', () => {
     beforeAll(async () => {
         await mockDateAdapter.set(new Date());
         await knexInstance('cliente_carro').del();
+        await knexInstance('servico_mecanico').del();
         await knexInstance('servico_peca').del();
         await knexInstance('nota_fiscal').del();
         await knexInstance('servico').del();

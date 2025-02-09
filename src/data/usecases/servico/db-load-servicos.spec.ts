@@ -17,6 +17,9 @@ import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { Filter } from '../../../main/protocols/filter';
 import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import { DbMechanicModel } from '@/data/models/db-mechanic-model';
+import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -115,6 +118,33 @@ describe('DbLoadServicos Use Case', () => {
             expect(loadByIdSpy).toHaveBeenCalledWith(mockFakeServicoModelList()[0].id);
         });
     });
+
+    describe('loadMechanics()', () => {
+        test('Deve chamar LoadMechanicsByIdServicoRepository com valores corretos', async () => {
+            const { sut, loadMechanicsByIdServicoRepositoryStub } = makeSut();
+            const loadSpy = jest.spyOn(loadMechanicsByIdServicoRepositoryStub, 'loadByIdServico');
+            await sut.load();
+            expect(loadSpy).toHaveBeenCalledWith(mockFakeServicoModelList()[0].id);
+        });
+
+        test('Deve retornar uma lista vazia caso não encontrar mecânicos', async () => {
+            const { sut, loadMechanicsByIdServicoRepositoryStub } = makeSut();
+            jest.spyOn(loadMechanicsByIdServicoRepositoryStub, 'loadByIdServico').mockReturnValueOnce(
+                Promise.resolve({ content: [] })
+            );
+            const carro = await sut.load();
+            expect(carro.content[0].mecanicos).toHaveLength(0);
+        });
+
+        test('Deve retornar uma lista de mecânicos em caso de sucesso', async () => {
+            const { sut, loadMechanicsByIdServicoRepositoryStub } = makeSut();
+            jest.spyOn(loadMechanicsByIdServicoRepositoryStub, 'loadByIdServico').mockReturnValueOnce(
+                Promise.resolve({ content: mockFakeDbMechanicModelList() })
+            );
+            const carro = await sut.load();
+            expect(carro.content[0].mecanicos).toHaveLength(2);
+        });
+    });
 });
 
 interface SutTypes {
@@ -124,6 +154,7 @@ interface SutTypes {
     loadIncludedItensRepositoryStub: LoadIncludedItensRepository;
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
+    loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
 }
 
 const makeSut = (): SutTypes => {
@@ -132,12 +163,14 @@ const makeSut = (): SutTypes => {
     const loadIncludedItensRepositoryStub = makeLoadIncludedItensRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
+    const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
-        loadNotaFiscalByIdServicoRepositoryStub
+        loadNotaFiscalByIdServicoRepositoryStub,
+        loadMechanicsByIdServicoRepositoryStub
     );
     return {
         sut,
@@ -145,7 +178,8 @@ const makeSut = (): SutTypes => {
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
-        loadNotaFiscalByIdServicoRepositoryStub
+        loadNotaFiscalByIdServicoRepositoryStub,
+        loadMechanicsByIdServicoRepositoryStub
     };
 };
 
@@ -193,4 +227,15 @@ const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRep
         }
     }
     return new LoadNotaFiscalByIdServicoRepositoryStub();
+};
+
+const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepository => {
+    class LoadMechanicsByIdServicoRepositoryStub implements LoadMechanicsByIdServicoRepository {
+        async loadByIdServico(servico: number): Promise<Wrapper<DbMechanicModel[]>> {
+            return {
+                content: mockFakeDbMechanicModelList()
+            };
+        }
+    }
+    return new LoadMechanicsByIdServicoRepositoryStub();
 };

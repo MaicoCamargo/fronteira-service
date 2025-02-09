@@ -1,13 +1,15 @@
-import { LoadServicos, LoadServicosParams } from '../../../domain/usecases/servico/load-servicos';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
-import { IncludedItemModel, ServicoModel } from '../../../domain/models/servico-model';
+import { LoadServicos, LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { IncludedItemModel, ServicoModel } from '@/domain/models/servico-model';
 import { LoadServicosDbFilter, LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
-import { CarroModel } from '../../../domain/models/carro-model';
+import { CarroModel } from '@/domain/models/carro-model';
 import { LoadIncludedItensRepository } from '../../protocols/db/servico/included-item/load-included-itens-repository';
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { Filter } from '@/main/protocols/filter';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
+import { MechanicModel } from '@/domain/models/mechanic-model';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
@@ -15,7 +17,8 @@ export class DbLoadServicos implements LoadServicos {
         private readonly loadCarroByIdRepository: LoadCarroByIdRepository,
         private readonly loadIncludedItensRepository: LoadIncludedItensRepository,
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
-        private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository
+        private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
+        private readonly loadMechanicsByIdServicoRepository: LoadMechanicsByIdServicoRepository
     ) {}
 
     async load(params?: LoadServicosParams): Promise<Wrapper<ServicoModel[]>> {
@@ -39,7 +42,8 @@ export class DbLoadServicos implements LoadServicos {
             carro: await this.loadCarroById(item.carro_id),
             itens: await this.loadItens(item.id_servico),
             cliente: await this.loadCliente(item.id_servico),
-            nota: await this.loadNotaFiscalByIdServicoRepository.load(item.id_servico)
+            nota: await this.loadNotaFiscalByIdServicoRepository.load(item.id_servico),
+            mecanicos: await this.loadMechanics(item.id_servico)
         }));
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }
@@ -76,5 +80,13 @@ export class DbLoadServicos implements LoadServicos {
             id: model.id_cliente,
             nome: model.nome
         };
+    }
+
+    private async loadMechanics(servicoId: number): Promise<MechanicModel[]> {
+        const wrapper = await this.loadMechanicsByIdServicoRepository.loadByIdServico(servicoId);
+        return wrapper.content.map((dbMechanicModel) => ({
+            id: dbMechanicModel.id_mecanico,
+            name: dbMechanicModel.nome
+        }));
     }
 }

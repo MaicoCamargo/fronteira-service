@@ -36,5 +36,10 @@ export const AxiosHelper = {
 
     async post(url: string, data: any, config?: any): Promise<any> {
         return this.instance.post(url, data, config);
+    },
+
+    async destroy(): Promise<void> {
+        this.host = null;
+        this.instance = null;
     }
 };
