@@ -1,11 +1,11 @@
-import { DbCarroModel } from '../../../models/db-carro-model';
+import { DbCarroModel } from '@/data/models/db-carro-model';
 
 export interface UpdateCarroModel {
-    ano: number;
-    cor: string;
-    quilometragem: number;
-    modelo: string;
-    placa: string;
+    ano?: number;
+    cor?: string;
+    quilometragem?: number;
+    modelo?: string;
+    placa?: string;
     id_carro: number;
 }
 
