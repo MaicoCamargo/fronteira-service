@@ -20,14 +20,15 @@ import {
 } from '../../../../tests/mock/mock-included-itens';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
-import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
-import { Wrapper } from '@/main/protocols/http-wrapper';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
 import {
     AddMechanicsModel,
     SaveServiceMechanicsRepository
 } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
+import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { DbCarroModel } from '@/data/models/db-carro-model';
+import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -78,6 +79,16 @@ describe('DbAddServico Use Case', () => {
         await sut.add(mockFakeAddServicoParams());
         expect(saveSpy).toHaveBeenCalledWith(mockFakeServicoModel().id, mockFakeAddServicoParams().mechanics);
     });
+
+    test('Deve chamar UpdateCarroRepository com os valores corretos', async () => {
+        const { sut, updateCarroRepositoryStub } = makeSut();
+        const saveSpy = jest.spyOn(updateCarroRepositoryStub, 'update');
+        await sut.add(mockFakeAddServicoParams());
+        expect(saveSpy).toHaveBeenCalledWith({
+            id_carro: mockFakeAddServicoParams().carro.id,
+            quilometragem: mockFakeAddServicoParams().quilometragem
+        });
+    });
 });
 
 interface SutTypes {
@@ -87,6 +98,7 @@ interface SutTypes {
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     saveNotaFiscalRepositoryStub: SaveNotaFiscalRepository;
     saveServiceMechanicsRepositoryStub: SaveServiceMechanicsRepository;
+    updateCarroRepositoryStub: UpdateCarroRepository;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -134,18 +146,30 @@ const makeSaveServiceMechanicsRepository = (): SaveServiceMechanicsRepository =>
     return new SaveServiceMechanicsRepositoryStub();
 };
 
+const makeUpdateCarroRepository = (): UpdateCarroRepository => {
+    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
+        async update(model: UpdateCarroModel): Promise<DbCarroModel> {
+            return Promise.resolve(mockFakeDbCarroModel());
+        }
+    }
+    return new UpdateCarroRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const saveServicoRepositoryStub = makeSaveServicoRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const saveNotaFiscalRepositoryStub = makeSaveNotaFiscalByIdServicoRepository();
     const saveServiceMechanicsRepositoryStub = makeSaveServiceMechanicsRepository();
+    const updateCarroRepositoryStub = makeUpdateCarroRepository();
+
     const sut = new DbAddServico(
         saveServicoRepositoryStub,
         saveIncludedItensRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         saveNotaFiscalRepositoryStub,
-        saveServiceMechanicsRepositoryStub
+        saveServiceMechanicsRepositoryStub,
+        updateCarroRepositoryStub
     );
     return {
         sut,
@@ -153,6 +177,7 @@ const makeSut = (): SutTypes => {
         saveIncludedItensRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         saveNotaFiscalRepositoryStub,
-        saveServiceMechanicsRepositoryStub
+        saveServiceMechanicsRepositoryStub,
+        updateCarroRepositoryStub
     };
 };

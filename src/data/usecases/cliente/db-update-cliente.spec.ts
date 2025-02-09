@@ -118,7 +118,7 @@ const makeUpdateCarroRepositoryStub = (): UpdateCarroRepository => {
 
 const makeSaveCarroRepositoryStub = (): SaveCarroRepository => {
     class SaveCarroRepositoryStub implements SaveCarroRepository {
-        save(model: UpdateCarroModel): Promise<DbCarroModel> {
+        save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }
