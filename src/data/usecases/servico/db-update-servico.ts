@@ -59,7 +59,6 @@ export class DbUpdateServico implements UpdateServico {
 
     private async quilometragem(carro: number, quilometragem: number): Promise<CarroModel> {
         const model = await this.updateCarroRepository.update({ id_carro: carro, quilometragem });
-        console.log(model);
         return {
             id: model.id_carro,
             modelo: model.modelo,
