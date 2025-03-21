@@ -33,7 +33,7 @@ export class MechanicPgRepository
     }
 
     async save(servico: number, mechanics: AddMechanicsModel): Promise<DbMechanicModel[]> {
-        if (!mechanics) return [];
+        if (!mechanics || mechanics.length === 0) return [];
         const batch = mechanics.map((mechanic) => ({
             servico_id: servico,
             mecanico_id: mechanic

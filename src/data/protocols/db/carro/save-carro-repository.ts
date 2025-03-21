@@ -1,4 +1,4 @@
-import { DbCarroModel } from '../../../models/db-carro-model';
+import { DbCarroModel } from '@/data/models/db-carro-model';
 
 export interface AddCarroModel {
     ano: number;

@@ -10,6 +10,8 @@ import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
 import { MechanicModel } from '@/domain/models/mechanic-model';
 import { SaveServiceMechanicsRepository } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
+import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { CarroModel } from '@/domain/models/carro-model';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -17,7 +19,8 @@ export class DbAddServico implements AddServico {
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
-        private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository
+        private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository,
+        private readonly updateCarroRepository: UpdateCarroRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -38,7 +41,7 @@ export class DbAddServico implements AddServico {
             data: result.data,
             quilometragem: result.quilometragem,
             descricao: result.descricao,
-            carro: params.carro,
+            carro: await this.quilometragem(model.carro_id, model.quilometragem),
             cliente: params.cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
             mecanicos: await this.saveMechanics(result.id_servico, params.mechanics)
@@ -70,5 +73,17 @@ export class DbAddServico implements AddServico {
             id: db.id_mecanico,
             name: db.nome
         }));
+    }
+
+    private async quilometragem(carro: number, quilometragem: number): Promise<CarroModel> {
+        const dbCarroModel = await this.updateCarroRepository.update({ quilometragem, id_carro: carro });
+        return {
+            id: dbCarroModel.id_carro,
+            ano: dbCarroModel.ano,
+            cor: dbCarroModel.cor,
+            quilometragem: dbCarroModel.quilometragem,
+            modelo: dbCarroModel.modelo,
+            placa: dbCarroModel.placa
+        };
     }
 }
