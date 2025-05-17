@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { IntegrationError } from '@/presentation/errors/integration-error';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export class AxiosHelper {
     private static instances: { [key: string]: AxiosHelper } = {};
@@ -41,13 +42,25 @@ export class AxiosHelper {
         return this.instances[host];
     }
 
-    async get(url: string, config?: any): Promise<any> {
-        return await this.axiosInstance.get(url, config);
+    async get(url: string, queryParams?: any, config?: any): Promise<Wrapper<any>> {
+        return await this.axiosInstance.get(url + this.queryParams(queryParams), config);
     }
 
     async post(url: string, data: any, config?: any): Promise<any> {
         console.log(data);
         return await this.axiosInstance.post(url, data, config);
+    }
+
+    private queryParams(params: Object): string {
+        if (!params) {
+            return '';
+        }
+        const query = Object.entries(params)
+            .filter(([_, value]) => value !== undefined)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Codifica os parâmetros
+            .join('&');
+
+        return `?${query}`;
     }
 
     async destroy(): Promise<void> {
