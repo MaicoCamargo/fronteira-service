@@ -14,7 +14,7 @@ import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-re
 import { CarroModel } from '@/domain/models/carro-model';
 import {
     SaveSimpleBillingIntegration,
-    SaveSimpleBillingModel,
+    SaveSimpleBillingIntegrationModel,
     SimplePaymentModel
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
 
@@ -103,7 +103,7 @@ export class DbAddServico implements AddServico {
             type: payment.type
         }));
         // @todo obter id do usuário autenticado
-        const billing: SaveSimpleBillingModel = {
+        const billing: SaveSimpleBillingIntegrationModel = {
             user: 1,
             name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
             order: servicoId,
