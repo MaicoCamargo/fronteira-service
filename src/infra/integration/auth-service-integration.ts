@@ -4,16 +4,18 @@ import { CredencialModel, LoadAuthIntegration } from '@/data/protocols/client/au
 import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export class AuthServiceIntegration implements LoadAuthDetailIntegration, LoadAuthIntegration {
+    constructor(private readonly axios: AxiosHelper) {}
+
     async load(token: string): Promise<any> {
         const config = {
             headers: {
                 Authorization: token
             }
         };
-        return await AxiosHelper.get('/auth', config);
+        return await this.axios.get('/auth', config);
     }
 
     async auth(credencial: CredencialModel): Promise<Wrapper<string>> {
-        return await AxiosHelper.post('/auth', credencial);
+        return await this.axios.post('/auth', credencial);
     }
 }

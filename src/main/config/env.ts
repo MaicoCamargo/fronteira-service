@@ -12,5 +12,6 @@ export const ENV = {
         DATABASE: process.env.DB_POSTGRES_DATABASE || 'new_fronteira_test',
         DEBUG: process.env.DB_POSTGRES_DEBUG !== 'false' || false
     },
-    AUTH_SERVICE_HOST: process.env.AUTH_SERVICE_HOST || 'http://127.0.0.1:8005'
+    AUTH_SERVICE_HOST: process.env.AUTH_SERVICE_HOST || 'http://127.0.0.1:8005',
+    BILLING_SERVICE_HOST: process.env.BILLING_SERVICE_HOST || 'http://127.0.0.1:8080'
 };

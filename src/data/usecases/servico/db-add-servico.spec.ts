@@ -29,6 +29,11 @@ import {
 import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 import { DbCarroModel } from '@/data/models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import {
+    SaveSimpleBillingIntegration,
+    SaveSimpleBillingModel
+} from '@/data/protocols/client/billing-service/save-simple-billing-integration';
+import { mockFakeBilling } from '../../../../tests/mock/mock-billing-integration';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -99,6 +104,7 @@ interface SutTypes {
     saveNotaFiscalRepositoryStub: SaveNotaFiscalRepository;
     saveServiceMechanicsRepositoryStub: SaveServiceMechanicsRepository;
     updateCarroRepositoryStub: UpdateCarroRepository;
+    saveSimpleBillingIntegrationStub: SaveSimpleBillingIntegration;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -107,6 +113,7 @@ const makeSaveServicoRepository = (): SaveServicoRepository => {
             return Promise.resolve(mockFakeDbServicoModel());
         }
     }
+
     return new AddServicoRepositoryStub();
 };
 
@@ -116,6 +123,7 @@ const makeSaveIncludedItensRepository = (): SaveIncludedItensRepository => {
             return mockFakeDbIncludedItemModelList();
         }
     }
+
     return new SaveIncludedItensRepositoryStub();
 };
 
@@ -125,6 +133,7 @@ const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRep
             return Promise.resolve(false);
         }
     }
+
     return new LoadNotaFiscalByIdServicoRepositoryStub();
 };
 
@@ -134,6 +143,7 @@ const makeSaveNotaFiscalByIdServicoRepository = (): SaveNotaFiscalRepository => 
             return;
         }
     }
+
     return new SaveNotaFiscalRepositoryStub();
 };
 
@@ -143,6 +153,7 @@ const makeSaveServiceMechanicsRepository = (): SaveServiceMechanicsRepository =>
             return Promise.resolve(mockFakeDbMechanicModelList());
         }
     }
+
     return new SaveServiceMechanicsRepositoryStub();
 };
 
@@ -152,7 +163,17 @@ const makeUpdateCarroRepository = (): UpdateCarroRepository => {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }
+
     return new UpdateCarroRepositoryStub();
+};
+
+const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {
+    class SaveSimpleBillingIntegrationStub implements SaveSimpleBillingIntegration {
+        save(billing: SaveSimpleBillingModel): Promise<any> {
+            return Promise.resolve(mockFakeBilling());
+        }
+    }
+    return new SaveSimpleBillingIntegrationStub();
 };
 
 const makeSut = (): SutTypes => {
@@ -162,6 +183,7 @@ const makeSut = (): SutTypes => {
     const saveNotaFiscalRepositoryStub = makeSaveNotaFiscalByIdServicoRepository();
     const saveServiceMechanicsRepositoryStub = makeSaveServiceMechanicsRepository();
     const updateCarroRepositoryStub = makeUpdateCarroRepository();
+    const saveSimpleBillingIntegrationStub = makeSaveSimpleBillingIntegration();
 
     const sut = new DbAddServico(
         saveServicoRepositoryStub,
@@ -169,7 +191,8 @@ const makeSut = (): SutTypes => {
         loadNotaFiscalByIdServicoRepositoryStub,
         saveNotaFiscalRepositoryStub,
         saveServiceMechanicsRepositoryStub,
-        updateCarroRepositoryStub
+        updateCarroRepositoryStub,
+        saveSimpleBillingIntegrationStub
     );
     return {
         sut,
@@ -178,6 +201,7 @@ const makeSut = (): SutTypes => {
         loadNotaFiscalByIdServicoRepositoryStub,
         saveNotaFiscalRepositoryStub,
         saveServiceMechanicsRepositoryStub,
-        updateCarroRepositoryStub
+        updateCarroRepositoryStub,
+        saveSimpleBillingIntegrationStub
     };
 };

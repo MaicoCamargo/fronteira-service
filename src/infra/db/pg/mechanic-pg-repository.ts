@@ -58,11 +58,11 @@ export class MechanicPgRepository
 
         await knexInstance('servico_mecanico')
             .update({ dh_exclusion: null, updated_at: new Date() })
-            .whereIn('mecanico_id', mechanics)
+            .whereIn('mecanico_id', mechanics || [])
             .where({ servico_id: servico });
         await knexInstance('servico_mecanico')
             .update({ dh_exclusion: new Date(), updated_at: new Date() })
-            .whereNotIn('mecanico_id', mechanics)
+            .whereNotIn('mecanico_id', mechanics || [])
             .where({ servico_id: servico });
         const wrapper = await this.loadByIdServico(servico);
         return wrapper.content;

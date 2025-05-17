@@ -12,6 +12,11 @@ import { MechanicModel } from '@/domain/models/mechanic-model';
 import { SaveServiceMechanicsRepository } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
 import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 import { CarroModel } from '@/domain/models/carro-model';
+import {
+    SaveSimpleBillingIntegration,
+    SaveSimpleBillingModel,
+    SimplePaymentModel
+} from '@/data/protocols/client/billing-service/save-simple-billing-integration';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -20,7 +25,8 @@ export class DbAddServico implements AddServico {
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
         private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository,
-        private readonly updateCarroRepository: UpdateCarroRepository
+        private readonly updateCarroRepository: UpdateCarroRepository,
+        private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -34,6 +40,7 @@ export class DbAddServico implements AddServico {
         await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);
 
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
+        await this.saveBilling(params, result.id_servico);
         return {
             itens,
             id: result.id_servico,
@@ -85,5 +92,27 @@ export class DbAddServico implements AddServico {
             modelo: dbCarroModel.modelo,
             placa: dbCarroModel.placa
         };
+    }
+
+    private async saveBilling(servico: AddServicoParams, servicoId: number): Promise<[]> {
+        // @todo alterar o retorno
+        const payments: SimplePaymentModel[] = servico.billing.payments.map((payment) => ({
+            installments: payment.installments,
+            value: payment.value,
+            status: payment.status,
+            type: payment.type
+        }));
+        // @todo obter id do usuário autenticado
+        const billing: SaveSimpleBillingModel = {
+            user: 1,
+            name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
+            order: servicoId,
+            description: servico.billing.description,
+            amount: servico.valor,
+            payments
+        };
+        const saved = await this.saveSimpleBillingIntegration.save(billing);
+        console.log(saved);
+        return [];
     }
 }
