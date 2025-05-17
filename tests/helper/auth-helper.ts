@@ -9,7 +9,7 @@ export const AuthHelper = {
     integrationLoadAuth: null as IntegrationLoadAuth,
 
     async init(): Promise<void> {
-        await AxiosHelper.create(ENV.AUTH_SERVICE_HOST);
+        AxiosHelper.getInstance(ENV.AUTH_SERVICE_HOST);
         this.integrationLoadAuth = makeIntegrationLoadAuth();
     },
 
@@ -27,6 +27,7 @@ export const AuthHelper = {
     },
 
     async destroy(): Promise<void> {
-        await AxiosHelper.destroy();
+        await AxiosHelper.getInstance(ENV.AUTH_SERVICE_HOST).destroy();
+        await AxiosHelper.getInstance(ENV.BILLING_SERVICE_HOST).destroy();
     }
 };
