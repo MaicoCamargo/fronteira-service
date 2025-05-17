@@ -31,7 +31,7 @@ import { DbCarroModel } from '@/data/models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import {
     SaveSimpleBillingIntegration,
-    SaveSimpleBillingModel
+    SaveSimpleBillingIntegrationModel
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
 import { mockFakeBilling } from '../../../../tests/mock/mock-billing-integration';
 
@@ -169,7 +169,7 @@ const makeUpdateCarroRepository = (): UpdateCarroRepository => {
 
 const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {
     class SaveSimpleBillingIntegrationStub implements SaveSimpleBillingIntegration {
-        save(billing: SaveSimpleBillingModel): Promise<any> {
+        save(billing: SaveSimpleBillingIntegrationModel): Promise<any> {
             return Promise.resolve(mockFakeBilling());
         }
     }

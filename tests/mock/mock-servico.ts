@@ -1,9 +1,9 @@
-import { DbServicoModel } from '../../src/data/models/db-servico-model';
-import { ServicoModel } from '../../src/domain/models/servico-model';
+import { DbServicoModel } from '@/data/models/db-servico-model';
+import { ServicoModel } from '@/domain/models/servico-model';
 import { mockFakeCarroModelList } from './mock-carro';
 import { mockFakeAddItemParams, mockFakeIncludedItemModelList } from './mock-included-itens';
-import { AddServicoParams } from '../../src/domain/usecases/servico/add-servico';
-import { SaveServicoModel } from '../../src/data/protocols/db/servico/save-servico-repository';
+import { AddServicoParams, PaymentStatus, PaymentType } from '@/domain/usecases/servico/add-servico';
+import { SaveServicoModel } from '@/data/protocols/db/servico/save-servico-repository';
 import { mockFakeClienteModel } from './mock-cliente';
 import { mockFakeMechanicModelList } from './mock-mechanic';
 
@@ -21,7 +21,14 @@ export const mockFakeAddServicoParams = (): AddServicoParams => ({
     billing: {
         amount: 100,
         description: 'any description',
-        payments: []
+        payments: [
+            {
+                status: PaymentStatus.COMPLETED,
+                type: PaymentType.CREDIT_CARD,
+                value: 100,
+                installments: 1
+            }
+        ]
     }
 });
 
