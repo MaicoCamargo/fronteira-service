@@ -1,12 +1,13 @@
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 
 export interface LoadBillingsIntegrationParams {
     service: number;
-    status: string;
-    order: number;
-    user: number;
+    status?: string;
+    order?: number;
+    user?: number;
 }
 
 export interface LoadBillingsIntegration {
-    load: (params: LoadBillingsIntegrationParams) => Promise<Wrapper<string>>;
+    load: (params: LoadBillingsIntegrationParams) => Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>>;
 }
