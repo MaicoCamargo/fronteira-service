@@ -1,5 +1,6 @@
 import { SaveSimpleBillingIntegrationModel } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
-import { mockFakeAddServicoParams, mockFakeServicoModel } from './mock-servico';
+import { mockFakeAddServicoParams, mockFakeDbServicoModel } from './mock-servico';
+import { ENV } from '@/main/config/env';
 
 export const makeSaveSimpleBillingIntegrationModel = (): SaveSimpleBillingIntegrationModel => ({
     // @TODO MONTAR OS CAMPOS COM OS OUTROS MOCKS
@@ -7,9 +8,9 @@ export const makeSaveSimpleBillingIntegrationModel = (): SaveSimpleBillingIntegr
     name: `Fronteira service ${mockFakeAddServicoParams().cliente.id}:${mockFakeAddServicoParams().carro.id}:${
         mockFakeAddServicoParams().valor
     }`,
-    order: mockFakeServicoModel().id,
-    description: 'any_description',
-    amount: mockFakeAddServicoParams().valor,
+    order: mockFakeDbServicoModel().id_servico,
+    description: mockFakeAddServicoParams().billing.description,
+    amount: mockFakeAddServicoParams().billing.amount,
     payments: [
         {
             installments: mockFakeAddServicoParams().billing.payments[0].installments,
@@ -17,5 +18,6 @@ export const makeSaveSimpleBillingIntegrationModel = (): SaveSimpleBillingIntegr
             status: mockFakeAddServicoParams().billing.payments[0].status,
             type: mockFakeAddServicoParams().billing.payments[0].type
         }
-    ]
+    ],
+    service: Number(ENV.SERVICE.ID)
 });

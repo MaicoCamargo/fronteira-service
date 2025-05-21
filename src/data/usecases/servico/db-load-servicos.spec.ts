@@ -20,6 +20,12 @@ import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
+import {
+    LoadBillingsIntegration,
+    LoadBillingsIntegrationParams
+} from '@/data/protocols/client/billing-service/load-billings-integration';
+import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
+import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -145,6 +151,15 @@ describe('DbLoadServicos Use Case', () => {
             expect(carro.content[0].mecanicos).toHaveLength(2);
         });
     });
+
+    describe('loadBilling()', () => {
+        test('Deve retornar null caso loadBillingsIntegration retornar uma lista vazia', async () => {
+            const { sut, loadBillingsIntegrationStub } = makeSut();
+            jest.spyOn(loadBillingsIntegrationStub, 'load').mockResolvedValueOnce({ content: [] });
+            const { content: servicos } = await sut.load();
+            expect(servicos[0].billing).toBeNull();
+        });
+    });
 });
 
 interface SutTypes {
@@ -155,6 +170,7 @@ interface SutTypes {
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
+    loadBillingsIntegrationStub: LoadBillingsIntegration;
 }
 
 const makeSut = (): SutTypes => {
@@ -164,13 +180,15 @@ const makeSut = (): SutTypes => {
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
+    const loadBillingsIntegrationStub = makeLoadBillingsIntegration();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        loadMechanicsByIdServicoRepositoryStub
+        loadMechanicsByIdServicoRepositoryStub,
+        loadBillingsIntegrationStub
     );
     return {
         sut,
@@ -179,7 +197,8 @@ const makeSut = (): SutTypes => {
         loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        loadMechanicsByIdServicoRepositoryStub
+        loadMechanicsByIdServicoRepositoryStub,
+        loadBillingsIntegrationStub
     };
 };
 
@@ -189,6 +208,7 @@ const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
             return mockFakeDbIncludedItemModelList();
         }
     }
+
     return new LoadIncludedItensRepositoryStub();
 };
 
@@ -199,6 +219,7 @@ const makeLoadServicosRepository = (): LoadServicosRepository => {
             return Promise.resolve(wrapper);
         }
     }
+
     return new LoadServicosRepositoryStub();
 };
 
@@ -208,6 +229,7 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }
+
     return new LoadCarroByIdRepositoryStub();
 };
 
@@ -217,6 +239,7 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
             return Promise.resolve(mockFakeDbClienteModel());
         }
     }
+
     return new LoadClienteByIdServicoRepositoryStub();
 };
 
@@ -226,6 +249,7 @@ const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRep
             return Promise.resolve(false);
         }
     }
+
     return new LoadNotaFiscalByIdServicoRepositoryStub();
 };
 
@@ -237,5 +261,16 @@ const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepos
             };
         }
     }
+
     return new LoadMechanicsByIdServicoRepositoryStub();
+};
+
+const makeLoadBillingsIntegration = (): LoadBillingsIntegration => {
+    class LoadBillingsIntegrationStub implements LoadBillingsIntegration {
+        async load(params: LoadBillingsIntegrationParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+            return { content: [makeIntegrationLoadSimpleBillingModel()] };
+        }
+    }
+
+    return new LoadBillingsIntegrationStub();
 };

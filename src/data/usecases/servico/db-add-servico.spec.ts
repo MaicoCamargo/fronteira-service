@@ -33,7 +33,8 @@ import {
     SaveSimpleBillingIntegration,
     SaveSimpleBillingIntegrationModel
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
-import { mockFakeBilling } from '../../../../tests/mock/mock-billing-integration';
+import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
+import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -169,8 +170,8 @@ const makeUpdateCarroRepository = (): UpdateCarroRepository => {
 
 const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {
     class SaveSimpleBillingIntegrationStub implements SaveSimpleBillingIntegration {
-        save(billing: SaveSimpleBillingIntegrationModel): Promise<any> {
-            return Promise.resolve(mockFakeBilling());
+        save(billing: SaveSimpleBillingIntegrationModel): Promise<IntegrationLoadSimpleBillingModel> {
+            return Promise.resolve(makeIntegrationLoadSimpleBillingModel());
         }
     }
     return new SaveSimpleBillingIntegrationStub();

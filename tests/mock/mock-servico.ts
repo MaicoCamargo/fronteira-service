@@ -73,7 +73,33 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
             nome: mockFakeClienteModel().nome
         },
         nota: false,
-        mecanicos: mockFakeMechanicModelList()
+        mecanicos: mockFakeMechanicModelList(),
+        billing: {
+            amount: mockFakeAddServicoParams().billing.amount,
+            order: mockFakeDbServicoModelList()[0].id_servico,
+            name: `Fronteira service:${mockFakeAddServicoParams().cliente.id}:${mockFakeAddServicoParams().carro.id}:${
+                mockFakeAddServicoParams().valor
+            }`,
+            description: mockFakeAddServicoParams().billing.description,
+            id: 44,
+            payments: [
+                {
+                    id: 59,
+                    value: 1,
+                    status: {
+                        name: 'PAID/COMPLETED',
+                        id: 2,
+                        date: new Date('2025-05-17T19:32:57.441Z')
+                    },
+                    expirationDate: new Date('2025-06-03T02:59:59.441Z'),
+                    type: {
+                        name: 'CASH_ON_DELIVERY',
+                        id: 3
+                    },
+                    installment: 1
+                }
+            ]
+        }
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
