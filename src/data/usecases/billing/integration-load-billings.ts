@@ -1,6 +1,7 @@
 import { LoadBillingsIntegration } from '@/data/protocols/client/billing-service/load-billings-integration';
 import { LoadBillings, LoadBillingsParams } from '@/domain/usecases/billing/load-billings';
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { BillingModel } from '@/domain/models/billing-model';
 
 export class IntegrationLoadBillings implements LoadBillings {
     constructor(private readonly loadBillingsIntegration: LoadBillingsIntegration) {}

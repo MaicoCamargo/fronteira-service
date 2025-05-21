@@ -18,6 +18,7 @@ import {
     SimplePaymentModel
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
 import { ENV } from '@/main/config/env';
+import { BillingModel } from '@/domain/models/billing-model';
 
 export class DbAddServico implements AddServico {
     constructor(
