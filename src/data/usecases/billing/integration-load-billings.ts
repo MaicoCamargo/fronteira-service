@@ -5,7 +5,33 @@ import { Wrapper } from '@/main/protocols/http-wrapper';
 export class IntegrationLoadBillings implements LoadBillings {
     constructor(private readonly loadBillingsIntegration: LoadBillingsIntegration) {}
 
-    async load(params: LoadBillingsParams): Promise<Wrapper<any>> {
-        return await this.loadBillingsIntegration.load(params);
+    async load(params: LoadBillingsParams): Promise<Wrapper<BillingModel[]>> {
+        const wrapper = await this.loadBillingsIntegration.load(params);
+        const billings: BillingModel[] = wrapper.content.map((loaded) => ({
+            id: loaded.id,
+            name: loaded.name,
+            description: loaded.description,
+            amount: loaded.amount,
+            order: loaded.order,
+            service: loaded.service,
+            user: loaded.user,
+            payments: loaded.payments.map((payment) => ({
+                id: payment.id,
+                value: payment.value,
+                installment: payment.installment,
+                type: {
+                    name: payment.type.name,
+                    id: payment.type.id
+                },
+                expirationDate: payment.expirationDate,
+                status: {
+                    name: payment.status.name,
+                    id: payment.status.id,
+                    date: payment.status.date
+                }
+            }))
+        }));
+
+        return { content: billings, pagination: wrapper.pagination };
     }
 }

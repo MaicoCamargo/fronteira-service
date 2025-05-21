@@ -19,22 +19,22 @@ export enum PaymentType {
     INSTALLMENT_CASH
 }
 
-export interface Payment {
+export interface AddPaymentParams {
     installments: number;
     value: number;
     status: PaymentStatus;
     type: PaymentType;
 }
 
-export interface Billing {
+export interface AddBillingParams {
     description: string;
     amount: number;
-    payments: Payment[];
+    payments: AddPaymentParams[];
 }
 
-export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' | 'mecanicos'> & {
+export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' | 'mecanicos' | 'billing'> & {
     mechanics?: number[];
-    billing?: Billing;
+    billing?: AddBillingParams;
 };
 
 export interface AddServico {

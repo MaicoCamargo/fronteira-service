@@ -25,4 +25,5 @@ export interface ServicoModel {
     cliente: Cliente;
     nota?: boolean;
     mecanicos: MechanicModel[];
+    billing?: BillingModel;
 }

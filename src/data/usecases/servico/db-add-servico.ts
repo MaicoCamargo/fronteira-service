@@ -17,6 +17,7 @@ import {
     SaveSimpleBillingIntegrationModel,
     SimplePaymentModel
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
+import { ENV } from '@/main/config/env';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -40,7 +41,7 @@ export class DbAddServico implements AddServico {
         await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);
 
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
-        await this.saveBilling(params, result.id_servico);
+        const billing = await this.saveBilling(params, result.id_servico);
         return {
             itens,
             id: result.id_servico,
@@ -51,7 +52,8 @@ export class DbAddServico implements AddServico {
             carro: await this.quilometragem(model.carro_id, model.quilometragem),
             cliente: params.cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
-            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics)
+            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics),
+            billing
         };
     }
 
@@ -94,8 +96,7 @@ export class DbAddServico implements AddServico {
         };
     }
 
-    private async saveBilling(servico: AddServicoParams, servicoId: number): Promise<[]> {
-        // @todo alterar o retorno
+    private async saveBilling(servico: AddServicoParams, servicoId: number): Promise<BillingModel> {
         const payments: SimplePaymentModel[] = servico.billing.payments.map((payment) => ({
             installments: payment.installments,
             value: payment.value,
@@ -104,6 +105,7 @@ export class DbAddServico implements AddServico {
         }));
         // @todo obter id do usuário autenticado
         const billing: SaveSimpleBillingIntegrationModel = {
+            service: Number(ENV.SERVICE.ID),
             user: 1,
             name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
             order: servicoId,
@@ -112,7 +114,20 @@ export class DbAddServico implements AddServico {
             payments
         };
         const saved = await this.saveSimpleBillingIntegration.save(billing);
-        console.log(saved);
-        return [];
+        return {
+            id: saved.id,
+            name: saved.name,
+            order: saved.order,
+            description: saved.description,
+            amount: saved.amount,
+            payments: saved.payments.map((payment) => ({
+                id: payment.id,
+                status: payment.status,
+                type: payment.type,
+                value: payment.value,
+                expirationDate: payment.expirationDate,
+                installment: payment.installment
+            }))
+        };
     }
 }

@@ -8,6 +8,5 @@ export interface LoadBillingsParams {
 }
 
 export interface LoadBillings {
-    // @TODO CRIAR O RETORNO
-    load: (params: LoadBillingsParams) => Promise<Wrapper<any>>;
+    load: (params: LoadBillingsParams) => Promise<Wrapper<BillingModel[]>>;
 }

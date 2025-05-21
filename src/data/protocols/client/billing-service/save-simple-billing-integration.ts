@@ -31,6 +31,7 @@ export interface SaveSimpleBillingIntegrationModel {
     amount: number;
     order: number;
     user: number;
+    service: number;
     payments: SimplePaymentModel[];
 }
 

@@ -30,6 +30,7 @@ export interface SaveSimpleBillingParams {
     description: string;
     payments: SaveSimplePayment[];
     amount: number;
+    order: number;
 }
 
 export interface SaveSimpleBilling {

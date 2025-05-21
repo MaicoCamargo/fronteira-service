@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import * as process from 'node:process';
 dotenv.config();
 export const ENV = {
     NODE_ENV: process.env.NODE_ENV || 'test',
@@ -13,5 +14,9 @@ export const ENV = {
         DEBUG: process.env.DB_POSTGRES_DEBUG !== 'false' || false
     },
     AUTH_SERVICE_HOST: process.env.AUTH_SERVICE_HOST || 'http://127.0.0.1:8005',
-    BILLING_SERVICE_HOST: process.env.BILLING_SERVICE_HOST || 'http://127.0.0.1:8080'
+    BILLING_SERVICE_HOST: process.env.BILLING_SERVICE_HOST || 'http://127.0.0.1:8080',
+    SERVICE: {
+        NAME: process.env.SERVICE_NAME || 'fronteira-service',
+        ID: process.env.SERVICE_ID || 1
+    }
 };
