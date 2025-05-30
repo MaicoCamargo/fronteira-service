@@ -9,15 +9,18 @@ import {
 } from '@/data/protocols/client/billing-service/load-billings-integration';
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { ENV } from '@/main/config/env';
 
 export class BillingServiceIntegration implements SaveSimpleBillingIntegration, LoadBillingsIntegration {
     constructor(private readonly axios: AxiosHelper) {}
 
-    async save(data: SaveSimpleBillingIntegrationModel): Promise<IntegrationLoadSimpleBillingModel> {
+    async save(data: SaveSimpleBillingIntegrationModel): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
         return await this.axios.post('/billings/simple', data);
     }
 
     async load(params: LoadBillingsIntegrationParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
-        return await this.axios.get(`/billings/service/${params.service}`, params);
+        return (await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, params)) as Wrapper<
+            IntegrationLoadSimpleBillingModel[]
+        >;
     }
 }

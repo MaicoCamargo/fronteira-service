@@ -1,4 +1,5 @@
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export enum PaymentStatus {
     PENDING = 1, // Pagamento pendente
@@ -34,5 +35,5 @@ export interface SaveSimpleBillingParams {
 }
 
 export interface SaveSimpleBilling {
-    save: (billing: SaveSimpleBillingParams) => Promise<IntegrationLoadSimpleBillingModel>;
+    save: (billing: SaveSimpleBillingParams) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
 }

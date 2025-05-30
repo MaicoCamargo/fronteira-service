@@ -114,7 +114,8 @@ export class DbAddServico implements AddServico {
             amount: servico.valor,
             payments
         };
-        const saved = await this.saveSimpleBillingIntegration.save(billing);
+        const wrapper = await this.saveSimpleBillingIntegration.save(billing);
+        const saved = wrapper.content;
         return {
             id: saved.id,
             name: saved.name,
