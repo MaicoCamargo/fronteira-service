@@ -7,7 +7,7 @@ export class LoadBillingsController implements Controller {
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const billings = await this.loadBillings.load(httpRequest.body);
+            const billings = await this.loadBillings.load(httpRequest.query);
             return ok(billings);
         } catch (err) {
             return serverError(err);
