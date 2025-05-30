@@ -31,11 +31,10 @@ describe('Billing Service Integration', () => {
             const { sut, axiosHelperStub } = makeSut();
             const spy = jest.spyOn(axiosHelperStub, 'get');
             const params: LoadBillingsIntegrationParams = {
-                service: 1,
                 order: mockFakeServicoModel().id
             };
             await sut.load(params);
-            expect(spy).toBeCalledWith(`/billings/service/${params.service}`, params);
+            expect(spy).toBeCalledWith(`/billings/service/${ENV.SERVICE.ID}`, params);
         });
 
         test('Should return billings filtered by the parameters in case of success', async () => {
@@ -44,10 +43,9 @@ describe('Billing Service Integration', () => {
                 .spyOn(axiosHelperStub, 'get')
                 .mockResolvedValueOnce({ content: [makeIntegrationLoadSimpleBillingModel()] });
             const params: LoadBillingsIntegrationParams = {
-                service: 1,
                 order: mockFakeServicoModel().id
             };
-            expect(spy).toBeCalledWith(`/billings/service/${params.service}`, params);
+            expect(spy).toBeCalledWith(`/billings/service/${ENV.SERVICE.ID}`, params);
             const billingModel = await sut.load(params);
             expect(billingModel.content).toEqual([makeIntegrationLoadSimpleBillingModel()]);
         });
