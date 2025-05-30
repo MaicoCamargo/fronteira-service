@@ -11,7 +11,6 @@ import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { MechanicModel } from '@/domain/models/mechanic-model';
 import { LoadBillingsIntegration } from '@/data/protocols/client/billing-service/load-billings-integration';
-import { ENV } from '@/main/config/env';
 import { BillingModel } from '@/domain/models/billing-model';
 
 export class DbLoadServicos implements LoadServicos {
@@ -96,7 +95,7 @@ export class DbLoadServicos implements LoadServicos {
     }
 
     private async loadBilling(servicoId: number): Promise<BillingModel> {
-        const wrapper = await this.loadBillingsIntegration.load({ order: servicoId, service: Number(ENV.SERVICE.ID) });
+        const wrapper = await this.loadBillingsIntegration.load({ order: servicoId });
         if (wrapper.content.length === 0) {
             return null;
         }
