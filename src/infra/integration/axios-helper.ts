@@ -51,6 +51,10 @@ export class AxiosHelper {
         return await this.axiosInstance.post(url, data, config);
     }
 
+    async put(url: string, data: any, config?: any): Promise<any> {
+        return await this.axiosInstance.put(url, data, config);
+    }
+
     private queryParams(params: Object): string {
         if (!params) {
             return '';
