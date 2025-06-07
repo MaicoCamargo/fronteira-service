@@ -122,6 +122,7 @@ export class DbAddServico implements AddServico {
             order: saved.order,
             description: saved.description,
             amount: saved.amount,
+            createdAt: saved.createdAt,
             payments: saved.payments.map((payment) => ({
                 id: payment.id,
                 status: payment.status,

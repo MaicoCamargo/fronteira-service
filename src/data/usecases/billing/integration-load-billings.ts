@@ -14,7 +14,7 @@ export class IntegrationLoadBillings implements LoadBillings {
             description: loaded.description,
             amount: loaded.amount,
             order: loaded.order,
-            service: loaded.service,
+            createdAt: loaded.createdAt,
             user: loaded.user,
             payments: loaded.payments.map((payment) => ({
                 id: payment.id,

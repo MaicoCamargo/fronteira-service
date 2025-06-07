@@ -24,7 +24,7 @@ export interface BillingModel {
     description: string;
     amount: number;
     order: number;
-    service?: number;
+    createdAt: Date;
     user?: number;
     payments: Payment[];
 }

@@ -5,7 +5,7 @@ export interface IntegrationLoadSimpleBillingModel {
     amount: number;
     order: number;
     user: number;
-    service: number;
+    createdAt: Date;
     payments: [
         {
             id: number;
