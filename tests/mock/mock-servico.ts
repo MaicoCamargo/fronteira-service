@@ -98,7 +98,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
                     },
                     installment: 1
                 }
-            ]
+            ],
+            createdAt: new Date('2025-05-17T19:32:57.441Z')
         }
     },
     {

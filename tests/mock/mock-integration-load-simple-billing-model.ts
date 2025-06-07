@@ -10,7 +10,7 @@ export const makeIntegrationLoadSimpleBillingModel = (): IntegrationLoadSimpleBi
     description: makeSaveSimpleBillingIntegrationModel().description,
     amount: makeSaveSimpleBillingIntegrationModel().amount,
     order: mockFakeServicoModel().id,
-    service: null,
+    createdAt: new Date('2025-05-17T19:32:57.441Z'),
     user: makeSaveSimpleBillingIntegrationModel().user,
     payments: [
         {
