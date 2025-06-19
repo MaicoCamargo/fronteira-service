@@ -15,7 +15,7 @@ export class IntegrationSaveSimpleBilling implements SaveSimpleBilling {
         const billing: SaveSimpleBillingIntegrationModel = {
             service: Number(ENV.SERVICE.ID),
             user: 1,
-            name: `Fronteira service->order${params.order}`,
+            name: params.name ? params.name : `Fronteira service->order${params.order}`,
             description: params.description,
             amount: params.amount,
             order: params.order,
