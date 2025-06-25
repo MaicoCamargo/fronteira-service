@@ -26,6 +26,7 @@ import {
 } from '@/data/protocols/client/billing-service/load-billings-integration';
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
+import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -153,9 +154,10 @@ describe('DbLoadServicos Use Case', () => {
     });
 
     describe('loadBilling()', () => {
-        test('Deve retornar null caso loadBillingsIntegration retornar uma lista vazia', async () => {
-            const { sut, loadBillingsIntegrationStub } = makeSut();
-            jest.spyOn(loadBillingsIntegrationStub, 'load').mockResolvedValueOnce({ content: [] });
+        test('Deve retornar null caso loadBillingByOrderIdIntegration retornar uma lista vazia', async () => {
+            const { sut, loadBillingByOrderIdIntegrationStub } = makeSut();
+            /*@todo API para retorna [] em vez de null*/
+            jest.spyOn(loadBillingByOrderIdIntegrationStub, 'loadByOrderId').mockResolvedValueOnce({ content: [] });
             const { content: servicos } = await sut.load();
             expect(servicos[0].billing).toBeNull();
         });
@@ -170,7 +172,7 @@ interface SutTypes {
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
-    loadBillingsIntegrationStub: LoadBillingsIntegration;
+    loadBillingByOrderIdIntegrationStub: LoadBillingByOrderIdIntegration;
 }
 
 const makeSut = (): SutTypes => {
@@ -180,7 +182,7 @@ const makeSut = (): SutTypes => {
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
-    const loadBillingsIntegrationStub = makeLoadBillingsIntegration();
+    const loadBillingByOrderIdIntegrationStub = makeLoadBillingByOrderIdIntegration();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
@@ -188,7 +190,7 @@ const makeSut = (): SutTypes => {
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         loadMechanicsByIdServicoRepositoryStub,
-        loadBillingsIntegrationStub
+        loadBillingByOrderIdIntegrationStub
     );
     return {
         sut,
@@ -198,7 +200,7 @@ const makeSut = (): SutTypes => {
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         loadMechanicsByIdServicoRepositoryStub,
-        loadBillingsIntegrationStub
+        loadBillingByOrderIdIntegrationStub
     };
 };
 
@@ -265,12 +267,12 @@ const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepos
     return new LoadMechanicsByIdServicoRepositoryStub();
 };
 
-const makeLoadBillingsIntegration = (): LoadBillingsIntegration => {
-    class LoadBillingsIntegrationStub implements LoadBillingsIntegration {
-        async load(params: LoadBillingsIntegrationParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+const makeLoadBillingByOrderIdIntegration = (): LoadBillingByOrderIdIntegration => {
+    class LoadBillingByOrderIdIntegrationStub implements LoadBillingByOrderIdIntegration {
+        async loadByOrderId(order: number): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
             return { content: [makeIntegrationLoadSimpleBillingModel()] };
         }
     }
 
-    return new LoadBillingsIntegrationStub();
+    return new LoadBillingByOrderIdIntegrationStub();
 };
