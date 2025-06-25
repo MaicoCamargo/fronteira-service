@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosResponse, HttpStatusCode } from 'axios';
 import { IntegrationError } from '@/presentation/errors/integration-error';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 
@@ -25,6 +25,9 @@ export class AxiosHelper {
                 return response.data;
             },
             async (error: AxiosError) => {
+                if (error.response.status === HttpStatusCode.NotFound) {
+                    return { content: null };
+                }
                 // Manipulação de erro
                 console.error(error);
                 throw await Promise.reject(

@@ -14,9 +14,14 @@ import {
     UpdateBillingPaymentIntegration,
     UpdateBillingPaymentIntegrationModel
 } from '@/data/protocols/client/billing-service/update-billing-payment-integration';
+import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 
 export class BillingServiceIntegration
-    implements SaveSimpleBillingIntegration, LoadBillingsIntegration, UpdateBillingPaymentIntegration
+    implements
+        SaveSimpleBillingIntegration,
+        LoadBillingsIntegration,
+        UpdateBillingPaymentIntegration,
+        LoadBillingByOrderIdIntegration
 {
     constructor(private readonly axios: AxiosHelper) {}
 
@@ -32,5 +37,9 @@ export class BillingServiceIntegration
 
     async update(payment: UpdateBillingPaymentIntegrationModel): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
         return await this.axios.put('/payments', payment);
+    }
+
+    async loadByOrderId(order: number): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+        return (await this.axios.get(`/billings/order/${order}`)) as Wrapper<IntegrationLoadSimpleBillingModel[]>;
     }
 }

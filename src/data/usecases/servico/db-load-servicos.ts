@@ -10,8 +10,8 @@ import { Filter } from '@/main/protocols/filter';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { MechanicModel } from '@/domain/models/mechanic-model';
-import { LoadBillingsIntegration } from '@/data/protocols/client/billing-service/load-billings-integration';
 import { BillingModel } from '@/domain/models/billing-model';
+import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
@@ -21,7 +21,7 @@ export class DbLoadServicos implements LoadServicos {
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly loadMechanicsByIdServicoRepository: LoadMechanicsByIdServicoRepository,
-        private readonly loadBillingsIntegration: LoadBillingsIntegration
+        private readonly loadBillingByOrderIdIntegration: LoadBillingByOrderIdIntegration
     ) {}
 
     async load(params?: LoadServicosParams): Promise<Wrapper<ServicoModel[]>> {
@@ -47,7 +47,7 @@ export class DbLoadServicos implements LoadServicos {
             cliente: await this.loadCliente(item.id_servico),
             nota: await this.loadNotaFiscalByIdServicoRepository.load(item.id_servico),
             mecanicos: await this.loadMechanics(item.id_servico),
-            billing: await this.loadBilling(item.id_servico)
+            billing: await this.loadBillingByOrderId(item.id_servico)
         }));
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }
@@ -94,12 +94,12 @@ export class DbLoadServicos implements LoadServicos {
         }));
     }
 
-    private async loadBilling(servicoId: number): Promise<BillingModel> {
-        const wrapper = await this.loadBillingsIntegration.load({ order: servicoId });
-        if (wrapper.content.length === 0) {
-            return null;
-        }
+    private async loadBillingByOrderId(servicoId: number): Promise<BillingModel> {
+        const wrapper = await this.loadBillingByOrderIdIntegration.loadByOrderId(servicoId);
+        console.log(wrapper);
+        if (wrapper.content === null || wrapper.content?.length === 0) return null;
         const billing = wrapper.content[0];
+        console.log(billing);
         return {
             id: billing.id,
             name: billing.name,

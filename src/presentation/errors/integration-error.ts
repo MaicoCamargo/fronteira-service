@@ -24,5 +24,8 @@ export class IntegrationError extends Error {
         if (HttpStatusCode.InternalServerError === statusCode) {
             return { message: 'Bad Gateway', status: HttpStatusCode.BadGateway };
         }
+        if (HttpStatusCode.NotFound === statusCode) {
+            return { message: 'Recurso não encontrado', status: HttpStatusCode.NotFound };
+        }
     }
 }
