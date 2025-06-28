@@ -25,5 +25,7 @@ export interface UpdateBillingPaymentIntegrationModel {
 }
 
 export interface UpdateBillingPaymentIntegration {
-    update: (billing: UpdateBillingPaymentIntegrationModel) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
+    updatePayment: (
+        billing: UpdateBillingPaymentIntegrationModel
+    ) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
 }

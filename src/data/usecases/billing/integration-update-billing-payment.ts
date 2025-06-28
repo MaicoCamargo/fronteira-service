@@ -7,7 +7,7 @@ export class IntegrationUpdateBillingPayment implements UpdateBillingPayment {
     constructor(private readonly updateBillingPaymentIntegration: UpdateBillingPaymentIntegration) {}
 
     async update(payment: UpdateBillingPaymentParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
-        return await this.updateBillingPaymentIntegration.update({
+        return await this.updateBillingPaymentIntegration.updatePayment({
             id: payment.id,
             value: payment.value,
             type: payment.type.valueOf(),
