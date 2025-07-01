@@ -28,5 +28,6 @@ export const makeIntegrationLoadSimpleBillingModel = (): IntegrationLoadSimpleBi
                 date: new Date('2025-05-17T16:32:57.441384326')
             }
         }
-    ]
+    ],
+    status: 'COMPLETED'
 });

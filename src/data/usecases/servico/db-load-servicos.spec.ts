@@ -1,7 +1,7 @@
 import { LoadServicosDbFilter, LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { DbLoadServicos } from './db-load-servicos';
 import { mockFakeDbServicoModelList, mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { DbServicoModel } from '../../models/db-servico-model';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
@@ -14,16 +14,12 @@ import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-inc
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
-import { Filter } from '../../../main/protocols/filter';
+import { Filter } from '@/main/protocols/filter';
 import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
-import {
-    LoadBillingsIntegration,
-    LoadBillingsIntegrationParams
-} from '@/data/protocols/client/billing-service/load-billings-integration';
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
