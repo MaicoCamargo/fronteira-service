@@ -27,4 +27,5 @@ export interface BillingModel {
     createdAt: Date;
     user?: number;
     payments: Payment[];
+    status: string;
 }

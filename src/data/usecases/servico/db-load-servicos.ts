@@ -96,10 +96,8 @@ export class DbLoadServicos implements LoadServicos {
 
     private async loadBillingByOrderId(servicoId: number): Promise<BillingModel> {
         const wrapper = await this.loadBillingByOrderIdIntegration.loadByOrderId(servicoId);
-        console.log(wrapper);
         if (wrapper.content === null || wrapper.content?.length === 0) return null;
         const billing = wrapper.content[0];
-        console.log(billing);
         return {
             id: billing.id,
             name: billing.name,
@@ -107,7 +105,8 @@ export class DbLoadServicos implements LoadServicos {
             amount: billing.amount,
             order: billing.order,
             payments: billing.payments,
-            createdAt: billing.createdAt
+            createdAt: billing.createdAt,
+            status: billing.status
         };
     }
 }

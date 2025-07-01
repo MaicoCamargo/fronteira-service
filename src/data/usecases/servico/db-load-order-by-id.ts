@@ -98,7 +98,8 @@ export class DbLoadOrderById implements LoadOrderById {
             amount: billing.amount,
             order: billing.order,
             payments: billing.payments,
-            createdAt: billing.createdAt
+            createdAt: billing.createdAt,
+            status: billing.status
         };
     }
 }

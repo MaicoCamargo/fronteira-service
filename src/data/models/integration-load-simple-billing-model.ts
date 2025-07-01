@@ -23,4 +23,5 @@ export interface IntegrationLoadSimpleBillingModel {
             };
         }
     ];
+    status: string;
 }

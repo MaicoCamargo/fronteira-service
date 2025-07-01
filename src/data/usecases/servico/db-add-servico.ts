@@ -130,7 +130,8 @@ export class DbAddServico implements AddServico {
                 value: payment.value,
                 expirationDate: payment.expirationDate,
                 installment: payment.installment
-            }))
+            })),
+            status: saved.status
         };
     }
 }
