@@ -3,7 +3,8 @@ import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-loa
 
 export interface LoadBillingsIntegrationParams {
     status?: string;
-    order?: number;
+    startDate?: string;
+    endDate?: string;
     user?: number;
 }
 

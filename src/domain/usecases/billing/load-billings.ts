@@ -4,9 +4,10 @@ import { PageFilter } from '@/main/protocols/page-filter';
 
 export interface LoadBillingsParams extends PageFilter {
     service: number;
-    status: string;
-    order: number;
-    user: number;
+    status?: string;
+    startDate?: Date;
+    endDate?: Date;
+    user?: number;
 }
 
 export interface LoadBillings {

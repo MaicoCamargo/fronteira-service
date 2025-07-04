@@ -1,13 +1,24 @@
-import { LoadBillingsIntegration } from '@/data/protocols/client/billing-service/load-billings-integration';
+import {
+    LoadBillingsIntegration,
+    LoadBillingsIntegrationParams
+} from '@/data/protocols/client/billing-service/load-billings-integration';
 import { LoadBillings, LoadBillingsParams } from '@/domain/usecases/billing/load-billings';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { BillingModel } from '@/domain/models/billing-model';
+import { MomentAdapter } from '@/main/adapters/moment-adapter';
 
 export class IntegrationLoadBillings implements LoadBillings {
     constructor(private readonly loadBillingsIntegration: LoadBillingsIntegration) {}
 
     async load(params: LoadBillingsParams): Promise<Wrapper<BillingModel[]>> {
-        const wrapper = await this.loadBillingsIntegration.load(params);
+        const queryParams: LoadBillingsIntegrationParams = {
+            user: params.user,
+            startDate: MomentAdapter.format(params.startDate),
+            endDate: MomentAdapter.format(params.endDate),
+            status: params.status
+        };
+
+        const wrapper = await this.loadBillingsIntegration.load(queryParams);
         const billings: BillingModel[] = wrapper.content.map((loaded) => ({
             id: loaded.id,
             name: loaded.name,

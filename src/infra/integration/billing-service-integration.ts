@@ -31,8 +31,10 @@ export class BillingServiceIntegration
         return await this.axios.post('/billings/simple', data);
     }
 
-    async load(params: LoadBillingsIntegrationParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
-        return (await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, params)) as Wrapper<
+    async load(
+        loadBillingsIntegrationParams: LoadBillingsIntegrationParams
+    ): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+        return (await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, loadBillingsIntegrationParams)) as Wrapper<
             IntegrationLoadSimpleBillingModel[]
         >;
     }
