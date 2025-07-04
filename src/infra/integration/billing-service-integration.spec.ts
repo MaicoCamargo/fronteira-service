@@ -4,7 +4,8 @@ import { BillingServiceIntegration } from '@/infra/integration/billing-service-i
 import { makeSaveSimpleBillingIntegrationModel } from '../../../tests/mock/mock-save-simple-billing-model-integration';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../tests/mock/mock-integration-load-simple-billing-model';
 import { LoadBillingsIntegrationParams } from '@/data/protocols/client/billing-service/load-billings-integration';
-import { mockFakeServicoModel } from '../../../tests/mock/mock-servico';
+import { mockDateAdapter } from '../../../tests/helper/mock-date-adapter';
+import { MomentAdapter } from '@/main/adapters/moment-adapter';
 
 describe('Billing Service Integration', () => {
     describe('save()', () => {
@@ -27,14 +28,25 @@ describe('Billing Service Integration', () => {
     });
 
     describe('load()', () => {
+        beforeAll(() => {
+            mockDateAdapter.set(new Date());
+        });
+
+        afterAll(() => {
+            mockDateAdapter.reset();
+        });
         test('Should call AxiosHelper with the correct values', async () => {
             const { sut, axiosHelperStub } = makeSut();
             const spy = jest.spyOn(axiosHelperStub, 'get');
             const params: LoadBillingsIntegrationParams = {
-                order: mockFakeServicoModel().id
+                startDate: MomentAdapter.format(new Date()),
+                endDate: MomentAdapter.format(new Date())
             };
             await sut.load(params);
-            expect(spy).toBeCalledWith(`/billings/service/${ENV.SERVICE.ID}`, params);
+            expect(spy).toBeCalledWith(`/billings/service/${ENV.SERVICE.ID}`, {
+                startDate: MomentAdapter.format(),
+                endDate: MomentAdapter.format()
+            });
         });
 
         test('Should return billings filtered by the parameters in case of success', async () => {
@@ -43,9 +55,13 @@ describe('Billing Service Integration', () => {
                 .spyOn(axiosHelperStub, 'get')
                 .mockResolvedValueOnce({ content: [makeIntegrationLoadSimpleBillingModel()] });
             const params: LoadBillingsIntegrationParams = {
-                order: mockFakeServicoModel().id
+                startDate: MomentAdapter.format(new Date()),
+                endDate: MomentAdapter.format(new Date())
             };
-            expect(spy).toBeCalledWith(`/billings/service/${ENV.SERVICE.ID}`, params);
+            expect(spy).toBeCalledWith(`/billings/service/${ENV.SERVICE.ID}`, {
+                startDate: MomentAdapter.format(),
+                endDate: MomentAdapter.format()
+            });
             const billingModel = await sut.load(params);
             expect(billingModel.content).toEqual([makeIntegrationLoadSimpleBillingModel()]);
         });
