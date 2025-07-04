@@ -1,9 +1,9 @@
-import { DbServicoModel } from '../../src/data/models/db-servico-model';
-import { ServicoModel } from '../../src/domain/models/servico-model';
+import { DbServicoModel } from '@/data/models/db-servico-model';
+import { ServicoModel } from '@/domain/models/servico-model';
 import { mockFakeCarroModelList } from './mock-carro';
 import { mockFakeAddItemParams, mockFakeIncludedItemModelList } from './mock-included-itens';
-import { AddServicoParams } from '../../src/domain/usecases/servico/add-servico';
-import { SaveServicoModel } from '../../src/data/protocols/db/servico/save-servico-repository';
+import { AddServicoParams, PaymentStatus, PaymentType } from '@/domain/usecases/servico/add-servico';
+import { SaveServicoModel } from '@/data/protocols/db/servico/save-servico-repository';
 import { mockFakeClienteModel } from './mock-cliente';
 import { mockFakeMechanicModelList } from './mock-mechanic';
 
@@ -17,7 +17,19 @@ export const mockFakeAddServicoParams = (): AddServicoParams => ({
         id: mockFakeClienteModel().id,
         nome: mockFakeClienteModel().nome
     },
-    mechanics: [1]
+    mechanics: [1],
+    billing: {
+        amount: 100,
+        description: 'any description',
+        payments: [
+            {
+                status: PaymentStatus.COMPLETED,
+                type: PaymentType.CREDIT_CARD,
+                value: 100,
+                installments: 1
+            }
+        ]
+    }
 });
 
 export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
@@ -61,7 +73,35 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
             nome: mockFakeClienteModel().nome
         },
         nota: false,
-        mecanicos: mockFakeMechanicModelList()
+        mecanicos: mockFakeMechanicModelList(),
+        billing: {
+            amount: mockFakeAddServicoParams().billing.amount,
+            order: mockFakeDbServicoModelList()[0].id_servico,
+            name: `Fronteira service:${mockFakeAddServicoParams().cliente.id}:${mockFakeAddServicoParams().carro.id}:${
+                mockFakeAddServicoParams().valor
+            }`,
+            description: mockFakeAddServicoParams().billing.description,
+            id: 44,
+            payments: [
+                {
+                    id: 59,
+                    value: 1,
+                    status: {
+                        name: 'PAID/COMPLETED',
+                        id: 2,
+                        date: new Date('2025-05-17T19:32:57.441Z')
+                    },
+                    expirationDate: new Date('2025-06-03T02:59:59.441Z'),
+                    type: {
+                        name: 'CASH_ON_DELIVERY',
+                        id: 3
+                    },
+                    installment: 1
+                }
+            ],
+            createdAt: new Date('2025-05-17T19:32:57.441Z'),
+            status: 'COMPLETED'
+        }
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,

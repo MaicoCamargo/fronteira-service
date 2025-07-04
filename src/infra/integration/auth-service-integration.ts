@@ -1,19 +1,24 @@
-import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
+import {
+    LoadAuthDetailIntegration,
+    LoadAuthDetailIntegrationModel
+} from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { AxiosHelper } from '@/infra/integration/axios-helper';
 import { CredencialModel, LoadAuthIntegration } from '@/data/protocols/client/auth-service/load-auth-integration';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export class AuthServiceIntegration implements LoadAuthDetailIntegration, LoadAuthIntegration {
-    async load(token: string): Promise<any> {
+    constructor(private readonly axios: AxiosHelper) {}
+
+    async load(token: string): Promise<Wrapper<LoadAuthDetailIntegrationModel>> {
         const config = {
             headers: {
                 Authorization: token
             }
         };
-        return await AxiosHelper.get('/auth', config);
+        return await this.axios.get('/auth', null, config);
     }
 
     async auth(credencial: CredencialModel): Promise<Wrapper<string>> {
-        return await AxiosHelper.post('/auth', credencial);
+        return await this.axios.post('/auth', credencial);
     }
 }

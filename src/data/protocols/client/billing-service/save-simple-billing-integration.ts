@@ -1,0 +1,41 @@
+import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+
+export enum PaymentStatus {
+    PENDING = 1, // Pagamento pendente
+    COMPLETED, // Pagamento concluído
+    FAILED, // Pagamento falhou
+    LATE, // Pagamento atrasado
+    CANCELED, // Pagamento cancelado
+    REFUND, // Pagamento estornado
+    IN_PROGRESS // Pagamento em andamento
+}
+
+export enum PaymentType {
+    CASH_ON_DELIVERY = 1, // Dinheiro á vista
+    DEBIT_CARD,
+    CREDIT_CARD,
+    BANK_SLIP, // boleto
+    INSTALLMENT_CASH
+}
+
+export interface SimplePaymentModel {
+    installments: number;
+    value: number;
+    status: PaymentStatus;
+    type: PaymentType;
+}
+
+export interface SaveSimpleBillingIntegrationModel {
+    name: string;
+    description: string;
+    amount: number;
+    order: number;
+    user: number;
+    service: number;
+    payments: SimplePaymentModel[];
+}
+
+export interface SaveSimpleBillingIntegration {
+    save: (billing: SaveSimpleBillingIntegrationModel) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
+}

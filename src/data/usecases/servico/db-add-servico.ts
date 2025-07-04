@@ -12,6 +12,13 @@ import { MechanicModel } from '@/domain/models/mechanic-model';
 import { SaveServiceMechanicsRepository } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
 import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 import { CarroModel } from '@/domain/models/carro-model';
+import {
+    SaveSimpleBillingIntegration,
+    SaveSimpleBillingIntegrationModel,
+    SimplePaymentModel
+} from '@/data/protocols/client/billing-service/save-simple-billing-integration';
+import { ENV } from '@/main/config/env';
+import { BillingModel } from '@/domain/models/billing-model';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -20,7 +27,8 @@ export class DbAddServico implements AddServico {
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
         private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository,
-        private readonly updateCarroRepository: UpdateCarroRepository
+        private readonly updateCarroRepository: UpdateCarroRepository,
+        private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration
     ) {}
 
     async add(params: AddServicoParams): Promise<ServicoModel> {
@@ -34,6 +42,7 @@ export class DbAddServico implements AddServico {
         await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);
 
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
+        const billing = await this.saveBilling(params, result.id_servico);
         return {
             itens,
             id: result.id_servico,
@@ -44,7 +53,8 @@ export class DbAddServico implements AddServico {
             carro: await this.quilometragem(model.carro_id, model.quilometragem),
             cliente: params.cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
-            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics)
+            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics),
+            billing
         };
     }
 
@@ -84,6 +94,44 @@ export class DbAddServico implements AddServico {
             quilometragem: dbCarroModel.quilometragem,
             modelo: dbCarroModel.modelo,
             placa: dbCarroModel.placa
+        };
+    }
+
+    private async saveBilling(servico: AddServicoParams, servicoId: number): Promise<BillingModel> {
+        const payments: SimplePaymentModel[] = servico.billing.payments.map((payment) => ({
+            installments: payment.installments,
+            value: payment.value,
+            status: payment.status,
+            type: payment.type
+        }));
+        // @todo obter id do usuário autenticado
+        const billing: SaveSimpleBillingIntegrationModel = {
+            service: Number(ENV.SERVICE.ID),
+            user: 1,
+            name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
+            order: servicoId,
+            description: servico.billing.description,
+            amount: servico.valor,
+            payments
+        };
+        const wrapper = await this.saveSimpleBillingIntegration.save(billing);
+        const saved = wrapper.content;
+        return {
+            id: saved.id,
+            name: saved.name,
+            order: saved.order,
+            description: saved.description,
+            amount: saved.amount,
+            createdAt: saved.createdAt,
+            payments: saved.payments.map((payment) => ({
+                id: payment.id,
+                status: payment.status,
+                type: payment.type,
+                value: payment.value,
+                expirationDate: payment.expirationDate,
+                installment: payment.installment
+            })),
+            status: saved.status
         };
     }
 }

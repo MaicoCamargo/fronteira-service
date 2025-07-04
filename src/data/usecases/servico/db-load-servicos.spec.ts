@@ -1,7 +1,7 @@
 import { LoadServicosDbFilter, LoadServicosRepository } from '../../protocols/db/servico/load-servicos-repository';
 import { DbLoadServicos } from './db-load-servicos';
 import { mockFakeDbServicoModelList, mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { DbServicoModel } from '../../models/db-servico-model';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-id-repository';
@@ -14,12 +14,15 @@ import { mockFakeDbIncludedItemModelList } from '../../../../tests/mock/mock-inc
 import { LoadClienteByIdServicoRepository } from '../../protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
-import { Filter } from '../../../main/protocols/filter';
+import { Filter } from '@/main/protocols/filter';
 import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
+import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
+import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
+import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
@@ -145,6 +148,16 @@ describe('DbLoadServicos Use Case', () => {
             expect(carro.content[0].mecanicos).toHaveLength(2);
         });
     });
+
+    describe('loadBilling()', () => {
+        test('Deve retornar null caso loadBillingByOrderIdIntegration retornar uma lista vazia', async () => {
+            const { sut, loadBillingByOrderIdIntegrationStub } = makeSut();
+            /*@todo API para retorna [] em vez de null*/
+            jest.spyOn(loadBillingByOrderIdIntegrationStub, 'loadByOrderId').mockResolvedValueOnce({ content: [] });
+            const { content: servicos } = await sut.load();
+            expect(servicos[0].billing).toBeNull();
+        });
+    });
 });
 
 interface SutTypes {
@@ -155,6 +168,7 @@ interface SutTypes {
     loadClienteByIdServicoRepositoryStub: LoadClienteByIdServicoRepository;
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
+    loadBillingByOrderIdIntegrationStub: LoadBillingByOrderIdIntegration;
 }
 
 const makeSut = (): SutTypes => {
@@ -164,13 +178,15 @@ const makeSut = (): SutTypes => {
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
+    const loadBillingByOrderIdIntegrationStub = makeLoadBillingByOrderIdIntegration();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
         loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        loadMechanicsByIdServicoRepositoryStub
+        loadMechanicsByIdServicoRepositoryStub,
+        loadBillingByOrderIdIntegrationStub
     );
     return {
         sut,
@@ -179,7 +195,8 @@ const makeSut = (): SutTypes => {
         loadIncludedItensRepositoryStub,
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
-        loadMechanicsByIdServicoRepositoryStub
+        loadMechanicsByIdServicoRepositoryStub,
+        loadBillingByOrderIdIntegrationStub
     };
 };
 
@@ -189,6 +206,7 @@ const makeLoadIncludedItensRepository = (): LoadIncludedItensRepository => {
             return mockFakeDbIncludedItemModelList();
         }
     }
+
     return new LoadIncludedItensRepositoryStub();
 };
 
@@ -199,6 +217,7 @@ const makeLoadServicosRepository = (): LoadServicosRepository => {
             return Promise.resolve(wrapper);
         }
     }
+
     return new LoadServicosRepositoryStub();
 };
 
@@ -208,6 +227,7 @@ const makeLoadCarroByIdRepository = (): LoadCarroByIdRepository => {
             return Promise.resolve(mockFakeDbCarroModel());
         }
     }
+
     return new LoadCarroByIdRepositoryStub();
 };
 
@@ -217,6 +237,7 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
             return Promise.resolve(mockFakeDbClienteModel());
         }
     }
+
     return new LoadClienteByIdServicoRepositoryStub();
 };
 
@@ -226,6 +247,7 @@ const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRep
             return Promise.resolve(false);
         }
     }
+
     return new LoadNotaFiscalByIdServicoRepositoryStub();
 };
 
@@ -237,5 +259,16 @@ const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepos
             };
         }
     }
+
     return new LoadMechanicsByIdServicoRepositoryStub();
+};
+
+const makeLoadBillingByOrderIdIntegration = (): LoadBillingByOrderIdIntegration => {
+    class LoadBillingByOrderIdIntegrationStub implements LoadBillingByOrderIdIntegration {
+        async loadByOrderId(order: number): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+            return { content: [makeIntegrationLoadSimpleBillingModel()] };
+        }
+    }
+
+    return new LoadBillingByOrderIdIntegrationStub();
 };

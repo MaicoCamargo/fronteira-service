@@ -5,6 +5,8 @@ import { IncludedItemPgRepository } from '@/infra/db/pg/included-item-pg-reposit
 import { ClientePgRepository } from '@/infra/db/pg/cliente-pg-repository';
 import { NotaFiscalPgRepository } from '@/infra/db/pg/nota-fiscal-pg-repository';
 import { MechanicPgRepository } from '@/infra/db/pg/mechanic-pg-repository';
+import { makeBillingServiceClient } from '@/main/factories/infra/integration/billing-service-client-factory';
+import { BillingServiceIntegration } from '@/infra/integration/billing-service-integration';
 
 export const makeDbLoadServicos = (): DbLoadServicos => {
     const servicoPgRepository = new ServicoPgRepository();
@@ -13,6 +15,7 @@ export const makeDbLoadServicos = (): DbLoadServicos => {
     const clientePgRepository = new ClientePgRepository();
     const notaFiscalPgRepository = new NotaFiscalPgRepository();
     const mechanicPgRepository = new MechanicPgRepository();
+    const billingServiceIntegration = new BillingServiceIntegration(makeBillingServiceClient());
 
     return new DbLoadServicos(
         servicoPgRepository,
@@ -20,6 +23,7 @@ export const makeDbLoadServicos = (): DbLoadServicos => {
         includedItemPgRepository,
         clientePgRepository,
         notaFiscalPgRepository,
-        mechanicPgRepository
+        mechanicPgRepository,
+        billingServiceIntegration
     );
 };

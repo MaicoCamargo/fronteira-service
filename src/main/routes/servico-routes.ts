@@ -5,10 +5,12 @@ import { makeSaveServicoController } from '../factories/controller/servico/save-
 import { makeUpdateServicoController } from '../factories/controller/servico/update-servico-controller-factory';
 import { makeDeleteServicoController } from '../factories/controller/servico/delete-servico-controller-factory';
 import { adminRole } from '@/main/middlewares/role-admin-middleware';
+import { makeLoadOrderByIdController } from '@/main/factories/controller/servico/load-order-by-id-controller-factory';
 
 export default (router: Router): void => {
     router.get('/servicos', adminRole, expressRouterAdapter(makeLoadServicosController()));
     router.post('/servicos', adminRole, expressRouterAdapter(makeSaveServicoController()));
     router.put('/servicos/:id', adminRole, expressRouterAdapter(makeUpdateServicoController()));
     router.delete('/servicos/:id', adminRole, expressRouterAdapter(makeDeleteServicoController()));
+    router.get('/servicos/:id', adminRole, expressRouterAdapter(makeLoadOrderByIdController()));
 };
