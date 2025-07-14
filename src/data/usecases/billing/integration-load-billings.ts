@@ -15,7 +15,9 @@ export class IntegrationLoadBillings implements LoadBillings {
             user: params.user,
             startDate: MomentAdapter.format(params.startDate),
             endDate: MomentAdapter.format(params.endDate),
-            status: params.status
+            status: params.status,
+            page: params.page,
+            size: params.size
         };
 
         const wrapper = await this.loadBillingsIntegration.load(queryParams);

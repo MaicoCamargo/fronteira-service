@@ -6,8 +6,8 @@ interface Pagination {
     perPage: number;
     currentPage: number;
     totalItemPage: number;
-    from: number;
-    to: number;
+    from?: number;
+    to?: number;
 }
 
 export interface Wrapper<T> {

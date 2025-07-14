@@ -6,6 +6,8 @@ export interface LoadBillingsIntegrationParams {
     startDate?: string;
     endDate?: string;
     user?: number;
+    page?: number;
+    size?: number;
 }
 
 export interface LoadBillingsIntegration {
