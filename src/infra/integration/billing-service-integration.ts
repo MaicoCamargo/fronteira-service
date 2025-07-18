@@ -34,6 +34,9 @@ export class BillingServiceIntegration
     async load(
         loadBillingsIntegrationParams: LoadBillingsIntegrationParams
     ): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+        if (loadBillingsIntegrationParams.page) {
+            loadBillingsIntegrationParams.page = loadBillingsIntegrationParams.page - 1;
+        }
         return (await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, loadBillingsIntegrationParams)) as Wrapper<
             IntegrationLoadSimpleBillingModel[]
         >;
