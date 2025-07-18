@@ -13,12 +13,16 @@ export class IntegrationLoadBillings implements LoadBillings {
     async load(params: LoadBillingsParams): Promise<Wrapper<BillingModel[]>> {
         const queryParams: LoadBillingsIntegrationParams = {
             user: params.user,
-            startDate: MomentAdapter.format(params.startDate),
-            endDate: MomentAdapter.format(params.endDate),
             status: params.status,
             page: params.page,
             size: params.size
         };
+        if (params.startDate) {
+            queryParams.startDate = MomentAdapter.format(params.startDate);
+        }
+        if (params.endDate) {
+            queryParams.endDate = MomentAdapter.format(params.endDate);
+        }
 
         const wrapper = await this.loadBillingsIntegration.load(queryParams);
         const billings: BillingModel[] = wrapper.content.map((loaded) => ({
