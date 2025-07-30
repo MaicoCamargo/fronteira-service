@@ -6,4 +6,5 @@ export interface DbServicoModel {
     carro_id: number;
     quilometragem?: number;
     last_updated?: Date;
+    codigo: string;
 }

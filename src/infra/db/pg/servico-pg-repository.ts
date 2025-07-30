@@ -28,7 +28,16 @@ export class ServicoPgRepository
         let query: any;
         if (filters?.params) {
             query = knexInstance('servico')
-                .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
+                .select([
+                    'id_servico',
+                    'valor',
+                    'descricao',
+                    'data',
+                    'quilometragem',
+                    'last_updated',
+                    'carro_id',
+                    'codigo'
+                ])
                 .whereNull('dh_exclusion');
             if (filters.params.startDate) {
                 const startDate = new Date(filters.params.startDate);
@@ -70,7 +79,16 @@ export class ServicoPgRepository
             }
         } else {
             query = knexInstance('servico')
-                .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
+                .select([
+                    'id_servico',
+                    'valor',
+                    'descricao',
+                    'data',
+                    'quilometragem',
+                    'last_updated',
+                    'carro_id',
+                    'codigo'
+                ])
                 .whereNull('dh_exclusion');
         }
         query.orderBy('data', 'desc');
