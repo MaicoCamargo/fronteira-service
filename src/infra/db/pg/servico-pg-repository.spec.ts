@@ -86,7 +86,8 @@ describe('Servico Postgres Repository', () => {
                 valor: 10,
                 descricao: 'any_descricao',
                 quilometragem: 100,
-                carro_id: carro.id_carro
+                carro_id: carro.id_carro,
+                code: '#SA1B2C'
             });
             expect(result.id_servico).toBeTruthy();
             expect(result.valor).toEqual(10);

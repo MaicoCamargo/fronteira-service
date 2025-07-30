@@ -36,10 +36,12 @@ import {
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { UniqueIdRepository } from '@/infra/unique-id-repository';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
         mockDateAdapter.set(new Date());
+        mockOrderCodeStub();
     });
 
     afterAll(async () => {
@@ -206,4 +208,9 @@ const makeSut = (): SutTypes => {
         updateCarroRepositoryStub,
         saveSimpleBillingIntegrationStub
     };
+};
+const mockOrderCodeStub = (): void => {
+    jest.spyOn(UniqueIdRepository, 'generate').mockImplementation((size: number, prefix?: string) => {
+        return 'OANY_CODE';
+    });
 };

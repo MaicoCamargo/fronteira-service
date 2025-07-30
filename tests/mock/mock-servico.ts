@@ -36,7 +36,8 @@ export const mockFakeSaveServicoModel = (): SaveServicoModel => ({
     valor: 100,
     carro_id: 1,
     descricao: 'any_descricao',
-    quilometragem: 1000
+    quilometragem: 1000,
+    code: 'OANY_CODE'
 });
 
 export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
