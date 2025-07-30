@@ -19,6 +19,7 @@ import {
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
 import { ENV } from '@/main/config/env';
 import { BillingModel } from '@/domain/models/billing-model';
+import { UniqueIdRepository } from '@/infra/unique-id-repository';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -36,7 +37,8 @@ export class DbAddServico implements AddServico {
             valor: params.valor,
             quilometragem: params.quilometragem,
             descricao: params.descricao,
-            carro_id: params.carro.id
+            carro_id: params.carro.id,
+            code: UniqueIdRepository.generate(5, 'O')
         };
         const result: DbServicoModel = await this.saveServicoRepository.save(model);
         await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);

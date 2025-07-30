@@ -78,8 +78,9 @@ export class ServicoPgRepository
     }
 
     async save(model: SaveServicoModel): Promise<DbServicoModel> {
+        const { code, ...modelWithoutCode } = model;
         const saved = await knexInstance('servico')
-            .insert({ ...model, data: new Date() })
+            .insert({ ...modelWithoutCode, codigo: code, data: new Date() })
             .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
         return mapper(saved);
     }
