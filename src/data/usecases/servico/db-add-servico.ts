@@ -56,7 +56,8 @@ export class DbAddServico implements AddServico {
             cliente: params.cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
             mecanicos: await this.saveMechanics(result.id_servico, params.mechanics),
-            billing
+            billing,
+            code: result.codigo
         };
     }
 

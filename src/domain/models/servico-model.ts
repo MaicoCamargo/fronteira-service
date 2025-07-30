@@ -27,4 +27,5 @@ export interface ServicoModel {
     nota?: boolean;
     mecanicos: MechanicModel[];
     billing?: BillingModel;
+    code: string;
 }

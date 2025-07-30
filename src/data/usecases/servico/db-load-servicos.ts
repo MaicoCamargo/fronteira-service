@@ -47,7 +47,8 @@ export class DbLoadServicos implements LoadServicos {
             cliente: await this.loadCliente(item.id_servico),
             nota: await this.loadNotaFiscalByIdServicoRepository.load(item.id_servico),
             mecanicos: await this.loadMechanics(item.id_servico),
-            billing: await this.loadBillingByOrderId(item.id_servico)
+            billing: await this.loadBillingByOrderId(item.id_servico),
+            code: item.codigo
         }));
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }

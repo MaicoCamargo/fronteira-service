@@ -32,7 +32,7 @@ export interface AddBillingParams {
     payments: AddPaymentParams[];
 }
 
-export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' | 'mecanicos' | 'billing'> & {
+export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' | 'mecanicos' | 'billing' | 'code'> & {
     mechanics?: number[];
     billing?: AddBillingParams;
 };
