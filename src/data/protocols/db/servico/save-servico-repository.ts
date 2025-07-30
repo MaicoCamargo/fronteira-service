@@ -1,4 +1,4 @@
-import { DbServicoModel } from '../../../models/db-servico-model';
+import { DbServicoModel } from '@/data/models/db-servico-model';
 
 export type SaveServicoModel = Omit<DbServicoModel, 'id_servico' | 'data' | 'last_updated'> & { code: string };
 
