@@ -7,6 +7,7 @@ import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { PageFilter } from '@/main/protocols/page-filter';
 import { Filter } from '@/main/protocols/filter';
 import { LoadServicosDbFilter } from '@/data/protocols/db/servico/load-servicos-repository';
+import { mockFakeDbServicoModelList, mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
 
 describe('Servico Postgres Repository', () => {
     let servicos: DbServicoModel[];
@@ -169,13 +170,14 @@ const makePgCarroCreate = async (): Promise<DbCarroModel> => {
 const makePgServicoCreate = async (): Promise<DbServicoModel[]> => {
     const carro = await makePgCarroCreate();
     const result: DbServicoModel[] = [];
+    const fake = mockFakeDbServicoModelList();
     let create = await knexInstance('servico')
-        .insert({ valor: 10, carro_id: carro.id_carro })
-        .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
+        .insert({ valor: fake[0].valor, carro_id: carro.id_carro, codigo: fake[0].codigo })
+        .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo']);
     result.push(create[0]);
     create = await knexInstance('servico')
-        .insert({ valor: 11, carro_id: carro.id_carro })
-        .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
+        .insert({ valor: fake[1].valor, carro_id: carro.id_carro, codigo: fake[1].codigo })
+        .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo']);
     result.push(create[0]);
     return result;
 };

@@ -46,14 +46,16 @@ export const mockFakeDbServicoModelList = (): DbServicoModel[] => [
         valor: 100,
         carro_id: 1,
         descricao: 'any_descricao',
-        quilometragem: 1000
+        quilometragem: 1000,
+        codigo: 'any_code'
     },
     {
         id_servico: 2,
         valor: 200,
         carro_id: 2,
         descricao: 'other_descricao',
-        quilometragem: 2000
+        quilometragem: 2000,
+        codigo: 'other_code'
     }
 ];
 
