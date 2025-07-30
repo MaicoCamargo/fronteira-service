@@ -104,7 +104,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
             ],
             createdAt: new Date('2025-05-17T19:32:57.441Z'),
             status: 'COMPLETED'
-        }
+        },
+        code: mockFakeDbServicoModelList()[0].codigo
     },
     {
         id: mockFakeDbServicoModelList()[1].id_servico,
@@ -120,7 +121,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
             nome: mockFakeClienteModel().nome
         },
         nota: false,
-        mecanicos: []
+        mecanicos: [],
+        code: mockFakeDbServicoModelList()[1].codigo
     }
 ];
 
