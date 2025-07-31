@@ -53,7 +53,8 @@ export class DbUpdateServico implements UpdateServico {
             itens,
             cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(updated.id_servico),
-            mecanicos: await this.updateMechanics(updated.id_servico, params.mechanics)
+            mecanicos: await this.updateMechanics(updated.id_servico, params.mechanics),
+            code: updated.codigo
         };
     }
 

@@ -38,7 +38,8 @@ export class DbLoadOrderById implements LoadOrderById {
                 cliente: await this.loadCliente(model.id_servico),
                 nota: await this.loadNotaFiscalByIdServicoRepository.load(model.id_servico),
                 mecanicos: await this.loadMechanics(model.id_servico),
-                billing: await this.loadBillingByOrderId(model.id_servico)
+                billing: await this.loadBillingByOrderId(model.id_servico),
+                code: model.codigo
             }
         };
     }
