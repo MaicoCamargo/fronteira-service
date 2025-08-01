@@ -77,6 +77,9 @@ export class ServicoPgRepository
                     .select('id_carro');
                 query.andWhere('carro_id', 'in', carroQuery);
             }
+            if (filters.params.code) {
+                query.andWhere({ codigo: filters.params.code });
+            }
         } else {
             query = knexInstance('servico')
                 .select([

@@ -9,6 +9,7 @@ export interface LoadServicosDbFilter {
     modelo?: string;
     placa?: string;
     cliente?: string;
+    code?: string;
 }
 
 export interface LoadServicosRepository {

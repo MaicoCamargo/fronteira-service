@@ -9,6 +9,7 @@ export interface LoadServicosParams extends PageFilter {
     startDate?: Date;
     endDate?: Date;
     clientes?: number[];
+    code: string;
 }
 
 export interface LoadServicos {
