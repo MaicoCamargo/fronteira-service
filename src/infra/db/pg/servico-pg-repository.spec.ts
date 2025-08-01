@@ -77,6 +77,23 @@ describe('Servico Postgres Repository', () => {
             expect(servicos.length).toEqual(wrapper.content.length);
             expect(wrapper.pagination.total).toEqual(servicos.length);
         });
+
+        test('Deve retornar um serviço filtrado pelo código', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 5 };
+
+            const first = sortByLatestDate(servicos)[0];
+            const filters: Filter<LoadServicosDbFilter> = {
+                params: {
+                    code: first.codigo
+                },
+                pageFilter
+            };
+            const wrapper = await sut.load(filters);
+            expect([first]).toEqual(wrapper.content);
+            expect(wrapper.content.length).toEqual(1);
+            expect(wrapper.pagination.total).toEqual(1);
+        });
     });
 
     describe('save()', () => {
