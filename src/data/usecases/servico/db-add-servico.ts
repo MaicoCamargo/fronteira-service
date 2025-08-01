@@ -38,7 +38,7 @@ export class DbAddServico implements AddServico {
             quilometragem: params.quilometragem,
             descricao: params.descricao,
             carro_id: params.carro.id,
-            code: UniqueIdRepository.generate(5, 'O')
+            code: UniqueIdRepository.generate(5, 'S')
         };
         const result: DbServicoModel = await this.saveServicoRepository.save(model);
         await this.saveNotaFiscalRepository.save(result.id_servico, params.nota || false);
