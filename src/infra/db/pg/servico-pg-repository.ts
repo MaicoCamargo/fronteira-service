@@ -114,7 +114,7 @@ export class ServicoPgRepository
 
     async loadById(id_servico: number): Promise<DbServicoModel> {
         const query = await knexInstance('servico')
-            .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id'])
+            .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo'])
             .where({ id_servico });
         return mapper(query);
     }

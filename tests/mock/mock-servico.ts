@@ -103,7 +103,8 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
                 }
             ],
             createdAt: new Date('2025-05-17T19:32:57.441Z'),
-            status: 'COMPLETED'
+            status: 'COMPLETED',
+            code: 'BXXXXX'
         },
         code: mockFakeDbServicoModelList()[0].codigo
     },

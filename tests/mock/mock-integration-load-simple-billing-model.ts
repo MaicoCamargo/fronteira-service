@@ -29,5 +29,6 @@ export const makeIntegrationLoadSimpleBillingModel = (): IntegrationLoadSimpleBi
             }
         }
     ],
-    status: 'COMPLETED'
+    status: 'COMPLETED',
+    code: 'BXXXXX'
 });

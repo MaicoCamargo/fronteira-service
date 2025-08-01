@@ -107,7 +107,8 @@ export class DbLoadServicos implements LoadServicos {
             order: billing.order,
             payments: billing.payments,
             createdAt: billing.createdAt,
-            status: billing.status
+            status: billing.status,
+            code: billing.code
         };
     }
 }

@@ -48,7 +48,8 @@ export class IntegrationLoadBillings implements LoadBillings {
                     date: payment.status.date
                 }
             })),
-            status: loaded.status
+            status: loaded.status,
+            code: loaded.code
         }));
 
         return { content: billings, pagination: wrapper.pagination };

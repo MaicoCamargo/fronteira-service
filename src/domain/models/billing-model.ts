@@ -28,4 +28,5 @@ export interface BillingModel {
     user?: number;
     payments: Payment[];
     status: string;
+    code: string;
 }
