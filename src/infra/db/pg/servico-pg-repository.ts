@@ -1,19 +1,13 @@
-import {
-    LoadServicosDbFilter,
-    LoadServicosRepository
-} from '../../../data/protocols/db/servico/load-servicos-repository';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
-import { DbServicoModel } from '../../../data/models/db-servico-model';
+import { LoadServicosDbFilter, LoadServicosRepository } from '@/data/protocols/db/servico/load-servicos-repository';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { DbServicoModel } from '@/data/models/db-servico-model';
 import { knexInstance } from './helpers/knex-helper';
-import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
-import { SaveServicoModel, SaveServicoRepository } from '../../../data/protocols/db/servico/save-servico-repository';
+import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
+import { SaveServicoModel, SaveServicoRepository } from '@/data/protocols/db/servico/save-servico-repository';
 import { mapper } from './helpers/mapper';
-import {
-    UpdateServicoModel,
-    UpdateServicoRepository
-} from '../../../data/protocols/db/servico/update-servico-repository';
-import { DeleteServicoRepository } from '../../../data/protocols/db/servico/delete-servico-repository';
-import { Filter } from '../../../main/protocols/filter';
+import { UpdateServicoModel, UpdateServicoRepository } from '@/data/protocols/db/servico/update-servico-repository';
+import { DeleteServicoRepository } from '@/data/protocols/db/servico/delete-servico-repository';
+import { Filter } from '@/main/protocols/filter';
 import { LoadOrderByIdRepository } from '@/data/protocols/db/servico/load-order-by-id-repository';
 
 export class ServicoPgRepository
