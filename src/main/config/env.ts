@@ -18,5 +18,6 @@ export const ENV = {
     SERVICE: {
         NAME: process.env.SERVICE_NAME || 'fronteira-service',
         ID: process.env.SERVICE_ID || 1
-    }
+    },
+    AUTH_SERVICE_CLIENT_ID: process.env.AUTH_SERVICE_CLIENT_ID
 };
