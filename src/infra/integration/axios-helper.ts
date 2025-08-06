@@ -76,4 +76,16 @@ export class AxiosHelper {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete AxiosHelper.instances[this.host]; // Remove a instância do host
     }
+
+    /**
+     * add http header
+     * @param key - header name
+     * @param value - header value
+     */
+    setHeader(key: string, value: string): void {
+        if (!this.axiosInstance) {
+            throw new Error('Axios instance not initialized');
+        }
+        this.axiosInstance.defaults.headers.common[key] = value;
+    }
 }
