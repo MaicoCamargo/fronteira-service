@@ -2,10 +2,7 @@ import { AuthServiceIntegration } from '@/infra/integration/auth-service-integra
 import { AxiosHelper } from '@/infra/integration/axios-helper';
 import { ENV } from '@/main/config/env';
 import { makeLoadAuthDetailIntegrationModel } from '../../../tests/mock/mock-load-auth-detail-integration';
-import { IntegrationError } from '@/presentation/errors/integration-error';
 import { throwError } from '../../../tests/helper/test-helper';
-import { makePgClienteCreate } from '../../../tests/mock/mock-db-cliente';
-import { mockFakeAddCarroParams } from '../../../tests/mock/mock-carro';
 
 describe('Auth Service Integration', () => {
     const AUTHORIZATION_HEADER = { headers: { Authorization: 'valid_token' } };
@@ -33,6 +30,29 @@ describe('Auth Service Integration', () => {
         jest.spyOn(axiosHelperStub, 'get').mockImplementationOnce(throwError);
         const promise = sut.load('invalid_token');
         await expect(promise).rejects.toThrow();
+    });
+
+    describe('Header X-Client-ID', () => {
+        let mockAxiosHelper: jest.Mocked<AxiosHelper>;
+        let authService: AuthServiceIntegration;
+
+        beforeEach(() => {
+            // instância mockada do AxiosHelper
+            mockAxiosHelper = {
+                setHeader: jest.fn(),
+                get: jest.fn(),
+                post: jest.fn()
+            } as unknown as jest.Mocked<AxiosHelper>;
+
+            // Instanciamos a nossa classe de serviço, injetando o mock da dependência.
+            // O construtor da AuthServiceIntegration será executado aqui.
+            authService = new AuthServiceIntegration(mockAxiosHelper);
+        });
+
+        test('Deve setar o X-Client-ID header corretamente no construtor', () => {
+            expect(mockAxiosHelper.setHeader).toHaveBeenCalledTimes(1);
+            expect(mockAxiosHelper.setHeader).toHaveBeenCalledWith('X-Client-ID', ENV.AUTH_SERVICE_CLIENT_ID);
+        });
     });
 });
 
