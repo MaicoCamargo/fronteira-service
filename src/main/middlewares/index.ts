@@ -2,3 +2,4 @@ export * from './cors';
 export * from './body-parser';
 export * from './content-type';
 export * from './prometheus';
+export * from './request-scope';
