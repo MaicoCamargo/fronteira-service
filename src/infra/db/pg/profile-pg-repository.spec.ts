@@ -50,6 +50,23 @@ describe('Profile Postgres Repository', () => {
             expect(data.id_profile).toBeTruthy();
         });
     });
+
+    describe('load()', () => {
+        test('Deve buscar o profile pelos parâmetros em caso de sucesso', async () => {
+            const sut = makeSut();
+
+            const wrapper = await sut.load({
+                params: {
+                    nickname: 'any'
+                }
+            });
+
+            const found = profiles.find((profile) => profile.nickname.includes('any'));
+            expect(wrapper.content).toHaveLength(1);
+            expect(found).toBeTruthy();
+            expect(wrapper.content).toEqual([found]);
+        });
+    });
 });
 
 const makeSut = (): ProfilePgRepository => {
