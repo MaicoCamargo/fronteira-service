@@ -4,7 +4,7 @@ export interface DbProfileModel {
     firstName: string; // Primeiro nome do usuário
     lastName?: string; // Sobrenome do usuário (opcional)
     mail: string; // E-mail do usuário, deve ser único
-    birthday?: string; // Data de nascimento do usuário (opcional)
+    birthday?: Date; // Data de nascimento do usuário (opcional)
     nickname?: string; // Apelido do usuário (opcional)
     contact?: string; // Contato do usuário (opcional)
 }
