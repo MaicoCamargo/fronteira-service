@@ -23,7 +23,7 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
         return mapper(saved);
     }
 
-    async load(filters: Filter<LoadProfileDbFilter>): Promise<Wrapper<DbProfileModel[]>> {
+    async load(filters?: Filter<LoadProfileDbFilter>): Promise<Wrapper<DbProfileModel[]>> {
         let query: any;
         if (filters?.params) {
             query = knexInstance('profile')

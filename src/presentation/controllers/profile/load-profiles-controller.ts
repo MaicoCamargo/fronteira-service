@@ -1,14 +1,14 @@
-import { AddProfile } from '@/domain/usecases/profile/add-profile';
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { ok, serverError } from '@/presentation/helpers/http';
+import { LoadProfiles } from '@/domain/usecases/profile/load-profiles';
 
-export class SaveProfileController implements Controller {
-    constructor(private readonly addProfile: AddProfile) {}
+export class LoadProfilesController implements Controller {
+    constructor(private readonly loadProfiles: LoadProfiles) {}
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const profile = await this.addProfile.add(httpRequest.body);
-            return ok(profile);
+            const profiles = await this.loadProfiles.load(httpRequest.query);
+            return ok(profiles);
         } catch (err) {
             return serverError(err);
         }
