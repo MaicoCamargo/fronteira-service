@@ -7,14 +7,14 @@ export class DbAddProfile implements AddProfile {
 
     async add(params: AddProfileParams): Promise<ProfileModel> {
         const contact: string = null;
-        if (params.contact) {
-            params.contact.join('::');
+        if (params.contacts) {
+            params.contacts.join('::');
         }
         const model = await this.saveProfileRepository.save({ ...params, contact });
         return {
             id: model.id_profile,
             birthday: model.birthday,
-            contact: model.contact ? model.contact.split('::') : null,
+            contacts: model.contact ? model.contact.split('::') : null,
             mail: model.mail,
             lastName: model.lastName,
             firstName: model.firstName,

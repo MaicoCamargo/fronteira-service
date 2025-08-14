@@ -6,7 +6,7 @@ export interface ProfileModel {
     mail: string;
     birthday?: Date;
     nickname?: string;
-    contact?: string[];
+    contacts?: string[];
     positions: string[];
     createdAt?: Date;
 }

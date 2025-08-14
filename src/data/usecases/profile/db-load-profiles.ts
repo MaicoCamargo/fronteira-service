@@ -20,7 +20,7 @@ export class DbLoadProfiles implements LoadProfiles {
         const map: ProfileModel[] = wrapper.content.map((profile) => ({
             ...profile,
             positions: [],
-            contact: profile.contact ? profile.contact.split('::') : null
+            contacts: profile.contact ? profile.contact.split('::') : null
         }));
         return {
             content: map,
