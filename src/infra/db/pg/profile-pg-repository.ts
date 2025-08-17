@@ -16,7 +16,7 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
         return mapper(query);
     }
 
-    async save(model: SaveProfileModel): Promise<DbProfileModel> {
+    async save(model: SaveProfileModel, positions?: number[]): Promise<DbProfileModel> {
         const saved = await knexInstance('profile')
             .insert({
                 username: model.username,
@@ -28,6 +28,16 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
                 contact: model.contact
             })
             .returning(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact']);
+
+        if (Array.isArray(positions)) {
+            for (const position of positions) {
+                await knexInstance('profile_position').insert({
+                    profile_id: saved[0].id_profile,
+                    position_id: position
+                });
+            }
+        }
+
         return mapper(saved);
     }
 
