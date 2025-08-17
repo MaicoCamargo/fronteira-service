@@ -18,7 +18,15 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
 
     async save(model: SaveProfileModel): Promise<DbProfileModel> {
         const saved = await knexInstance('profile')
-            .insert(model)
+            .insert({
+                username: model.username,
+                firstName: model.firstName,
+                lastName: model.lastName,
+                mail: model.mail,
+                birthday: model.birthday,
+                nickname: model.nickname,
+                contact: model.contact
+            })
             .returning(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact']);
         return mapper(saved);
     }
