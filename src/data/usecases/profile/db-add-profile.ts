@@ -6,9 +6,9 @@ export class DbAddProfile implements AddProfile {
     constructor(private readonly saveProfileRepository: SaveProfileRepository) {}
 
     async add(params: AddProfileParams): Promise<ProfileModel> {
-        const contact: string = null;
+        let contact: string = null;
         if (params.contacts) {
-            params.contacts.join('::');
+            contact = params.contacts.join('::');
         }
         const model = await this.saveProfileRepository.save({ ...params, contact });
         return {
