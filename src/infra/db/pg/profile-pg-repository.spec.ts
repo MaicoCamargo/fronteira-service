@@ -4,19 +4,22 @@ import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
 import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 import { SaveProfileModel } from '@/data/protocols/db/profile/save-profile-repository';
 import { makeProfileCreate } from '../../../../tests/mock/mock-db-profile';
+import { DbPositionModel } from '@/data/models/db-position-model';
+import { makeProfilePositionCreate } from '../../../../tests/mock/mock-db-profile-position';
+import { makePositionCreate } from '../../../../tests/mock/mock-db-position';
 
 describe('Profile Postgres Repository', () => {
     let profiles: DbProfileModel[];
+    let positions: DbPositionModel[];
     beforeAll(async () => {
-        await mockDateAdapter.set(new Date());
         await knexInstance('profile_position').del();
         await knexInstance('position').del();
         await knexInstance('profile').del();
         profiles = await makeProfileCreate();
+        positions = await makePositionCreate();
     });
 
     afterAll(async () => {
-        await mockDateAdapter.reset();
         await knexInstance.destroy();
     });
 
@@ -66,8 +69,7 @@ describe('Profile Postgres Repository', () => {
                 lastName: 'any_last_name',
                 username: randomStr
             };
-            const positionId = await makeNewPosition();
-            const data = await sut.save(model, [positionId]);
+            const data = await sut.save(model, [positions[0].id_position]);
             expect(data.id_profile).toBeTruthy();
             const result = await knexInstance('profile_position').where({ profile_id: data.id_profile });
             expect(result).toHaveLength(1);
@@ -89,20 +91,23 @@ describe('Profile Postgres Repository', () => {
             expect(found).toBeTruthy();
             expect(wrapper.content).toEqual([found]);
         });
+
+        test('Deve buscar o profile pelo parâmetro [position] em caso de sucesso', async () => {
+            const sut = makeSut();
+            await makeProfilePositionCreate(profiles[0], positions[1]);
+
+            const wrapper = await sut.load({
+                params: {
+                    position: positions[1].id_position
+                }
+            });
+            expect(wrapper.content).toHaveLength(1);
+            expect(wrapper.content[0].id_profile).toEqual(profiles[0].id_profile);
+            expect(wrapper.content[0].nickname).toEqual(profiles[0].nickname);
+        });
     });
 });
 
 const makeSut = (): ProfilePgRepository => {
     return new ProfilePgRepository();
-};
-
-const makeNewPosition = async (): Promise<number> => {
-    const saved = await knexInstance('position')
-        .insert({
-            name: 'any_name',
-            description: 'any_description'
-        })
-        .returning(['id_position']);
-    console.log(saved);
-    return saved[0].id_position;
 };
