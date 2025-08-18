@@ -3,9 +3,15 @@ import { LoadProfiles, LoadProfilesParams } from '@/domain/usecases/profile/load
 import { Filter } from '@/main/protocols/filter';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { ProfileModel } from '@/domain/models/profile-model';
+import { LoadPositionByProfileIdRepository } from '@/data/protocols/db/position/load-position-by-profile-id-repository';
+import { PositionModel } from '@/domain/models/position-model';
+import { DbProfileModel } from '@/data/models/db-profile-model';
 
 export class DbLoadProfiles implements LoadProfiles {
-    constructor(private readonly loadProfilesRepository: LoadProfilesRepository) {}
+    constructor(
+        private readonly loadProfilesRepository: LoadProfilesRepository,
+        private readonly loadPositionByProfileIdRepository: LoadPositionByProfileIdRepository
+    ) {}
 
     async load(params: LoadProfilesParams): Promise<Wrapper<ProfileModel[]>> {
         const filters: Filter<LoadProfileDbFilter> = {};
@@ -17,14 +23,19 @@ export class DbLoadProfiles implements LoadProfiles {
             }
         }
         const wrapper = await this.loadProfilesRepository.load({ ...filters });
-        const map: ProfileModel[] = wrapper.content.map((profile) => ({
-            ...profile,
-            positions: [],
-            contacts: profile.contact ? profile.contact.split('::') : null
+        const profiles: Array<Promise<ProfileModel>> = wrapper.content.map(async (profile: DbProfileModel) => ({
+            positions: await this.loadPositions(profile.id_profile),
+            contacts: profile.contact ? profile.contact.split('::') : [],
+            ...profile
         }));
         return {
-            content: map,
+            content: await Promise.all(profiles),
             pagination: wrapper.pagination
         };
+    }
+
+    private async loadPositions(profile: number): Promise<PositionModel[]> {
+        const model = await this.loadPositionByProfileIdRepository.loadByIdProfile(profile);
+        return model.map((position) => ({ id: position.id_position, name: position.name }));
     }
 }
