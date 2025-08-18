@@ -6,6 +6,7 @@ export interface LoadProfilesParams extends PageFilter {
     firstName?: string;
     lastName?: string;
     nickname?: string;
+    position?: number;
 }
 
 export interface LoadProfiles {

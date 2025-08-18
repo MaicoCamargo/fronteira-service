@@ -56,6 +56,14 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
             if (filters.params.lastName) {
                 query.andWhereILike('lastName', `%${filters.params.lastName}%`);
             }
+            if (filters.params.position) {
+                const profilePositionQuery = knexInstance('profile_position')
+                    .select('profile_id')
+                    .where({ position_id: filters.params.position })
+                    .whereNull('dh_exclusion');
+
+                query.andWhere('id_profile', 'in', profilePositionQuery);
+            }
         } else {
             query = knexInstance('profile')
                 .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
