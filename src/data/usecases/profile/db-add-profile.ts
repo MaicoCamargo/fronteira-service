@@ -23,7 +23,7 @@ export class DbAddProfile implements AddProfile {
         return {
             id: model.id_profile,
             birthday: model.birthday,
-            contacts: model.contact ? model.contact.split('::') : null,
+            contacts: model.contact ? model.contact.split('::') : [],
             mail: model.mail,
             lastName: model.lastName,
             firstName: model.firstName,
