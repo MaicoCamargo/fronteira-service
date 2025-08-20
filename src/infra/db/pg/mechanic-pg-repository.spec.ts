@@ -3,6 +3,10 @@ import { DbServicoModel } from '@/data/models/db-servico-model';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
 import { MechanicPgRepository } from '@/infra/db/pg/mechanic-pg-repository';
+import { makeProfilePositionCreate } from '../../../../tests/mock/mock-db-profile-position';
+import { makePositionCreate } from '../../../../tests/mock/mock-db-position';
+import { makeProfileCreate } from '../../../../tests/mock/mock-db-profile';
+import { ENV } from '@/main/config/env';
 
 describe('Mechanic Pg Repository', () => {
     let servicos: DbServicoModel[];
@@ -10,10 +14,12 @@ describe('Mechanic Pg Repository', () => {
 
     beforeAll(async () => {
         await knexInstance('servico_mecanico').del();
+        await knexInstance('profile_position').del();
         await knexInstance('servico_peca').del();
         await knexInstance('nota_fiscal').del();
         await knexInstance('servico').del();
-        await knexInstance('mecanico').del();
+        await knexInstance('position').del();
+        await knexInstance('profile').del();
         mecanicos = await makePgMechanicCreate();
     });
 
@@ -33,7 +39,7 @@ describe('Mechanic Pg Repository', () => {
             expect(wrapper).toBeTruthy();
             expect(wrapper.content.length).toEqual(1);
             expect(wrapper.content[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
-            expect(wrapper.content[0].nome).toEqual(mecanicos[0].nome);
+            expect(wrapper.content[0].firstName).toEqual(mecanicos[0].firstName);
         });
     });
 
@@ -44,7 +50,7 @@ describe('Mechanic Pg Repository', () => {
             expect(wrapper).toBeTruthy();
             expect(wrapper.content.length).toEqual(mecanicos.length);
             expect(wrapper.content[0].id_mecanico).toEqual(mecanicos[0].id_mecanico);
-            expect(wrapper.content[0].nome).toEqual(mecanicos[0].nome);
+            expect(wrapper.content[0].firstName).toEqual(mecanicos[0].firstName);
         });
     });
 
@@ -107,9 +113,18 @@ const makeSut = () => {
 };
 
 const makePgMechanicCreate = async (): Promise<DbMechanicModel[]> => {
-    return knexInstance('mecanico')
-        .insert([{ nome: 'any_nome' }, { nome: 'other_nome', dh_exclusion: new Date() }])
-        .returning('*');
+    const profiles = await makeProfileCreate();
+    const positions = await makePositionCreate();
+    const mechanicProfileOne = profiles[0];
+    const mechanicProfileTwo = profiles[1];
+    const mechanicPosition = positions[0];
+    await makeProfilePositionCreate(mechanicProfileOne, mechanicPosition);
+    await makeProfilePositionCreate(mechanicProfileTwo, mechanicPosition);
+    ENV.MECHANIC_POSITION_ID = mechanicPosition.id_position;
+    return [
+        { ...mechanicProfileOne, id_mecanico: mechanicProfileOne.id_profile },
+        { ...mechanicProfileTwo, id_mecanico: mechanicProfileTwo.id_profile }
+    ];
 };
 
 const makePgServicoMecanicoCreate = async (servicos: DbServicoModel[], mechanics: DbMechanicModel[]): Promise<void> => {

@@ -1,5 +1,4 @@
 import { DbProfileModel } from '@/data/models/db-profile-model';
-import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
 import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 import { SaveProfileModel } from '@/data/protocols/db/profile/save-profile-repository';
@@ -13,6 +12,7 @@ describe('Profile Postgres Repository', () => {
     let positions: DbPositionModel[];
     beforeAll(async () => {
         await knexInstance('profile_position').del();
+        await knexInstance('servico_mecanico').del();
         await knexInstance('position').del();
         await knexInstance('profile').del();
         profiles = await makeProfileCreate();
