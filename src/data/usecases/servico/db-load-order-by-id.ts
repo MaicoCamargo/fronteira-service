@@ -82,7 +82,7 @@ export class DbLoadOrderById implements LoadOrderById {
         const wrapper = await this.loadMechanicsByIdServicoRepository.loadByIdServico(servicoId);
         return wrapper.content.map((dbMechanicModel) => ({
             id: dbMechanicModel.id_mecanico,
-            name: dbMechanicModel.nome
+            name: dbMechanicModel.firstName
         }));
     }
 

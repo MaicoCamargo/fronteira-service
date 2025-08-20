@@ -84,7 +84,7 @@ export class DbAddServico implements AddServico {
         const dbMechanicModels = await this.saveServiceMechanicsRepository.save(servicoId, mechanics);
         return dbMechanicModels.map((db) => ({
             id: db.id_mecanico,
-            name: db.nome
+            name: db.firstName
         }));
     }
 
