@@ -1,6 +1,6 @@
 import { DbClienteModel } from '../../src/data/models/db-cliente-model';
 import { mapper } from '../../src/infra/db/pg/helpers/mapper';
-import { knexInstance } from '../../src/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '../../src/infra/db/pg/helpers/knex-helper';
 import { makePgEnderecoCreate } from './mock-db-endereco';
 
 export const makePgClienteCreate = async (): Promise<DbClienteModel> => {
@@ -8,7 +8,8 @@ export const makePgClienteCreate = async (): Promise<DbClienteModel> => {
 
     const endereco = await makePgEnderecoCreate();
     return mapper(
-        await knexInstance('cliente')
+        await KnexHelper.forTenant()
+            .table('cliente')
             .insert({
                 nome: randomStr,
                 telefone: randomStr,
