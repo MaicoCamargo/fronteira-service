@@ -1,4 +1,4 @@
-import { AddProfile } from '@/domain/usecases/add-profile';
+import { AddProfile } from '@/domain/usecases/profile/add-profile';
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { ok, serverError } from '@/presentation/helpers/http';
 

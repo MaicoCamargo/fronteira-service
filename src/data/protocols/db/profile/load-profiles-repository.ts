@@ -6,6 +6,7 @@ export interface LoadProfileDbFilter {
     firstName?: string;
     lastName?: string;
     nickname?: string;
+    position?: number;
 }
 
 export interface LoadProfilesRepository {

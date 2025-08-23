@@ -120,7 +120,7 @@ export class DbUpdateServico implements UpdateServico {
         const dbMechanicModels = await this.updateServiceMechanicsRepository.update(servicoId, mechanics);
         return dbMechanicModels.map((value) => ({
             id: value.id_mecanico,
-            name: value.nome
+            name: value.firstName
         }));
     }
 }

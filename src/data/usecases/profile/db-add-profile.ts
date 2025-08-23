@@ -1,4 +1,4 @@
-import { AddProfile, AddProfileParams } from '@/domain/usecases/add-profile';
+import { AddProfile, AddProfileParams } from '@/domain/usecases/profile/add-profile';
 import { ProfileModel } from '@/domain/models/profile-model';
 import { SaveProfileRepository } from '@/data/protocols/db/profile/save-profile-repository';
 

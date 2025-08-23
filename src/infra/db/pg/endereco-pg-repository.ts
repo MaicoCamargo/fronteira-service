@@ -3,17 +3,17 @@ import {
     DbAddEnderecoModel
 } from '../../../data/protocols/db/endereco/save-endereco-repository';
 import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { mapper } from './helpers/mapper';
 import { LoadEnderecoByIdRepository } from '../../../data/protocols/db/endereco/load-endereco-by-id-repository';
 
 export class EnderecoPgRepository implements SaveEnderecoRepository, LoadEnderecoByIdRepository {
     async save(endereco: DbAddEnderecoModel): Promise<DbEnderecoModel> {
-        return mapper(await knexInstance('endereco').insert(endereco).returning('*'));
+        return mapper(await KnexHelper.forTenant().table('endereco').insert(endereco).returning('*'));
     }
 
     async loadById(id: number): Promise<DbEnderecoModel> {
-        const result: any = await knexInstance('endereco').where({ id_endereco: id });
+        const result: any = await KnexHelper.forTenant().table('endereco').where({ id_endereco: id });
         if (result.length <= 0) return null;
         const map = mapper(result);
         return {
