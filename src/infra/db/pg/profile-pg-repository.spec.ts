@@ -1,11 +1,11 @@
 import { DbProfileModel } from '@/data/models/db-profile-model';
-import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 import { SaveProfileModel } from '@/data/protocols/db/profile/save-profile-repository';
 import { makeProfileCreate } from '../../../../tests/mock/mock-db-profile';
 import { DbPositionModel } from '@/data/models/db-position-model';
 import { makeProfilePositionCreate } from '../../../../tests/mock/mock-db-profile-position';
 import { makePositionCreate } from '../../../../tests/mock/mock-db-position';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 
 describe('Profile Postgres Repository', () => {
     let profiles: DbProfileModel[];

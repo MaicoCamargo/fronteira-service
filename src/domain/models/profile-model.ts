@@ -1,3 +1,5 @@
+import { PositionModel } from '@/domain/models/position-model';
+
 export interface ProfileModel {
     id?: number;
     username: string;
@@ -6,7 +8,7 @@ export interface ProfileModel {
     mail: string;
     birthday?: Date;
     nickname?: string;
-    contact?: string[];
-    positions: string[];
+    contacts?: string[];
+    positions: PositionModel[];
     createdAt?: Date;
 }
