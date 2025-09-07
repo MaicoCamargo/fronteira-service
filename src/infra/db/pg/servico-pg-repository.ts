@@ -1,7 +1,7 @@
 import { LoadServicosDbFilter, LoadServicosRepository } from '@/data/protocols/db/servico/load-servicos-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { DbServicoModel } from '@/data/models/db-servico-model';
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 import { SaveServicoModel, SaveServicoRepository } from '@/data/protocols/db/servico/save-servico-repository';
 import { mapper } from './helpers/mapper';
@@ -21,7 +21,8 @@ export class ServicoPgRepository
     async load(filters?: Filter<LoadServicosDbFilter>): Promise<Wrapper<DbServicoModel[]>> {
         let query: any;
         if (filters?.params) {
-            query = knexInstance('servico')
+            query = KnexHelper.forTenant()
+                .table('servico')
                 .select([
                     'id_servico',
                     'valor',
@@ -44,28 +45,32 @@ export class ServicoPgRepository
                 query.andWhere('data', '<=', endOfDay);
             }
             if (filters.params.clientes) {
-                const carroQuery = knexInstance('cliente_carro')
+                const carroQuery = await KnexHelper.forTenant()
+                    .table('cliente_carro')
                     .whereIn('cliente_id', filters?.params?.clientes)
                     .whereNull('dh_exclusion')
                     .returning('carro_id');
                 query.andWhere('carro_id', 'in', carroQuery);
             }
             if (filters.params.cliente) {
-                const clienteQuery = knexInstance('cliente')
+                const clienteQuery = await KnexHelper.forTenant()
+                    .table('cliente')
                     .rightJoin('cliente_carro', 'cliente_id', '=', 'id_cliente')
                     .andWhereILike('nome', `%${filters.params.cliente}%`)
                     .select('cliente_carro.carro_id as carro_id');
                 query.andWhere('carro_id', 'in', clienteQuery);
             }
             if (filters.params.placa) {
-                const carroQuery = knexInstance('carro')
+                const carroQuery = await KnexHelper.forTenant()
+                    .table('carro')
                     .rightJoin('cliente_carro', 'id_carro', '=', 'carro_id')
                     .andWhereILike('placa', `%${filters.params.placa}%`)
                     .select('id_carro');
                 query.andWhere('carro_id', 'in', carroQuery);
             }
             if (filters.params.modelo) {
-                const carroQuery = knexInstance('carro')
+                const carroQuery = await KnexHelper.forTenant()
+                    .table('carro')
                     .rightJoin('cliente_carro', 'id_carro', '=', 'carro_id')
                     .andWhereILike('modelo', `%${filters.params.modelo}%`)
                     .select('id_carro');
@@ -75,7 +80,8 @@ export class ServicoPgRepository
                 query.andWhere({ codigo: filters.params.code });
             }
         } else {
-            query = knexInstance('servico')
+            query = KnexHelper.forTenant()
+                .table('servico')
                 .select([
                     'id_servico',
                     'valor',
@@ -94,14 +100,16 @@ export class ServicoPgRepository
 
     async save(model: SaveServicoModel): Promise<DbServicoModel> {
         const { code, ...modelWithoutCode } = model;
-        const saved = await knexInstance('servico')
+        const saved = await KnexHelper.forTenant()
+            .table('servico')
             .insert({ ...modelWithoutCode, codigo: code, data: new Date() })
             .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
         return mapper(saved);
     }
 
     async update(model: UpdateServicoModel): Promise<DbServicoModel> {
-        const updated = await knexInstance('servico')
+        const updated = await KnexHelper.forTenant()
+            .table('servico')
             .where({ id_servico: model.id_servico })
             .update({ ...model, last_updated: new Date() })
             .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id']);
@@ -109,11 +117,12 @@ export class ServicoPgRepository
     }
 
     async delete(id: number): Promise<void> {
-        await knexInstance('servico').where({ id_servico: id }).update({ dh_exclusion: new Date() });
+        await KnexHelper.forTenant().table('servico').where({ id_servico: id }).update({ dh_exclusion: new Date() });
     }
 
     async loadById(id_servico: number): Promise<DbServicoModel> {
-        const query = await knexInstance('servico')
+        const query = await KnexHelper.forTenant()
+            .table('servico')
             .select(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo'])
             .where({ id_servico });
         return mapper(query);

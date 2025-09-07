@@ -1,5 +1,5 @@
 import { EnderecoPgRepository } from './endereco-pg-repository';
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { DbAddEnderecoModel } from '../../../data/protocols/db/endereco/save-endereco-repository';
 
 const makeFakeAddEndereco = (): DbAddEnderecoModel => ({
@@ -14,13 +14,13 @@ const makeSut = () => {
 };
 describe('Endereço Postgres Repository', function () {
     beforeAll(async () => {
-        await knexInstance('cliente_carro').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
+        await KnexHelper.forTenant().table('cliente_carro').del();
+        await KnexHelper.forTenant().table('cliente').del();
+        await KnexHelper.forTenant().table('endereco').del();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     describe('save()', () => {

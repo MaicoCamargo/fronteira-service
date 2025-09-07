@@ -1,6 +1,6 @@
 import { ItemPgRepository } from './item-pg-repository';
 import { DbItemModel } from '../../../data/models/db-item-model';
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { mockFakeSaveItemModel } from '../../../../tests/mock/mock-item';
 import { PageFilter } from '../../../main/protocols/page-filter';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
@@ -11,17 +11,17 @@ import { makePgItemCreate } from '../../../../tests/mock/mock-db-item';
 
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
-        await knexInstance('servico_peca').del();
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('cliente_carro').del();
-        await knexInstance('servico').del();
-        await knexInstance('carro').del();
-        await knexInstance('item').del();
+        await KnexHelper.forTenant().table('servico_peca').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('cliente_carro').del();
+        await KnexHelper.forTenant().table('servico').del();
+        await KnexHelper.forTenant().table('carro').del();
+        await KnexHelper.forTenant().table('item').del();
         mockDateAdapter.set(new Date());
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
         mockDateAdapter.reset();
     });
 
@@ -83,7 +83,7 @@ describe('ItemPgRepository', () => {
             expect(result.marca).toEqual(item.marca);
             expect(result.valor).toEqual(item.valor);
 
-            const dbItem = await knexInstance('item').where({ id_peca: item.id_peca }).first();
+            const dbItem = await await KnexHelper.forTenant().table('item').where({ id_peca: item.id_peca }).first();
             expect(dbItem.last_updated).toEqual(new Date());
         });
     });
@@ -92,16 +92,18 @@ describe('ItemPgRepository', () => {
         test('Deve retornar uma lista de item em caso de sucesso', async () => {
             const createdItens = await makePgItemCreate();
             const dbServicoModels: DbServicoModel[] = await makePgServicoCreate();
-            await knexInstance('servico_peca').insert([
-                {
-                    servico_id: dbServicoModels[0].id_servico,
-                    peca_id: createdItens[0].id_peca
-                },
-                {
-                    servico_id: dbServicoModels[0].id_servico,
-                    peca_id: createdItens[1].id_peca
-                }
-            ]);
+            await KnexHelper.forTenant()
+                .table('servico_peca')
+                .insert([
+                    {
+                        servico_id: dbServicoModels[0].id_servico,
+                        peca_id: createdItens[0].id_peca
+                    },
+                    {
+                        servico_id: dbServicoModels[0].id_servico,
+                        peca_id: createdItens[1].id_peca
+                    }
+                ]);
             const sut = makeSut();
             const result = await sut.loadByServico(dbServicoModels[0].id_servico);
             expect(result).toBeTruthy();
@@ -117,7 +119,7 @@ describe('ItemPgRepository', () => {
             const created: DbItemModel[] = await makePgItemCreate();
             const sut = makeSut();
             await sut.delete(created[0].id_peca);
-            const dbItem = await knexInstance('item').where({ id_peca: created[0].id_peca }).first();
+            const dbItem = await KnexHelper.forTenant().table('item').where({ id_peca: created[0].id_peca }).first();
             expect(dbItem).toBeUndefined();
         });
     });

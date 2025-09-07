@@ -1,20 +1,26 @@
 import { DbProfileModel } from '@/data/models/db-profile-model';
-import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
 import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 import { SaveProfileModel } from '@/data/protocols/db/profile/save-profile-repository';
+import { makeProfileCreate } from '../../../../tests/mock/mock-db-profile';
+import { DbPositionModel } from '@/data/models/db-position-model';
+import { makeProfilePositionCreate } from '../../../../tests/mock/mock-db-profile-position';
+import { makePositionCreate } from '../../../../tests/mock/mock-db-position';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 
 describe('Profile Postgres Repository', () => {
     let profiles: DbProfileModel[];
+    let positions: DbPositionModel[];
     beforeAll(async () => {
-        await mockDateAdapter.set(new Date());
-        await knexInstance('profile').del();
+        await KnexHelper.forTenant().table('profile_position').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('position').del();
+        await KnexHelper.forTenant().table('profile').del();
         profiles = await makeProfileCreate();
+        positions = await makePositionCreate();
     });
 
     afterAll(async () => {
-        await mockDateAdapter.reset();
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     describe('loadByMail()', () => {
@@ -49,6 +55,27 @@ describe('Profile Postgres Repository', () => {
             expect(data.username).toEqual(model.username);
             expect(data.id_profile).toBeTruthy();
         });
+
+        test('Deve criar um novo profile com a funcionalidade fornecida em caso de sucesso', async () => {
+            const sut = makeSut();
+
+            const randomStr = (Math.random() + 1).toString(36).substring(7);
+            const model: SaveProfileModel = {
+                mail: randomStr,
+                birthday: new Date('01-01-2025'),
+                nickname: randomStr,
+                contact: randomStr,
+                firstName: 'any_first_name',
+                lastName: 'any_last_name',
+                username: randomStr
+            };
+            const data = await sut.save(model, [positions[0].id_position]);
+            expect(data.id_profile).toBeTruthy();
+            const result = await KnexHelper.forTenant()
+                .table('profile_position')
+                .where({ profile_id: data.id_profile });
+            expect(result).toHaveLength(1);
+        });
     });
 
     describe('load()', () => {
@@ -66,38 +93,23 @@ describe('Profile Postgres Repository', () => {
             expect(found).toBeTruthy();
             expect(wrapper.content).toEqual([found]);
         });
+
+        test('Deve buscar o profile pelo parâmetro [position] em caso de sucesso', async () => {
+            const sut = makeSut();
+            await makeProfilePositionCreate(profiles[0], positions[1]);
+
+            const wrapper = await sut.load({
+                params: {
+                    position: positions[1].id_position
+                }
+            });
+            expect(wrapper.content).toHaveLength(1);
+            expect(wrapper.content[0].id_profile).toEqual(profiles[0].id_profile);
+            expect(wrapper.content[0].nickname).toEqual(profiles[0].nickname);
+        });
     });
 });
 
 const makeSut = (): ProfilePgRepository => {
     return new ProfilePgRepository();
-};
-
-const makeProfileCreate = async (): Promise<DbProfileModel[]> => {
-    let created: DbProfileModel[] = [];
-    let result = await knexInstance('profile')
-        .insert({
-            username: 'any_username',
-            firstName: 'any_first_name',
-            lastName: 'any_last_name',
-            mail: 'any_mail',
-            birthday: new Date(),
-            nickname: 'any_nickname',
-            contact: 'any_contact'
-        })
-        .returning(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact']);
-    created.push(result[0]);
-    result = await knexInstance('profile')
-        .insert({
-            username: 'other_username',
-            firstName: 'other_first_name',
-            lastName: 'other_last_name',
-            mail: 'other_mail',
-            birthday: new Date(),
-            nickname: 'other_nickname',
-            contact: 'other_contact'
-        })
-        .returning(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact']);
-    created.push(result[0]);
-    return created;
 };

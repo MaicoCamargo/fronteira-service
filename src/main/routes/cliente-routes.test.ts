@@ -1,5 +1,5 @@
 import { HttpRequest } from '../../presentation/protocols';
-import { knexInstance } from '../../infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import request from 'supertest';
 import app from '../config/app';
 import { ClientePgRepository } from '../../infra/db/pg/cliente-pg-repository';
@@ -12,18 +12,18 @@ import { AuthHelper } from '../../../tests/helper/auth-helper';
 describe('/clientes', () => {
     const AUTHORIZATION_HEADER = 'authorization';
     beforeAll(async () => {
-        await knexInstance('cliente_carro').del();
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('servico_peca').del();
-        await knexInstance('servico').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
+        await KnexHelper.forTenant().table('cliente_carro').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('servico_peca').del();
+        await KnexHelper.forTenant().table('servico').del();
+        await KnexHelper.forTenant().table('cliente').del();
+        await KnexHelper.forTenant().table('endereco').del();
+        await KnexHelper.forTenant().table('carro').del();
         await AuthHelper.init();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
         await AuthHelper.destroy();
     });
 

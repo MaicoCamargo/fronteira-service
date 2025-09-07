@@ -3,18 +3,24 @@ import { MechanicModel } from '@/domain/models/mechanic-model';
 
 export const mockFakeDbMechanicModelList = (): DbMechanicModel[] => [
     {
-        nome: 'any_name',
-        id_mecanico: 1
+        id_mecanico: 1,
+        firstName: 'any_name',
+        lastName: 'any_lastName',
+        nickname: 'any_nickname',
+        mail: 'any_email@email.com'
     },
     {
-        nome: 'other_name',
-        id_mecanico: 2
+        id_mecanico: 2,
+        firstName: 'other_name',
+        lastName: 'other_lastName',
+        nickname: 'other_nickname',
+        mail: 'other_email@email.com'
     }
 ];
 
 export const mockFakeMechanicModelList = (): MechanicModel[] => {
     return mockFakeDbMechanicModelList().map((row) => ({
-        name: row.nome,
+        name: row.firstName,
         id: row.id_mecanico
     }));
 };
