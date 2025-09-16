@@ -108,6 +108,14 @@ describe('Profile Postgres Repository', () => {
             expect(wrapper.content[0].nickname).toEqual(profiles[0].nickname);
         });
     });
+
+    describe('loadByUsername()', () => {
+        test('Deve retornar o profile filtrado pelo username', async () => {
+            const sut = new ProfilePgRepository();
+            const data = await sut.loadByUsername(profiles[0].username);
+            expect(data).toEqual(profiles[0]);
+        });
+    });
 });
 
 const makeSut = (): ProfilePgRepository => {
