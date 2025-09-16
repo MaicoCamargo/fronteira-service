@@ -1,5 +1,6 @@
 import { DbProfileModel } from '@/data/models/db-profile-model';
 import { LoadProfileByMailRepository } from '@/data/protocols/db/profile/load-profile-by-mail-repository';
+import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { mapper } from '@/infra/db/pg/helpers/mapper';
 import { SaveProfileModel, SaveProfileRepository } from '@/data/protocols/db/profile/save-profile-repository';
@@ -8,12 +9,26 @@ import { Wrapper } from '@/main/protocols/http-wrapper';
 import { Filter } from '@/main/protocols/filter';
 import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 
-export class ProfilePgRepository implements LoadProfileByMailRepository, SaveProfileRepository, LoadProfilesRepository {
+export class ProfilePgRepository
+    implements
+        LoadProfileByMailRepository,
+        LoadProfileByUsernameRepository,
+        SaveProfileRepository,
+        LoadProfilesRepository
+{
     async loadByMail(mail: string): Promise<DbProfileModel> {
         const query = await KnexHelper.forTenant()
             .table('profile')
             .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
             .where({ mail });
+        return mapper(query);
+    }
+
+    async loadByUsername(username: string): Promise<DbProfileModel> {
+        const query = await KnexHelper.forTenant()
+            .table('profile')
+            .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
+            .where({ username });
         return mapper(query);
     }
 
