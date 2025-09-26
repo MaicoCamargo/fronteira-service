@@ -1,8 +1,12 @@
 import { AuthServiceIntegration } from '@/infra/integration/auth-service-integration';
 import { IntegrationLoadAuth } from '@/data/usecases/auth/integration-load-auth';
 import { makeAuthServiceClient } from '@/main/factories/infra/integration/auth-service-client-factory';
+import { makeDbLoadProfileByUsername } from '@/main/factories/usescase/profile/db-load-profile-by-username-factory';
+import { makeDbLoadProfileByMail } from '@/main/factories/usescase/profile/db-load-profile-by-mail-factory';
 
 export const makeIntegrationLoadAuth = (): IntegrationLoadAuth => {
     const authServiceIntegration = new AuthServiceIntegration(makeAuthServiceClient());
-    return new IntegrationLoadAuth(authServiceIntegration);
+    const loadProfileByUsername = makeDbLoadProfileByUsername();
+    const loadProfileByMail = makeDbLoadProfileByMail();
+    return new IntegrationLoadAuth(authServiceIntegration, loadProfileByUsername, loadProfileByMail);
 };

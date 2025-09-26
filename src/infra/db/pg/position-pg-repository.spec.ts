@@ -10,6 +10,7 @@ describe('Position Pg Repository', () => {
     let profiles: DbProfileModel[];
     beforeAll(async () => {
         await KnexHelper.forTenant().table('profile_position').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
         await KnexHelper.forTenant().table('position').del();
         await KnexHelper.forTenant().table('profile').del();
         positions = await makePositionCreate();
