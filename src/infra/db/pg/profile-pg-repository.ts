@@ -1,6 +1,7 @@
 import { DbProfileModel } from '@/data/models/db-profile-model';
 import { LoadProfileByMailRepository } from '@/data/protocols/db/profile/load-profile-by-mail-repository';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { mapper } from '@/infra/db/pg/helpers/mapper';
 import { SaveProfileModel, SaveProfileRepository } from '@/data/protocols/db/profile/save-profile-repository';
 import { LoadProfileDbFilter, LoadProfilesRepository } from '@/data/protocols/db/profile/load-profiles-repository';
@@ -8,16 +9,32 @@ import { Wrapper } from '@/main/protocols/http-wrapper';
 import { Filter } from '@/main/protocols/filter';
 import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 
-export class ProfilePgRepository implements LoadProfileByMailRepository, SaveProfileRepository, LoadProfilesRepository {
+export class ProfilePgRepository
+    implements
+        LoadProfileByMailRepository,
+        LoadProfileByUsernameRepository,
+        SaveProfileRepository,
+        LoadProfilesRepository
+{
     async loadByMail(mail: string): Promise<DbProfileModel> {
-        const query = await knexInstance('profile')
+        const query = await KnexHelper.forTenant()
+            .table('profile')
             .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
             .where({ mail });
         return mapper(query);
     }
 
+    async loadByUsername(username: string): Promise<DbProfileModel> {
+        const query = await KnexHelper.forTenant()
+            .table('profile')
+            .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
+            .where({ username });
+        return mapper(query);
+    }
+
     async save(model: SaveProfileModel, positions?: number[]): Promise<DbProfileModel> {
-        const saved = await knexInstance('profile')
+        const saved = await KnexHelper.forTenant()
+            .table('profile')
             .insert({
                 username: model.username,
                 firstName: model.firstName,
@@ -31,7 +48,7 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
 
         if (Array.isArray(positions)) {
             for (const position of positions) {
-                await knexInstance('profile_position').insert({
+                await KnexHelper.forTenant().table('profile_position').insert({
                     profile_id: saved[0].id_profile,
                     position_id: position
                 });
@@ -44,7 +61,8 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
     async load(filters?: Filter<LoadProfileDbFilter>): Promise<Wrapper<DbProfileModel[]>> {
         let query: any;
         if (filters?.params) {
-            query = knexInstance('profile')
+            query = KnexHelper.forTenant()
+                .table('profile')
                 .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
                 .whereNull('dh_exclusion');
             if (filters.params.nickname) {
@@ -57,7 +75,8 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
                 query.andWhereILike('lastName', `%${filters.params.lastName}%`);
             }
             if (filters.params.position) {
-                const profilePositionQuery = knexInstance('profile_position')
+                const profilePositionQuery = KnexHelper.forTenant()
+                    .table('profile_position')
                     .select('profile_id')
                     .where({ position_id: filters.params.position })
                     .whereNull('dh_exclusion');
@@ -65,7 +84,8 @@ export class ProfilePgRepository implements LoadProfileByMailRepository, SavePro
                 query.andWhere('id_profile', 'in', profilePositionQuery);
             }
         } else {
-            query = knexInstance('profile')
+            query = KnexHelper.forTenant()
+                .table('profile')
                 .select(['id_profile', 'username', 'firstName', 'lastName', 'mail', 'birthday', 'nickname', 'contact'])
                 .whereNull('dh_exclusion');
         }

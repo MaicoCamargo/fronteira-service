@@ -1,4 +1,4 @@
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { CarroPgRepository } from './carro-pg-repository';
 import { mockFakeAddCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbClienteModel } from '@/data/models/db-cliente-model';
@@ -9,19 +9,19 @@ let cliente: DbClienteModel;
 
 describe('Carro Postgres Repository', () => {
     beforeAll(async () => {
-        await knexInstance('nota_fiscal').del();
-        await knexInstance('cliente_carro').del();
-        await knexInstance('servico_peca').del();
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('servico').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
+        await KnexHelper.forTenant().table('nota_fiscal').del();
+        await KnexHelper.forTenant().table('cliente_carro').del();
+        await KnexHelper.forTenant().table('servico_peca').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('servico').del();
+        await KnexHelper.forTenant().table('cliente').del();
+        await KnexHelper.forTenant().table('endereco').del();
+        await KnexHelper.forTenant().table('carro').del();
         cliente = await makePgClienteCreate();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     describe('save()', () => {
@@ -35,7 +35,9 @@ describe('Carro Postgres Repository', () => {
             expect(carro.cor).toEqual(mockFakeAddCarroModel().cor);
             expect(carro.quilometragem).toEqual(mockFakeAddCarroModel().quilometragem);
             const clienteCarro = mapper(
-                await knexInstance('cliente_carro').where({ cliente_id: cliente.id_cliente, carro_id: carro.id_carro })
+                await KnexHelper.forTenant()
+                    .table('cliente_carro')
+                    .where({ cliente_id: cliente.id_cliente, carro_id: carro.id_carro })
             );
             expect(clienteCarro).toBeTruthy();
             expect(clienteCarro.cliente_id).toEqual(cliente.id_cliente);

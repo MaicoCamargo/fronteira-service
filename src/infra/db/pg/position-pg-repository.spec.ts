@@ -1,5 +1,5 @@
 import { DbProfileModel } from '@/data/models/db-profile-model';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { makeProfileCreate } from '../../../../tests/mock/mock-db-profile';
 import { DbPositionModel } from '@/data/models/db-position-model';
 import { makePositionCreate } from '../../../../tests/mock/mock-db-position';
@@ -9,16 +9,17 @@ describe('Position Pg Repository', () => {
     let positions: DbPositionModel[];
     let profiles: DbProfileModel[];
     beforeAll(async () => {
-        await knexInstance('profile_position').del();
-        await knexInstance('position').del();
-        await knexInstance('profile').del();
+        await KnexHelper.forTenant().table('profile_position').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('position').del();
+        await KnexHelper.forTenant().table('profile').del();
         positions = await makePositionCreate();
         profiles = await makeProfileCreate();
         await makeProfilePositionCreate(profiles[0], positions[0]);
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     test('Deve retornar uma position(funcionalidade) buscando pelo id do profile(perfil) em caso de sucesso', async () => {
@@ -36,7 +37,7 @@ const makeSut = (): PositionPgRepository => {
 };
 
 const makeProfilePositionCreate = async (profile: DbProfileModel, position: DbPositionModel): Promise<void> => {
-    await knexInstance('profile_position').insert({
+    await KnexHelper.forTenant().table('profile_position').insert({
         profile_id: profile.id_profile,
         position_id: position.id_position
     });

@@ -2,17 +2,17 @@ import { DbAddItem } from './db-add-item';
 import { SaveItemModel, SaveItemRepository } from '../../protocols/db/item/save-item-repository';
 import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeAddItemParams, mockFakeDbItemModel, mockFakeItemModel } from '../../../../tests/mock/mock-item';
-import { knexInstance } from '../../../infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { throwError } from '../../../../tests/helper/test-helper';
 
 describe('DbAddItem Use Case', () => {
     beforeAll(async () => {
-        await knexInstance('servico_peca').del();
-        await knexInstance('item').del();
+        KnexHelper.forTenant().table('servico_peca').del();
+        KnexHelper.forTenant().table('item').del();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     test('Deve chamar AddItemRepository com valores corretos', () => {

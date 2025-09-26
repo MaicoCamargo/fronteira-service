@@ -2,22 +2,22 @@ import request from 'supertest';
 import app from '../config/app';
 import { AuthHelper } from '../../../tests/helper/auth-helper';
 import { HttpRequest } from '@/presentation/protocols';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { makeProfileCreate } from '../../../tests/mock/mock-db-profile';
 import { DbProfileModel } from '@/data/models/db-profile-model';
 
 describe('/profiles', () => {
     const AUTHORIZATION_HEADER = 'authorization';
     beforeAll(async () => {
-        await knexInstance('profile_position').del();
-        await knexInstance('position').del();
-        await knexInstance('profile').del();
+        await KnexHelper.forTenant().table('profile_position').del();
+        await KnexHelper.forTenant().table('position').del();
+        await KnexHelper.forTenant().table('profile').del();
         await AuthHelper.init();
     });
 
     afterAll(async () => {
         await AuthHelper.destroy();
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     describe.skip('POST', () => {

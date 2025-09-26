@@ -4,6 +4,7 @@ import { makeIntegrationLoadAuth } from '@/main/factories/usescase/auth/integrat
 import { AxiosHelper } from '@/infra/integration/axios-helper';
 import { ENV } from '@/main/config/env';
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 
 export const AuthHelper = {
     integrationLoadAuth: null as IntegrationLoadAuth,
@@ -11,6 +12,11 @@ export const AuthHelper = {
     async init(): Promise<void> {
         AxiosHelper.getInstance(ENV.AUTH_SERVICE_HOST);
         this.integrationLoadAuth = makeIntegrationLoadAuth();
+        const hasProfileTest = await KnexHelper.forTenant().table('profile').where({ username: 'test' });
+        if (!hasProfileTest || hasProfileTest.length === 0) {
+            console.log('criar profile');
+            await KnexHelper.forTenant().table('profile').insert({ username: 'test', firstName: 'firstName' });
+        }
     },
 
     async authenticate(): Promise<string> {

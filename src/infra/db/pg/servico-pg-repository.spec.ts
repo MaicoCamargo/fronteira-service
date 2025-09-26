@@ -1,31 +1,31 @@
 import { ServicoPgRepository } from './servico-pg-repository';
 import { DbServicoModel } from '@/data/models/db-servico-model';
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { DbCarroModel } from '@/data/models/db-carro-model';
 import { mapper } from './helpers/mapper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { PageFilter } from '@/main/protocols/page-filter';
 import { Filter } from '@/main/protocols/filter';
 import { LoadServicosDbFilter } from '@/data/protocols/db/servico/load-servicos-repository';
-import { mockFakeDbServicoModelList, mockFakeServicoModelList } from '../../../../tests/mock/mock-servico';
+import { mockFakeDbServicoModelList } from '../../../../tests/mock/mock-servico';
 
 describe('Servico Postgres Repository', () => {
     let servicos: DbServicoModel[];
 
     beforeAll(async () => {
         await mockDateAdapter.set(new Date());
-        await knexInstance('cliente_carro').del();
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('servico_peca').del();
-        await knexInstance('nota_fiscal').del();
-        await knexInstance('servico').del();
-        await knexInstance('carro').del();
+        await KnexHelper.forTenant().table('cliente_carro').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('servico_peca').del();
+        await KnexHelper.forTenant().table('nota_fiscal').del();
+        await KnexHelper.forTenant().table('servico').del();
+        await KnexHelper.forTenant().table('carro').del();
         servicos = await makePgServicoCreate();
     });
 
     afterAll(async () => {
         await mockDateAdapter.reset();
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     describe('load()', () => {
@@ -139,7 +139,10 @@ describe('Servico Postgres Repository', () => {
         test('Deve deletar em caso de sucesso', async () => {
             const sut = makeSut();
             await sut.delete(servicos[0].id_servico);
-            const servico = await knexInstance('servico').where({ id_servico: servicos[0].id_servico }).first();
+            const servico = await KnexHelper.forTenant()
+                .table('servico')
+                .where({ id_servico: servicos[0].id_servico })
+                .first();
             expect(servico).toBeTruthy();
             expect(servico.dh_exclusion).toBeTruthy();
             expect(servico.dh_exclusion).not.toBeNull();
@@ -164,7 +167,8 @@ const makeSut = (): ServicoPgRepository => {
 
 const makePgCarroCreate = async (): Promise<DbCarroModel> => {
     const result = mapper(
-        await knexInstance('carro')
+        await KnexHelper.forTenant()
+            .table('carro')
             .insert({
                 ano: 2023,
                 cor: 'any_cor',
@@ -188,11 +192,13 @@ const makePgServicoCreate = async (): Promise<DbServicoModel[]> => {
     const carro = await makePgCarroCreate();
     const result: DbServicoModel[] = [];
     const fake = mockFakeDbServicoModelList();
-    let create = await knexInstance('servico')
+    let create = await KnexHelper.forTenant()
+        .table('servico')
         .insert({ valor: fake[0].valor, carro_id: carro.id_carro, codigo: fake[0].codigo })
         .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo']);
     result.push(create[0]);
-    create = await knexInstance('servico')
+    create = await KnexHelper.forTenant()
+        .table('servico')
         .insert({ valor: fake[1].valor, carro_id: carro.id_carro, codigo: fake[1].codigo })
         .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo']);
     result.push(create[0]);

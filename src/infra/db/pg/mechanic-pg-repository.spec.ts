@@ -1,7 +1,7 @@
 import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
 import { DbServicoModel } from '@/data/models/db-servico-model';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { MechanicPgRepository } from '@/infra/db/pg/mechanic-pg-repository';
 import { makeProfilePositionCreate } from '../../../../tests/mock/mock-db-profile-position';
 import { makePositionCreate } from '../../../../tests/mock/mock-db-position';
@@ -13,18 +13,18 @@ describe('Mechanic Pg Repository', () => {
     let mecanicos: DbMechanicModel[];
 
     beforeAll(async () => {
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('profile_position').del();
-        await knexInstance('servico_peca').del();
-        await knexInstance('nota_fiscal').del();
-        await knexInstance('servico').del();
-        await knexInstance('position').del();
-        await knexInstance('profile').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('profile_position').del();
+        await KnexHelper.forTenant().table('servico_peca').del();
+        await KnexHelper.forTenant().table('nota_fiscal').del();
+        await KnexHelper.forTenant().table('servico').del();
+        await KnexHelper.forTenant().table('position').del();
+        await KnexHelper.forTenant().table('profile').del();
         mecanicos = await makePgMechanicCreate();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     describe('loadByIdServico()', () => {
@@ -56,7 +56,7 @@ describe('Mechanic Pg Repository', () => {
 
     describe('save()', () => {
         beforeAll(async () => {
-            await knexInstance('servico_mecanico').del();
+            await KnexHelper.forTenant().table('servico_mecanico').del();
         });
 
         test('Deve salvar e retornar os mecânicos atuais de um serviço', async () => {
@@ -79,14 +79,16 @@ describe('Mechanic Pg Repository', () => {
 
     describe('update()', () => {
         beforeAll(async () => {
-            await knexInstance('servico_mecanico').del();
+            KnexHelper.forTenant().table('servico_mecanico').del();
         });
 
         test('Deve atualizar os mecânicos de um serviço e trazer os mecânicos atuais', async () => {
-            await knexInstance('servico_mecanico').insert([
-                { servico_id: servicos[0].id_servico, mecanico_id: mecanicos[0].id_mecanico },
-                { servico_id: servicos[0].id_servico, mecanico_id: mecanicos[1].id_mecanico }
-            ]);
+            KnexHelper.forTenant()
+                .table('servico_mecanico')
+                .insert([
+                    { servico_id: servicos[0].id_servico, mecanico_id: mecanicos[0].id_mecanico },
+                    { servico_id: servicos[0].id_servico, mecanico_id: mecanicos[1].id_mecanico }
+                ]);
 
             const sut = makeSut();
             const mechanicModels = await sut.update(servicos[0].id_servico, [mecanicos[0].id_mecanico]);
@@ -95,7 +97,7 @@ describe('Mechanic Pg Repository', () => {
         });
 
         test('Deve criar os mecânicos de um serviço e trazer os mecânicos atuais', async () => {
-            await knexInstance('servico_mecanico').del();
+            await KnexHelper.forTenant().table('servico_mecanico').del();
             const sut = makeSut();
             const mechanicModels = await sut.update(servicos[0].id_servico, [
                 mecanicos[0].id_mecanico,
@@ -128,9 +130,11 @@ const makePgMechanicCreate = async (): Promise<DbMechanicModel[]> => {
 };
 
 const makePgServicoMecanicoCreate = async (servicos: DbServicoModel[], mechanics: DbMechanicModel[]): Promise<void> => {
-    await knexInstance('servico_mecanico').insert([
-        { servico_id: servicos[0].id_servico, mecanico_id: mechanics[0].id_mecanico },
-        { servico_id: servicos[0].id_servico, mecanico_id: mechanics[1].id_mecanico, dh_exclusion: new Date() },
-        { servico_id: servicos[1].id_servico, mecanico_id: mechanics[0].id_mecanico }
-    ]);
+    await KnexHelper.forTenant()
+        .table('servico_mecanico')
+        .insert([
+            { servico_id: servicos[0].id_servico, mecanico_id: mechanics[0].id_mecanico },
+            { servico_id: servicos[0].id_servico, mecanico_id: mechanics[1].id_mecanico, dh_exclusion: new Date() },
+            { servico_id: servicos[1].id_servico, mecanico_id: mechanics[0].id_mecanico }
+        ]);
 };

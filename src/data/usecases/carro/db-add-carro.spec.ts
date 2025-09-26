@@ -7,21 +7,21 @@ import {
 } from '../../../../tests/mock/mock-carro';
 import { DbCarroModel } from '../../models/db-carro-model';
 import { DbAddCarro } from './db-add-carro';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
 
 describe('DbAddCarro Use Case', () => {
     beforeAll(async () => {
-        await knexInstance('cliente_carro').del();
-        await knexInstance('servico_peca').del();
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('servico').del();
-        await knexInstance('carro').del();
+        KnexHelper.forTenant().table('cliente_carro').del();
+        KnexHelper.forTenant().table('servico_peca').del();
+        KnexHelper.forTenant().table('servico_mecanico').del();
+        KnexHelper.forTenant().table('servico').del();
+        KnexHelper.forTenant().table('carro').del();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
 
     test('Deve chamar SaveCarroRepository com valores corretos', async () => {

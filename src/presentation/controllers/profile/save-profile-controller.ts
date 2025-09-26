@@ -1,6 +1,6 @@
-import { AddProfile } from '@/domain/usecases/profile/add-profile';
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols';
 import { ok, serverError } from '@/presentation/helpers/http';
+import { AddProfile } from '@/domain/usecases/profile/add-profile';
 
 export class SaveProfileController implements Controller {
     constructor(private readonly addProfile: AddProfile) {}

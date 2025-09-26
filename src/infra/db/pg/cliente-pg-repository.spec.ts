@@ -1,4 +1,4 @@
-import { knexInstance } from './helpers/knex-helper';
+import { KnexHelper } from './helpers/knex-helper';
 import { DbClienteModel } from '../../../data/models/db-cliente-model';
 import { ClientePgRepository } from './cliente-pg-repository';
 import { PageFilter } from '@/main/protocols/page-filter';
@@ -13,17 +13,17 @@ const makeSut = () => {
 
 describe('Cliente Postgres Repository', () => {
     beforeAll(async () => {
-        await knexInstance('servico_peca').del();
-        await knexInstance('servico_mecanico').del();
-        await knexInstance('servico').del();
-        await knexInstance('cliente_carro').del();
-        await knexInstance('cliente').del();
-        await knexInstance('endereco').del();
-        await knexInstance('carro').del();
+        await KnexHelper.forTenant().table('servico_peca').del();
+        await KnexHelper.forTenant().table('servico_mecanico').del();
+        await KnexHelper.forTenant().table('servico').del();
+        await KnexHelper.forTenant().table('cliente_carro').del();
+        await KnexHelper.forTenant().table('cliente').del();
+        await KnexHelper.forTenant().table('endereco').del();
+        await KnexHelper.forTenant().table('carro').del();
     });
 
     afterAll(async () => {
-        await knexInstance.destroy();
+        await KnexHelper.destroy();
     });
     describe('load()', () => {
         test('Deve retornar todos os clientes em caso de sucesso', async () => {
@@ -139,7 +139,10 @@ describe('Cliente Postgres Repository', () => {
             expect(cliente.endereco_id).toEqual(model.endereco_id);
             expect(cliente.telefone).toEqual('other_telefone');
 
-            const clienteDb = await knexInstance('cliente').where({ id_cliente: model.id_cliente }).first();
+            const clienteDb = await KnexHelper.forTenant()
+                .table('cliente')
+                .where({ id_cliente: model.id_cliente })
+                .first();
             expect(clienteDb.last_updated).not.toBeNull();
             expect(clienteDb.dh_exclusion).toBeNull();
         });

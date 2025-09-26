@@ -1,8 +1,9 @@
 import { DbProfileModel } from '../../src/data/models/db-profile-model';
-import { knexInstance } from '../../src/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '../../src/infra/db/pg/helpers/knex-helper';
 
 export const makeProfileCreate = async (): Promise<DbProfileModel[]> => {
-    return await knexInstance('profile')
+    return await KnexHelper.forTenant()
+        .table('profile')
         .insert([
             {
                 username: 'any_username',

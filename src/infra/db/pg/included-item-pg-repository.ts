@@ -3,7 +3,7 @@ import {
     SaveIncludedItensRepository
 } from '@/data/protocols/db/servico/included-item/save-included-itens-repository';
 import { DbIncludedItemModel } from '@/data/models/db-included-item-model';
-import { knexInstance } from '@/infra/db/pg/helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { LoadIncludedItensRepository } from '@/data/protocols/db/servico/included-item/load-included-itens-repository';
 import {
     UpdateIncludedItemModel,
@@ -20,11 +20,12 @@ export class IncludedItemPgRepository
         DeleteIncludedItemRepository
 {
     async save(itens: SaveIncludedItemModel[]): Promise<DbIncludedItemModel[]> {
-        return knexInstance('servico_peca').insert(itens).returning('*') as any;
+        return KnexHelper.forTenant().table('servico_peca').insert(itens).returning('*') as any;
     }
 
     async load(servicoId: number): Promise<DbIncludedItemModel[]> {
-        return knexInstance('servico_peca')
+        return KnexHelper.forTenant()
+            .table('servico_peca')
             .innerJoin('item', 'servico_peca.peca_id', 'item.id_peca')
             .where({ servico_id: servicoId })
             .whereNull('servico_peca.dh_exclusion')
@@ -41,7 +42,8 @@ export class IncludedItemPgRepository
     }
 
     async update(model: UpdateIncludedItemModel): Promise<DbIncludedItemModel> {
-        const result = await knexInstance('servico_peca')
+        const result = await KnexHelper.forTenant()
+            .table('servico_peca')
             .update({ ...model, last_updated: new Date(), dh_exclusion: null })
             .where({ peca_id: model.peca_id, servico_id: model.servico_id })
             .returning('*');
@@ -50,7 +52,8 @@ export class IncludedItemPgRepository
     }
 
     async delete(pecaId: number, servicoId: number): Promise<void> {
-        await knexInstance('servico_peca')
+        await KnexHelper.forTenant()
+            .table('servico_peca')
             .update({ last_updated: new Date(), dh_exclusion: new Date() })
             .where({ peca_id: pecaId, servico_id: servicoId });
     }

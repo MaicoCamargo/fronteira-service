@@ -20,5 +20,6 @@ export const ENV = {
         ID: process.env.SERVICE_ID || 1
     },
     AUTH_SERVICE_CLIENT_ID: process.env.AUTH_SERVICE_CLIENT_ID,
-    MECHANIC_POSITION_ID: process.env.MECHANIC_POSITION_ID || 1
+    MECHANIC_POSITION_ID: process.env.MECHANIC_POSITION_ID || 1,
+    TENANTS: [{ CLIENT_ID: process.env.CLIENT_ID_NEW_FRONTEIRA, SCHEMA: process.env.SCHEMA_NEW_FRONTEIRA }]
 };
