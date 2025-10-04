@@ -50,23 +50,26 @@ export class ServicoPgRepository
                     .whereIn('cliente_id', filters?.params?.clientes)
                     .whereNull('dh_exclusion')
                     .returning('carro_id');
-                query.andWhere('carro_id', 'in', carroQuery);
+                const carros = carroQuery.map((row) => row.carro_id);
+                query.andWhere('carro_id', 'in', carros);
             }
             if (filters.params.cliente) {
                 const clienteQuery = await KnexHelper.forTenant()
                     .table('cliente')
                     .rightJoin('cliente_carro', 'cliente_id', '=', 'id_cliente')
                     .andWhereILike('nome', `%${filters.params.cliente}%`)
-                    .select('cliente_carro.carro_id as carro_id');
-                query.andWhere('carro_id', 'in', clienteQuery);
+                    .select('cliente_carro.carro_id');
+                const carros = clienteQuery.map((row) => row.carro_id);
+                query.andWhere('carro_id', 'in', carros);
             }
             if (filters.params.placa) {
                 const carroQuery = await KnexHelper.forTenant()
                     .table('carro')
                     .rightJoin('cliente_carro', 'id_carro', '=', 'carro_id')
                     .andWhereILike('placa', `%${filters.params.placa}%`)
-                    .select('id_carro');
-                query.andWhere('carro_id', 'in', carroQuery);
+                    .select('carro_id');
+                const carros = carroQuery.map((row) => row.carro_id);
+                query.andWhere('carro_id', 'in', carros);
             }
             if (filters.params.modelo) {
                 const carroQuery = await KnexHelper.forTenant()
@@ -74,7 +77,8 @@ export class ServicoPgRepository
                     .rightJoin('cliente_carro', 'id_carro', '=', 'carro_id')
                     .andWhereILike('modelo', `%${filters.params.modelo}%`)
                     .select('id_carro');
-                query.andWhere('carro_id', 'in', carroQuery);
+                const carros = carroQuery.map((row) => row.id_carro);
+                query.andWhere('carro_id', 'in', carros);
             }
             if (filters.params.code) {
                 query.andWhere({ codigo: filters.params.code });
