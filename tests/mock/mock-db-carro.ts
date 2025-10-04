@@ -7,7 +7,16 @@ export const makePgCarroCreate = async (): Promise<DbCarroModel[]> => {
     const cliente = await makePgClienteCreate();
     const carros = (await KnexHelper.forTenant()
         .table('carro')
-        .insert([mockFakeAddCarroModel(), mockFakeAddCarroModel()])
+        .insert([
+            mockFakeAddCarroModel(),
+            {
+                cor: 'other_color',
+                ano: 1996,
+                modelo: 'other_modelo',
+                placa: 'other_placa',
+                quilometragem: 129911
+            }
+        ])
         .returning('*')) as DbCarroModel[];
     await KnexHelper.forTenant()
         .table('cliente_carro')

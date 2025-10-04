@@ -1,30 +1,37 @@
 import { ServicoPgRepository } from './servico-pg-repository';
 import { DbServicoModel } from '@/data/models/db-servico-model';
 import { KnexHelper } from './helpers/knex-helper';
-import { DbCarroModel } from '@/data/models/db-carro-model';
-import { mapper } from './helpers/mapper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { PageFilter } from '@/main/protocols/page-filter';
 import { Filter } from '@/main/protocols/filter';
 import { LoadServicosDbFilter } from '@/data/protocols/db/servico/load-servicos-repository';
-import { mockFakeDbServicoModelList } from '../../../../tests/mock/mock-servico';
+import { DbClienteModel } from '@/data/models/db-cliente-model';
+import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
+import { DbCarroModel } from '@/data/models/db-carro-model';
 
 describe('Servico Postgres Repository', () => {
     let servicos: DbServicoModel[];
+    let cliente: DbClienteModel;
+    let car: DbCarroModel;
+    let first: DbServicoModel;
 
     beforeAll(async () => {
-        await mockDateAdapter.set(new Date());
+        mockDateAdapter.set(new Date());
         await KnexHelper.forTenant().table('cliente_carro').del();
         await KnexHelper.forTenant().table('servico_mecanico').del();
         await KnexHelper.forTenant().table('servico_peca').del();
         await KnexHelper.forTenant().table('nota_fiscal').del();
         await KnexHelper.forTenant().table('servico').del();
         await KnexHelper.forTenant().table('carro').del();
+        await KnexHelper.forTenant().table('cliente').del();
         servicos = await makePgServicoCreate();
+        cliente = await loadExistingClient();
+        first = sortByLatestDate(servicos)[0];
+        car = await loadExistingCar(first.carro_id);
     });
 
     afterAll(async () => {
-        await mockDateAdapter.reset();
+        mockDateAdapter.reset();
         await KnexHelper.destroy();
     });
 
@@ -82,7 +89,6 @@ describe('Servico Postgres Repository', () => {
             const sut = makeSut();
             const pageFilter: PageFilter = { page: 1, size: 5 };
 
-            const first = sortByLatestDate(servicos)[0];
             const filters: Filter<LoadServicosDbFilter> = {
                 params: {
                     code: first.codigo
@@ -94,17 +100,76 @@ describe('Servico Postgres Repository', () => {
             expect(wrapper.content.length).toEqual(1);
             expect(wrapper.pagination.total).toEqual(1);
         });
+
+        test('Deve retornar um serviço filtrado pelo cliente', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 5 };
+            const filters: Filter<LoadServicosDbFilter> = {
+                params: {
+                    cliente: cliente.nome
+                },
+                pageFilter
+            };
+            const wrapper = await sut.load(filters);
+            expect(servicos).toEqual(wrapper.content);
+            expect(wrapper.content.length).toEqual(servicos.length);
+            expect(wrapper.pagination.total).toEqual(servicos.length);
+        });
+
+        test('Deve retornar um serviço filtrado pelos clientes', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 5 };
+            const filters: Filter<LoadServicosDbFilter> = {
+                params: {
+                    clientes: [cliente.id_cliente]
+                },
+                pageFilter
+            };
+            const wrapper = await sut.load(filters);
+            expect(servicos).toEqual(wrapper.content);
+            expect(wrapper.content.length).toEqual(servicos.length);
+            expect(wrapper.pagination.total).toEqual(servicos.length);
+        });
+
+        test('Deve retornar um serviço filtrado pela placa', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 5 };
+            const filters: Filter<LoadServicosDbFilter> = {
+                params: {
+                    placa: car.placa
+                },
+                pageFilter
+            };
+            const wrapper = await sut.load(filters);
+            expect(wrapper.content.length).toEqual(1);
+            expect(wrapper.pagination.total).toEqual(1);
+            expect([first]).toEqual(wrapper.content);
+        });
+
+        test('Deve retornar um serviço filtrado pelo modelo', async () => {
+            const sut = makeSut();
+            const pageFilter: PageFilter = { page: 1, size: 5 };
+            const filters: Filter<LoadServicosDbFilter> = {
+                params: {
+                    modelo: car.modelo
+                },
+                pageFilter
+            };
+            const wrapper = await sut.load(filters);
+            expect(wrapper.content.length).toEqual(1);
+            expect(wrapper.pagination.total).toEqual(1);
+            expect([first]).toEqual(wrapper.content);
+        });
     });
 
     describe('save()', () => {
         test('Deve retornar um serviço em caso de sucesso', async () => {
             const sut = makeSut();
-            const carro = await makePgCarroCreate();
             const result = await sut.save({
                 valor: 10,
                 descricao: 'any_descricao',
                 quilometragem: 100,
-                carro_id: carro.id_carro,
+                carro_id: first.carro_id,
                 code: '#SA1B2C'
             });
             expect(result.id_servico).toBeTruthy();
@@ -112,7 +177,7 @@ describe('Servico Postgres Repository', () => {
             expect(result.descricao).toEqual('any_descricao');
             expect(result.data).toEqual(new Date());
             expect(result.quilometragem).toEqual(100);
-            expect(result.carro_id).toEqual(carro.id_carro);
+            expect(result.carro_id).toEqual(first.carro_id);
         });
     });
 
@@ -165,42 +230,20 @@ const makeSut = (): ServicoPgRepository => {
     return new ServicoPgRepository();
 };
 
-const makePgCarroCreate = async (): Promise<DbCarroModel> => {
-    const result = mapper(
-        await KnexHelper.forTenant()
-            .table('carro')
-            .insert({
-                ano: 2023,
-                cor: 'any_cor',
-                quilometragem: 100,
-                modelo: 'any_modelo',
-                placa: 'any_placa'
-            })
-            .returning('*')
-    );
-    return {
-        id_carro: result.id_carro,
-        ano: result.ano,
-        cor: result.cor,
-        quilometragem: result.quilometragem,
-        modelo: result.modelo,
-        placa: result.placa
-    };
+/**
+ * Asynchronously loads an existing client record from the database.
+ * uses a tenant-specific table within the database to fetch the first available client record.
+ *
+ * @async
+ * @function
+ * @returns {Promise<DbClienteModel>} A promise that resolves to a `DbClienteModel` representing the client record.
+ */
+const loadExistingClient = async (): Promise<DbClienteModel> => {
+    const result = await KnexHelper.forTenant().table('cliente').first();
+    return result as DbClienteModel;
 };
 
-const makePgServicoCreate = async (): Promise<DbServicoModel[]> => {
-    const carro = await makePgCarroCreate();
-    const result: DbServicoModel[] = [];
-    const fake = mockFakeDbServicoModelList();
-    let create = await KnexHelper.forTenant()
-        .table('servico')
-        .insert({ valor: fake[0].valor, carro_id: carro.id_carro, codigo: fake[0].codigo })
-        .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo']);
-    result.push(create[0]);
-    create = await KnexHelper.forTenant()
-        .table('servico')
-        .insert({ valor: fake[1].valor, carro_id: carro.id_carro, codigo: fake[1].codigo })
-        .returning(['id_servico', 'valor', 'descricao', 'data', 'quilometragem', 'last_updated', 'carro_id', 'codigo']);
-    result.push(create[0]);
-    return result;
+const loadExistingCar = async (car: number): Promise<DbCarroModel> => {
+    const result = await KnexHelper.forTenant().table('carro').where({ id_carro: car }).first();
+    return result as DbCarroModel;
 };
