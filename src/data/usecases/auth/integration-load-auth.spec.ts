@@ -6,6 +6,7 @@ import { LoadProfileByMail } from '@/domain/usecases/profile/load-profile-by-mai
 import { ProfileModel } from '@/domain/models/profile-model';
 import { mockFakeProfileModel } from '../../../../tests/mock/mock-profile';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { httpRequestScope } from '@/infra/http/http-request-scope';
 
 describe('IntegrationLoadAuth', () => {
     beforeAll(async () => {
@@ -48,7 +49,7 @@ describe('IntegrationLoadAuth', () => {
         jest.spyOn(loadProfileByUsernameStub, 'load').mockResolvedValueOnce(null as any);
         jest.spyOn(loadProfileByMailStub, 'load').mockResolvedValueOnce(mockFakeProfileModel());
         const result = await sut.auth({ username: mockFakeProfileModel().username, password: '123' });
-        expect(result).toEqual({ content: 'any_token' });
+        expect(result).toEqual({ content: { jwt: 'any_token', clientId: httpRequestScope.getStore().clientId } });
     });
 
     test('Deve tentar autenticar quando não encontrar por e-mail mas encontrar por username', async () => {
@@ -56,7 +57,7 @@ describe('IntegrationLoadAuth', () => {
         jest.spyOn(loadProfileByMailStub, 'load').mockResolvedValueOnce(null as any);
         jest.spyOn(loadProfileByUsernameStub, 'load').mockResolvedValueOnce(mockFakeProfileModel());
         const result = await sut.auth({ username: mockFakeProfileModel().username, password: '123' });
-        expect(result).toEqual({ content: 'any_token' });
+        expect(result).toEqual({ content: { jwt: 'any_token', clientId: httpRequestScope.getStore().clientId } });
     });
 });
 
