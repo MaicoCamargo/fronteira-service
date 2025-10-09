@@ -35,5 +35,6 @@ export const AuthHelper = {
     async destroy(): Promise<void> {
         await AxiosHelper.getInstance(ENV.AUTH_SERVICE_HOST).destroy();
         await AxiosHelper.getInstance(ENV.BILLING_SERVICE_HOST).destroy();
+        await KnexHelper.destroy();
     }
 };
