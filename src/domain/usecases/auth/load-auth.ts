@@ -1,4 +1,5 @@
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { AuthModel } from '@/domain/models/auth-model';
 
 export interface CredencialParams {
     username: string;
@@ -6,5 +7,5 @@ export interface CredencialParams {
 }
 
 export interface LoadAuth {
-    auth: (credencial: CredencialParams) => Promise<Wrapper<string>>;
+    auth: (credencial: CredencialParams) => Promise<Wrapper<AuthModel>>;
 }

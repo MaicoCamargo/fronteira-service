@@ -7,6 +7,7 @@ import { LoadProfileByMail } from '@/domain/usecases/profile/load-profile-by-mai
 import { httpRequestScope } from '@/infra/http/http-request-scope';
 import { ProfileModel } from '@/domain/models/profile-model';
 import { ENV } from '@/main/config/env';
+import { AuthModel } from '@/domain/models/auth-model';
 
 export class IntegrationLoadAuth implements LoadAuth {
     constructor(
@@ -15,11 +16,20 @@ export class IntegrationLoadAuth implements LoadAuth {
         private readonly loadProfileByMail: LoadProfileByMail
     ) {}
 
-    async auth(credencial: CredencialParams): Promise<Wrapper<string>> {
+    async auth(credencial: CredencialParams): Promise<Wrapper<AuthModel>> {
         if (!(await this.loadProfileInAllTenants(credencial))) {
             throw new InvalidCredentialsError();
         }
-        return await this.loadAuthIntegration.auth({ login: credencial.username, password: credencial.password });
+        const wrapper: Wrapper<string> = await this.loadAuthIntegration.auth({
+            login: credencial.username,
+            password: credencial.password
+        });
+        return {
+            content: {
+                jwt: wrapper.content,
+                clientId: httpRequestScope.getStore().clientId
+            }
+        };
     }
 
     /**
