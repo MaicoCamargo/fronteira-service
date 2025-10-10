@@ -21,7 +21,7 @@ const baseKnex = knex({
 
 function loadSchema(clientId: string): string {
     const tenant = ENV.TENANTS.find((t) => t.CLIENT_ID === clientId);
-    return tenant.SCHEMA ?? 'new_fronteira';
+    return tenant?.SCHEMA ?? 'public';
 }
 
 export const KnexHelper = {
