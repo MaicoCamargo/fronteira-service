@@ -8,6 +8,8 @@ export interface LoadBillingsParams extends PageFilter {
     startDate?: Date;
     endDate?: Date;
     user?: number;
+    order?: string;
+    code?: string;
 }
 
 export interface LoadBillings {

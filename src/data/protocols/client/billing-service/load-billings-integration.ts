@@ -8,6 +8,8 @@ export interface LoadBillingsIntegrationParams {
     user?: number;
     page?: number;
     size?: number;
+    order?: number;
+    code?: string;
 }
 
 export interface LoadBillingsIntegration {
