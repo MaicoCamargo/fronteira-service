@@ -17,9 +17,11 @@ export class IntegrationLoadAuth implements LoadAuth {
     ) {}
 
     async auth(credencial: CredencialParams): Promise<Wrapper<AuthModel>> {
-        if (!(await this.loadProfileInAllTenants(credencial))) {
+        const clientId = await this.loadClientId(credencial);
+        if (!clientId) {
             throw new InvalidCredentialsError();
         }
+        httpRequestScope.enterWith({ clientId });
         const wrapper: Wrapper<string> = await this.loadAuthIntegration.auth({
             login: credencial.username,
             password: credencial.password
@@ -27,30 +29,31 @@ export class IntegrationLoadAuth implements LoadAuth {
         return {
             content: {
                 jwt: wrapper.content,
-                clientId: httpRequestScope.getStore().clientId
+                clientId
             }
         };
     }
 
     /**
-     * Loads a user's profile in all available tenants.
-     * @param {CredencialParams} credencial - An object containing the username and password for authentication.
-     * @returns {Promise<ProfileModel>} - A promise that resolves to the loaded profile, or null if no matching profile is found.
+     * This method loads the client ID based on the provided credentials. It iterates through the ENV.TENANTS array to find a match. If found, it sets the httpRequestScope with the corresponding CLIENT_ID and returns it. If not found, it returns null.
+
+     * @param {CredencialParams} credencial - The credentials object containing username and password or email.
+     *
+     * @return {Promise<string>} Promise that resolves to the client ID string if found, otherwise null.
      */
-    private async loadProfileInAllTenants(credencial: CredencialParams): Promise<ProfileModel> {
+    private async loadClientId(credencial: CredencialParams): Promise<string> {
         const tenants = [...ENV.TENANTS, { SCHEMA: 'public', CLIENT_ID: null }];
         for (const tenantsKey of tenants) {
-            httpRequestScope.enterWith({ clientId: tenantsKey.CLIENT_ID, authorization: null });
+            httpRequestScope.enterWith({ clientId: tenantsKey.CLIENT_ID });
             const [profileFromUsername, profileFromMail] = await Promise.all([
                 this.loadProfileByUsername.load(credencial.username).catch(() => null),
                 this.loadProfileByMail.load(credencial.username).catch(() => null)
             ]);
             const profile: ProfileModel = profileFromUsername || profileFromMail;
             if (profile) {
-                return profile;
+                return tenantsKey.CLIENT_ID;
             }
         }
-        console.log('null', credencial.username);
         return null;
     }
 }
