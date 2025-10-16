@@ -42,7 +42,7 @@ export class IntegrationLoadAuth implements LoadAuth {
      * @return {Promise<string>} Promise that resolves to the client ID string if found, otherwise null.
      */
     private async loadClientId(credencial: CredencialParams): Promise<string> {
-        const tenants = [...ENV.TENANTS, { SCHEMA: 'public', CLIENT_ID: null }];
+        const tenants = [...ENV.TENANTS, { SCHEMA: 'public', CLIENT_ID: 'client-id' }];
         for (const tenantsKey of tenants) {
             httpRequestScope.enterWith({ clientId: tenantsKey.CLIENT_ID });
             const [profileFromUsername, profileFromMail] = await Promise.all([

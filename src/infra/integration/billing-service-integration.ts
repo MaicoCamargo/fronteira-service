@@ -16,6 +16,7 @@ import {
 } from '@/data/protocols/client/billing-service/update-billing-payment-integration';
 import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 import { UpdateSimpleBillingIntegration } from '@/data/protocols/client/billing-service/update-simple-billing-integration';
+import { httpRequestScope } from '@/infra/http/http-request-scope';
 
 export class BillingServiceIntegration
     implements
@@ -28,6 +29,7 @@ export class BillingServiceIntegration
     constructor(private readonly axios: AxiosHelper) {}
 
     async save(data: SaveSimpleBillingIntegrationModel): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
+        this.headers();
         return await this.axios.post('/billings/simple', data);
     }
 
@@ -37,6 +39,7 @@ export class BillingServiceIntegration
         if (loadBillingsIntegrationParams.page) {
             loadBillingsIntegrationParams.page = loadBillingsIntegrationParams.page - 1;
         }
+        this.headers();
         return (await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, loadBillingsIntegrationParams)) as Wrapper<
             IntegrationLoadSimpleBillingModel[]
         >;
@@ -45,10 +48,12 @@ export class BillingServiceIntegration
     async updatePayment(
         payment: UpdateBillingPaymentIntegrationModel
     ): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
+        this.headers();
         return await this.axios.put('/payments', payment);
     }
 
     async loadByOrderId(order: number): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
+        this.headers();
         return (await this.axios.get(`/billings/order/${order}`)) as Wrapper<IntegrationLoadSimpleBillingModel[]>;
     }
 
@@ -56,6 +61,11 @@ export class BillingServiceIntegration
         id: number,
         billing: SaveSimpleBillingIntegrationModel
     ): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
+        this.headers();
         return await this.axios.put(`/billings/${id}`, billing);
+    }
+
+    private headers(): void {
+        this.axios.setHeader('X-Client-ID', httpRequestScope.getStore()?.clientId);
     }
 }
