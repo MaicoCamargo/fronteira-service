@@ -50,7 +50,6 @@ export class AxiosHelper {
     }
 
     async post(url: string, data: any, config?: any): Promise<any> {
-        console.log(data);
         return await this.axiosInstance.post(url, data, config);
     }
 
