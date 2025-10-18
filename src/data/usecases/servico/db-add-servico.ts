@@ -101,19 +101,20 @@ export class DbAddServico implements AddServico {
     }
 
     private async saveBilling(servico: AddServicoParams, servicoId: number): Promise<BillingModel> {
-        const payments: SimplePaymentModel[] = servico.billing.payments.map((payment) => ({
-            installments: payment.installments,
-            value: payment.value,
-            status: payment.status,
-            type: payment.type
-        }));
+        const payments: SimplePaymentModel[] =
+            servico?.billing?.payments?.map((payment) => ({
+                installments: payment.installments,
+                value: payment.value,
+                status: payment.status,
+                type: payment.type
+            })) ?? [];
         // @todo obter id do usuário autenticado
         const billing: SaveSimpleBillingIntegrationModel = {
             service: Number(ENV.SERVICE.ID),
             user: 1,
             name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
             order: servicoId,
-            description: servico.billing.description,
+            description: servico?.billing?.description,
             amount: servico.valor,
             payments
         };
