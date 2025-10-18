@@ -51,14 +51,14 @@ describe('DbAddServico Use Case', () => {
     test('Deve criar um serviço em caso de sucesso', async () => {
         const { sut } = makeSut();
         const model = await sut.add(mockFakeAddServicoParams());
-        expect(model).toEqual(mockFakeServicoModel());
+        expect(model).toEqual({ content: mockFakeServicoModel() });
     });
 
     test('Deve criar um serviço em caso de sucesso se "billing" não for enviado', async () => {
         const { sut } = makeSut();
         const { billing, ...orderWithBilling } = mockFakeAddServicoParams();
         const model = await sut.add(orderWithBilling);
-        expect(model).toEqual(mockFakeServicoModel());
+        expect(model).toEqual({ content: mockFakeServicoModel() });
     });
 
     test('Deve lançar uma exceção se SaveServicoRepository lançar uma exceção', async () => {
