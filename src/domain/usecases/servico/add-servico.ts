@@ -1,4 +1,5 @@
 import { IncludedItemModel, ServicoModel } from '../../models/servico-model';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export type AddItemParams = Required<IncludedItemModel>;
 
@@ -38,5 +39,5 @@ export type AddServicoParams = Omit<ServicoModel, 'id' | 'data' | 'lastUpdate' |
 };
 
 export interface AddServico {
-    add: (params: AddServicoParams) => Promise<ServicoModel>;
+    add: (params: AddServicoParams) => Promise<Wrapper<ServicoModel>>;
 }

@@ -20,6 +20,7 @@ import {
 import { ENV } from '@/main/config/env';
 import { BillingModel } from '@/domain/models/billing-model';
 import { UniqueIdRepository } from '@/infra/unique-id-repository';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -32,7 +33,7 @@ export class DbAddServico implements AddServico {
         private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration
     ) {}
 
-    async add(params: AddServicoParams): Promise<ServicoModel> {
+    async add(params: AddServicoParams): Promise<Wrapper<ServicoModel>> {
         const model: SaveServicoModel = {
             valor: params.valor,
             quilometragem: params.quilometragem,
@@ -46,18 +47,20 @@ export class DbAddServico implements AddServico {
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
         const billing = await this.saveBilling(params, result.id_servico);
         return {
-            itens,
-            id: result.id_servico,
-            valor: result.valor,
-            data: result.data,
-            quilometragem: result.quilometragem,
-            descricao: result.descricao,
-            carro: await this.quilometragem(model.carro_id, model.quilometragem),
-            cliente: params.cliente,
-            nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
-            mecanicos: await this.saveMechanics(result.id_servico, params.mechanics),
-            billing,
-            code: result.codigo
+            content: {
+                itens,
+                id: result.id_servico,
+                valor: result.valor,
+                data: result.data,
+                quilometragem: result.quilometragem,
+                descricao: result.descricao,
+                carro: await this.quilometragem(model.carro_id, model.quilometragem),
+                cliente: params.cliente,
+                nota: await this.loadNotaFiscalByIdServicoRepository.load(result.id_servico),
+                mecanicos: await this.saveMechanics(result.id_servico, params.mechanics),
+                billing,
+                code: result.codigo
+            }
         };
     }
 
