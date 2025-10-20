@@ -9,6 +9,7 @@ import { UpdateServicoModel, UpdateServicoRepository } from '@/data/protocols/db
 import { DeleteServicoRepository } from '@/data/protocols/db/servico/delete-servico-repository';
 import { Filter } from '@/main/protocols/filter';
 import { LoadOrderByIdRepository } from '@/data/protocols/db/servico/load-order-by-id-repository';
+import { MomentAdapter } from '@/main/adapters/moment-adapter';
 
 export class ServicoPgRepository
     implements
@@ -35,13 +36,11 @@ export class ServicoPgRepository
                 ])
                 .whereNull('dh_exclusion');
             if (filters.params.startDate) {
-                const startDate = new Date(filters.params.startDate);
-                const startOfDay = new Date(startDate.setHours(0, 0, 0));
+                const startOfDay = `${MomentAdapter.format(filters.params.startDate)}T00:00:00.000Z`;
                 query.andWhere('data', '>=', startOfDay);
             }
             if (filters.params.endDate) {
-                const endDate = new Date(filters.params.endDate);
-                const endOfDay = new Date(endDate.setHours(23, 59, 59));
+                const endOfDay = `${MomentAdapter.format(filters.params.endDate)}T23:59:59.599Z`;
                 query.andWhere('data', '<=', endOfDay);
             }
             if (filters.params.clientes) {
