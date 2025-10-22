@@ -21,6 +21,7 @@ export class CarroPgRepository
         TransferirCarrosRepository
 {
     async save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
+        model.placa = this.upper(model.placa);
         const result: any = await KnexHelper.forTenant().table('carro').insert(model).returning('*');
         const map = mapper(result);
         await KnexHelper.forTenant().table('cliente_carro').insert({ cliente_id: clienteId, carro_id: map.id_carro });
@@ -35,6 +36,7 @@ export class CarroPgRepository
     }
 
     async update(model: UpdateCarroModel): Promise<DbCarroModel> {
+        model.placa = this.upper(model.placa);
         const result = await KnexHelper.forTenant()
             .table('carro')
             .where({ id_carro: model.id_carro })
@@ -70,5 +72,12 @@ export class CarroPgRepository
                 .update({ cliente_id: clienteId });
         }
         return await this.loadByClienteId(clienteId);
+    }
+
+    private upper(value: string): string {
+        if (value) {
+            return value.toUpperCase();
+        }
+        return value;
     }
 }
