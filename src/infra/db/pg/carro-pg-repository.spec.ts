@@ -1,6 +1,6 @@
 import { KnexHelper } from './helpers/knex-helper';
 import { CarroPgRepository } from './carro-pg-repository';
-import { mockFakeAddCarroModel } from '../../../../tests/mock/mock-carro';
+import { mockFakeAddCarroModel, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbClienteModel } from '@/data/models/db-cliente-model';
 import { mapper } from './helpers/mapper';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
@@ -52,11 +52,11 @@ describe('Carro Postgres Repository', () => {
             const carroLoaded = await sut.loadById({ id_carro: carro.id_carro });
             expect(carroLoaded).toBeTruthy();
             expect(carroLoaded.id_carro).toBeTruthy();
-            expect(carroLoaded.modelo).toEqual(mockFakeAddCarroModel().modelo);
-            expect(carroLoaded.ano).toEqual(mockFakeAddCarroModel().ano);
-            expect(carroLoaded.cor).toEqual(mockFakeAddCarroModel().cor);
-            expect(carroLoaded.quilometragem).toEqual(mockFakeAddCarroModel().quilometragem);
-            expect(carroLoaded.placa).toEqual(mockFakeAddCarroModel().placa);
+            expect(carroLoaded.modelo).toEqual(mockFakeDbCarroModel().modelo);
+            expect(carroLoaded.ano).toEqual(mockFakeDbCarroModel().ano);
+            expect(carroLoaded.cor).toEqual(mockFakeDbCarroModel().cor);
+            expect(carroLoaded.quilometragem).toEqual(mockFakeDbCarroModel().quilometragem);
+            expect(carroLoaded.placa).toEqual(mockFakeDbCarroModel().placa);
         });
     });
 

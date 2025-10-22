@@ -17,55 +17,48 @@ export const mockFakeDbCarroModel = (): DbCarroModel => ({
     cor: 'any_cor',
     ano: 2020,
     modelo: 'any_modelo',
-    placa: 'any_placa',
+    placa: 'ANY_PLACA',
     quilometragem: 0,
     id_carro: 1
 });
 
 export const mockFakeDbCarroModelList = (): DbCarroModel[] => [
-    {
-        cor: 'any_cor',
-        ano: 2020,
-        modelo: 'any_modelo',
-        placa: 'any_placa',
-        quilometragem: 0,
-        id_carro: 1
-    },
+    { ...mockFakeDbCarroModel() },
     {
         cor: 'other_cor',
         ano: 2025,
         modelo: 'other_modelo',
-        placa: 'other_placa',
+        placa: 'OTHER_PLACA',
         quilometragem: 10,
         id_carro: 2
     }
 ];
 
 export const mockFakeCarroModel = (): CarroModel => ({
-    cor: 'any_cor',
-    ano: 2020,
-    modelo: 'any_modelo',
-    placa: 'any_placa',
-    quilometragem: 0,
-    id: 1
+    cor: mockFakeDbCarroModel().cor,
+    ano: mockFakeDbCarroModel().ano,
+    modelo: mockFakeDbCarroModel().modelo,
+    placa: mockFakeDbCarroModel().placa,
+    quilometragem: mockFakeDbCarroModel().quilometragem,
+    id: mockFakeDbCarroModel().id_carro
 });
 
 export const mockFakeCarroModelList = (): CarroModel[] => [
     {
-        cor: 'any_cor',
-        ano: 2020,
-        modelo: 'any_modelo',
-        placa: 'any_placa',
-        quilometragem: 0,
-        id: 1
+        cor: mockFakeDbCarroModelList()[0].cor,
+        ano: mockFakeDbCarroModelList()[0].ano,
+        modelo: mockFakeDbCarroModelList()[0].modelo,
+        placa: mockFakeDbCarroModelList()[0].placa,
+        quilometragem: mockFakeDbCarroModelList()[0].quilometragem,
+        id: mockFakeDbCarroModelList()[0].id_carro
     },
     {
-        cor: 'other_cor',
-        ano: 2025,
-        modelo: 'other_modelo',
-        placa: 'other_placa',
-        quilometragem: 10,
-        id: 2
+        cor: mockFakeDbCarroModelList()[1].cor,
+        ano: mockFakeDbCarroModelList()[1].ano,
+        modelo: mockFakeDbCarroModelList()[1].modelo,
+        placa: mockFakeDbCarroModelList()[1].placa,
+        quilometragem: mockFakeDbCarroModelList()[1].quilometragem,
+        id: mockFakeDbCarroModelList()[1].id_carro
     }
 ];
 
