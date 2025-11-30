@@ -6,6 +6,8 @@ import { MechanicPgRepository } from '@/infra/db/pg/mechanic-pg-repository';
 import { CarroPgRepository } from '@/infra/db/pg/carro-pg-repository';
 import { BillingServiceIntegration } from '@/infra/integration/billing-service-integration';
 import { makeBillingServiceClient } from '@/main/factories/infra/integration/billing-service-client-factory';
+import { makeIntegrationLoadAuthDetail } from '@/main/factories/usescase/auth/integration-load-auth-detail-factory';
+import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 
 export const makeDbAddServico = (): DbAddServico => {
     const servicoPgRepository = new ServicoPgRepository();
@@ -14,6 +16,9 @@ export const makeDbAddServico = (): DbAddServico => {
     const mechanicPgRepository = new MechanicPgRepository();
     const carroPgRepository = new CarroPgRepository();
     const billingServiceIntegration = new BillingServiceIntegration(makeBillingServiceClient());
+    const loadAuthDetailIntegration = makeIntegrationLoadAuthDetail();
+    const profilePgRepository = new ProfilePgRepository();
+
     return new DbAddServico(
         servicoPgRepository,
         includedItemPgRepository,
@@ -21,6 +26,8 @@ export const makeDbAddServico = (): DbAddServico => {
         notaFiscalPgRepository,
         mechanicPgRepository,
         carroPgRepository,
-        billingServiceIntegration
+        billingServiceIntegration,
+        loadAuthDetailIntegration,
+        profilePgRepository
     );
 };

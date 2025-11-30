@@ -21,6 +21,10 @@ import { ENV } from '@/main/config/env';
 import { BillingModel } from '@/domain/models/billing-model';
 import { UniqueIdRepository } from '@/infra/unique-id-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
+import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
+import { httpRequestScope } from '@/infra/http/http-request-scope';
+import { ProfileModel } from '@/domain/models/profile-model';
+import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
 
 export class DbAddServico implements AddServico {
     constructor(
@@ -30,7 +34,9 @@ export class DbAddServico implements AddServico {
         private readonly saveNotaFiscalRepository: SaveNotaFiscalRepository,
         private readonly saveServiceMechanicsRepository: SaveServiceMechanicsRepository,
         private readonly updateCarroRepository: UpdateCarroRepository,
-        private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration
+        private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration,
+        private readonly loadAuthDetailIntegration: LoadAuthDetailIntegration,
+        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<Wrapper<ServicoModel>> {
@@ -111,10 +117,10 @@ export class DbAddServico implements AddServico {
                 status: payment.status,
                 type: payment.type
             })) ?? [];
-        // @todo obter id do usuário autenticado
+        const profile = await this.loadAuthDetail();
         const billing: SaveSimpleBillingIntegrationModel = {
             service: Number(ENV.SERVICE.ID),
-            user: 1,
+            user: profile.id,
             name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
             order: servicoId,
             description: servico?.billing?.description,
@@ -140,6 +146,19 @@ export class DbAddServico implements AddServico {
             })),
             status: saved.status,
             code: saved.code
+        };
+    }
+
+    private async loadAuthDetail(): Promise<ProfileModel> {
+        const jwt = httpRequestScope.getStore().authorization;
+        const authDetailWrapper = await this.loadAuthDetailIntegration.load(jwt);
+        const dbProfileModel = await this.loadProfileByUsernameRepository.loadByUsername(
+            authDetailWrapper.content.username
+        );
+        return {
+            ...dbProfileModel,
+            id: dbProfileModel.id_profile,
+            positions: []
         };
     }
 }
