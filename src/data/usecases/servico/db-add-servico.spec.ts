@@ -37,11 +37,21 @@ import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-loa
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { UniqueIdRepository } from '@/infra/unique-id-repository';
+import {
+    LoadAuthDetailIntegration,
+    LoadAuthDetailIntegrationModel
+} from '@/data/protocols/client/auth-service/load-auth-detail-integration';
+import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { makeLoadAuthDetailIntegrationModel } from '../../../../tests/mock/mock-load-auth-detail-integration';
+import { DbProfileModel } from '@/data/models/db-profile-model';
+import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
+import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
         mockDateAdapter.set(new Date());
         mockOrderCodeStub();
+        mockSpyHttpRequestScopeAuthorization();
     });
 
     afterAll(async () => {
@@ -116,6 +126,8 @@ interface SutTypes {
     saveServiceMechanicsRepositoryStub: SaveServiceMechanicsRepository;
     updateCarroRepositoryStub: UpdateCarroRepository;
     saveSimpleBillingIntegrationStub: SaveSimpleBillingIntegration;
+    loadAuthDetailIntegrationStub: LoadAuthDetailIntegration;
+    loadProfileByUsernameRepositoryStub: LoadProfileByUsernameRepository;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -187,6 +199,24 @@ const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {
     return new SaveSimpleBillingIntegrationStub();
 };
 
+const makeLoadAuthDetailIntegration = (): LoadAuthDetailIntegration => {
+    class LoadAuthDetailIntegrationStub implements LoadAuthDetailIntegration {
+        async load(token: string): Promise<Wrapper<LoadAuthDetailIntegrationModel>> {
+            return Promise.resolve({ content: makeLoadAuthDetailIntegrationModel() });
+        }
+    }
+    return new LoadAuthDetailIntegrationStub();
+};
+
+const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository => {
+    class LoadProfileByUsernameRepositoryStub implements LoadProfileByUsernameRepository {
+        async loadByUsername(username: string): Promise<DbProfileModel> {
+            return Promise.resolve(mockFakeDbProfileModel());
+        }
+    }
+    return new LoadProfileByUsernameRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const saveServicoRepositoryStub = makeSaveServicoRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
@@ -195,6 +225,8 @@ const makeSut = (): SutTypes => {
     const saveServiceMechanicsRepositoryStub = makeSaveServiceMechanicsRepository();
     const updateCarroRepositoryStub = makeUpdateCarroRepository();
     const saveSimpleBillingIntegrationStub = makeSaveSimpleBillingIntegration();
+    const loadAuthDetailIntegrationStub = makeLoadAuthDetailIntegration();
+    const loadProfileByUsernameRepositoryStub = makeLoadProfileByUsernameRepository();
 
     const sut = new DbAddServico(
         saveServicoRepositoryStub,
@@ -203,7 +235,9 @@ const makeSut = (): SutTypes => {
         saveNotaFiscalRepositoryStub,
         saveServiceMechanicsRepositoryStub,
         updateCarroRepositoryStub,
-        saveSimpleBillingIntegrationStub
+        saveSimpleBillingIntegrationStub,
+        loadAuthDetailIntegrationStub,
+        loadProfileByUsernameRepositoryStub
     );
     return {
         sut,
@@ -213,9 +247,12 @@ const makeSut = (): SutTypes => {
         saveNotaFiscalRepositoryStub,
         saveServiceMechanicsRepositoryStub,
         updateCarroRepositoryStub,
-        saveSimpleBillingIntegrationStub
+        saveSimpleBillingIntegrationStub,
+        loadAuthDetailIntegrationStub,
+        loadProfileByUsernameRepositoryStub
     };
 };
+
 const mockOrderCodeStub = (): void => {
     jest.spyOn(UniqueIdRepository, 'generate').mockImplementation((size: number, prefix?: string) => {
         return 'OANY_CODE';
