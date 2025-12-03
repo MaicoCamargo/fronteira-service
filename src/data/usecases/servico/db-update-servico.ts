@@ -15,6 +15,17 @@ import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fis
 import { MechanicModel } from '@/domain/models/mechanic-model';
 import { UpdateServiceMechanicsRepository } from '@/data/protocols/db/mechanic/update-service-mechanics-repository';
 import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { CancelBillingIntegration } from '@/data/protocols/client/billing-service/cancel-billing-integration';
+import { BillingModel } from '@/domain/models/billing-model';
+import {
+    SaveSimpleBillingIntegration,
+    SaveSimpleBillingIntegrationModel
+} from '@/data/protocols/client/billing-service/save-simple-billing-integration';
+import { ENV } from '@/main/config/env';
+import { ProfileModel } from '@/domain/models/profile-model';
+import { httpRequestScope } from '@/infra/http/http-request-scope';
+import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
+import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
 
 export class DbUpdateServico implements UpdateServico {
     constructor(
@@ -27,7 +38,11 @@ export class DbUpdateServico implements UpdateServico {
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly updateNotaFiscalRepository: UpdateNotaFiscalRepository,
         private readonly updateServiceMechanicsRepository: UpdateServiceMechanicsRepository,
-        private readonly updateCarroRepository: UpdateCarroRepository
+        private readonly updateCarroRepository: UpdateCarroRepository,
+        private readonly cancelBillingIntegration: CancelBillingIntegration,
+        private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration,
+        private readonly loadAuthDetailIntegration: LoadAuthDetailIntegration,
+        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -43,6 +58,7 @@ export class DbUpdateServico implements UpdateServico {
         await this.updateNotaFiscalRepository.update(model.id_servico, params.nota);
         const carro = await this.quilometragem(model.carro_id, model.quilometragem);
         const cliente = await this.loadCliente(updated.id_servico);
+        await this.cancelBillingIntegration.cancel(params.billing.code);
         return {
             id: updated.id_servico,
             valor: updated.valor,
@@ -54,7 +70,8 @@ export class DbUpdateServico implements UpdateServico {
             cliente,
             nota: await this.loadNotaFiscalByIdServicoRepository.load(updated.id_servico),
             mecanicos: await this.updateMechanics(updated.id_servico, params.mechanics),
-            code: updated.codigo
+            code: updated.codigo,
+            billing: await this.saveBilling(params)
         };
     }
 
@@ -122,5 +139,50 @@ export class DbUpdateServico implements UpdateServico {
             id: value.id_mecanico,
             name: value.firstName
         }));
+    }
+
+    private async saveBilling(order: UpdateServicoParams): Promise<BillingModel> {
+        const profile = await this.loadAuthDetail();
+        const billing: SaveSimpleBillingIntegrationModel = {
+            service: Number(ENV.SERVICE.ID),
+            user: profile.id,
+            name: `Fronteira service:${order.cliente.id}:${order.carro.id}:${order.valor}`,
+            order: order.id,
+            amount: order.valor,
+            payments: []
+        };
+        const wrapper = await this.saveSimpleBillingIntegration.save(billing);
+        const saved = wrapper.content;
+        return {
+            id: saved.id,
+            name: saved.name,
+            order: saved.order,
+            description: saved.description,
+            amount: saved.amount,
+            createdAt: saved.createdAt,
+            payments: saved.payments.map((payment) => ({
+                id: payment.id,
+                status: payment.status,
+                type: payment.type,
+                value: payment.value,
+                expirationDate: payment.expirationDate,
+                installment: payment.installment
+            })),
+            status: saved.status,
+            code: saved.code
+        };
+    }
+
+    private async loadAuthDetail(): Promise<ProfileModel> {
+        const jwt = httpRequestScope.getStore().authorization;
+        const authDetailWrapper = await this.loadAuthDetailIntegration.load(jwt);
+        const dbProfileModel = await this.loadProfileByUsernameRepository.loadByUsername(
+            authDetailWrapper.content.username
+        );
+        return {
+            ...dbProfileModel,
+            id: dbProfileModel.id_profile,
+            positions: []
+        };
     }
 }

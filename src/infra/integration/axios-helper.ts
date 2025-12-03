@@ -25,7 +25,7 @@ export class AxiosHelper {
                 return response.data;
             },
             async (error: AxiosError) => {
-                if (error.response.status === HttpStatusCode.NotFound) {
+                if (error?.response?.status === HttpStatusCode.NotFound) {
                     return { content: null };
                 }
                 // Manipulação de erro
@@ -55,6 +55,10 @@ export class AxiosHelper {
 
     async put(url: string, data: any, config?: any): Promise<any> {
         return await this.axiosInstance.put(url, data, config);
+    }
+
+    async patch(url: string, data?: any, config?: any): Promise<any> {
+        return await this.axiosInstance.patch(url, data, config);
     }
 
     private queryParams(params: Object): string {
