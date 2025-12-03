@@ -61,6 +61,10 @@ export class AxiosHelper {
         return await this.axiosInstance.patch(url, data, config);
     }
 
+    async delete(url: string, config?: any): Promise<any> {
+        return await this.axiosInstance.delete(url, config);
+    }
+
     private queryParams(params: Object): string {
         if (!params) {
             return '';
