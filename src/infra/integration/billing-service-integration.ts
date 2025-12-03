@@ -18,6 +18,7 @@ import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing
 import { UpdateSimpleBillingIntegration } from '@/data/protocols/client/billing-service/update-simple-billing-integration';
 import { httpRequestScope } from '@/infra/http/http-request-scope';
 import { CancelBillingIntegration } from '@/data/protocols/client/billing-service/cancel-billing-integration';
+import { DeleteBillingIntegration } from '@/data/protocols/client/billing-service/delete-billing-integration';
 
 export class BillingServiceIntegration
     implements
@@ -26,7 +27,8 @@ export class BillingServiceIntegration
         UpdateBillingPaymentIntegration,
         LoadBillingByOrderIdIntegration,
         UpdateSimpleBillingIntegration,
-        CancelBillingIntegration
+        CancelBillingIntegration,
+        DeleteBillingIntegration
 {
     constructor(private readonly axios: AxiosHelper) {}
 
@@ -69,6 +71,10 @@ export class BillingServiceIntegration
 
     async cancel(code: string): Promise<void> {
         return await this.axios.patch(`/billings/${code}/cancel`);
+    }
+
+    async delete(code: number): Promise<void> {
+        return await this.axios.delete(`/billings/order/${code}`);
     }
 
     private headers(): void {
