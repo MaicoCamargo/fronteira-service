@@ -58,7 +58,9 @@ export class DbUpdateServico implements UpdateServico {
         await this.updateNotaFiscalRepository.update(model.id_servico, params.nota);
         const carro = await this.quilometragem(model.carro_id, model.quilometragem);
         const cliente = await this.loadCliente(updated.id_servico);
-        await this.cancelBillingIntegration.cancel(params.billing.code);
+        if (params.billing) {
+            await this.cancelBillingIntegration.cancel(params.billing.code);
+        }
         return {
             id: updated.id_servico,
             valor: updated.valor,
