@@ -28,7 +28,7 @@ export interface SimplePaymentModel {
 
 export interface SaveSimpleBillingIntegrationModel {
     name: string;
-    description: string;
+    description?: string;
     amount: number;
     order: number;
     user: number;

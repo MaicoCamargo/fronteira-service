@@ -32,10 +32,28 @@ import { mockFakeDbMechanicModelList, mockFakeMechanicModelList } from '../../..
 import { UpdateServiceMechanicsRepository } from '@/data/protocols/db/mechanic/update-service-mechanics-repository';
 import { AddMechanicsModel } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
 import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { CancelBillingIntegration } from '@/data/protocols/client/billing-service/cancel-billing-integration';
+import {
+    SaveSimpleBillingIntegration,
+    SaveSimpleBillingIntegrationModel
+} from '@/data/protocols/client/billing-service/save-simple-billing-integration';
+import {
+    LoadAuthDetailIntegration,
+    LoadAuthDetailIntegrationModel
+} from '@/data/protocols/client/auth-service/load-auth-detail-integration';
+import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { Wrapper } from '@/main/protocols/http-wrapper';
+import { makeLoadAuthDetailIntegrationModel } from '../../../../tests/mock/mock-load-auth-detail-integration';
+import { DbProfileModel } from '@/data/models/db-profile-model';
+import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
+import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
+import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
+import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
         mockDateAdapter.set(new Date());
+        mockSpyHttpRequestScopeAuthorization();
     });
 
     afterAll(async () => {
@@ -82,6 +100,10 @@ interface SutTypes {
     updateNotaFiscalRepositoryStub: UpdateNotaFiscalRepository;
     updateServiceMechanicsRepositoryStub: UpdateServiceMechanicsRepository;
     updateCarroRepositoryStub: UpdateCarroRepository;
+    cancelBillingIntegrationStub: CancelBillingIntegration;
+    saveSimpleBillingIntegrationStub: SaveSimpleBillingIntegration;
+    loadAuthDetailIntegrationStub: LoadAuthDetailIntegration;
+    loadProfileByUsernameRepositoryStub: LoadProfileByUsernameRepository;
     sut: DbUpdateServico;
 }
 
@@ -187,6 +209,42 @@ const makeUpdateCarroRepository = (): UpdateCarroRepository => {
     return new UpdateCarroRepositoryStub();
 };
 
+const makeCancelBillingIntegration = (): CancelBillingIntegration => {
+    class CancelBillingIntegrationStub implements CancelBillingIntegration {
+        async cancel(code: string): Promise<void> {
+            return Promise.resolve();
+        }
+    }
+    return new CancelBillingIntegrationStub();
+};
+
+const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {
+    class SaveSimpleBillingIntegrationStub implements SaveSimpleBillingIntegration {
+        async save(data: SaveSimpleBillingIntegrationModel): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
+            return Promise.resolve({ content: makeIntegrationLoadSimpleBillingModel() });
+        }
+    }
+    return new SaveSimpleBillingIntegrationStub();
+};
+
+const makeLoadAuthDetailIntegration = (): LoadAuthDetailIntegration => {
+    class LoadAuthDetailIntegrationStub implements LoadAuthDetailIntegration {
+        async load(token: string): Promise<Wrapper<LoadAuthDetailIntegrationModel>> {
+            return Promise.resolve({ content: makeLoadAuthDetailIntegrationModel() });
+        }
+    }
+    return new LoadAuthDetailIntegrationStub();
+};
+
+const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository => {
+    class LoadProfileByUsernameRepositoryStub implements LoadProfileByUsernameRepository {
+        async loadByUsername(username: string): Promise<DbProfileModel> {
+            return Promise.resolve(mockFakeDbProfileModel());
+        }
+    }
+    return new LoadProfileByUsernameRepositoryStub();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
@@ -198,6 +256,10 @@ const makeSut = (): SutTypes => {
     const updateNotaFiscalRepositoryStub = makeUpdateNotaFiscalRepository();
     const updateServiceMechanicsRepositoryStub = makeUpdateServiceMechanicsRepository();
     const updateCarroRepositoryStub = makeUpdateCarroRepository();
+    const cancelBillingIntegrationStub = makeCancelBillingIntegration();
+    const saveSimpleBillingIntegrationStub = makeSaveSimpleBillingIntegration();
+    const loadAuthDetailIntegrationStub = makeLoadAuthDetailIntegration();
+    const loadProfileByUsernameRepositoryStub = makeLoadProfileByUsernameRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
@@ -209,7 +271,11 @@ const makeSut = (): SutTypes => {
         loadNotaFiscalByIdServicoRepositoryStub,
         updateNotaFiscalRepositoryStub,
         updateServiceMechanicsRepositoryStub,
-        updateCarroRepositoryStub
+        updateCarroRepositoryStub,
+        cancelBillingIntegrationStub,
+        saveSimpleBillingIntegrationStub,
+        loadAuthDetailIntegrationStub,
+        loadProfileByUsernameRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
@@ -221,6 +287,10 @@ const makeSut = (): SutTypes => {
         updateNotaFiscalRepositoryStub,
         updateServiceMechanicsRepositoryStub,
         updateCarroRepositoryStub,
+        cancelBillingIntegrationStub,
+        saveSimpleBillingIntegrationStub,
+        loadAuthDetailIntegrationStub,
+        loadProfileByUsernameRepositoryStub,
         sut
     };
 };
