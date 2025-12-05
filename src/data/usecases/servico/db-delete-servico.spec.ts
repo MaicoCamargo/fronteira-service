@@ -1,5 +1,6 @@
 import { DbDeleteServico } from './db-delete-servico';
 import { DeleteServicoRepository } from '../../protocols/db/servico/delete-servico-repository';
+import { DeleteBillingIntegration } from '@/data/protocols/client/billing-service/delete-billing-integration';
 
 describe('DbDeleteServico Use Case', () => {
     test('Deve chamar o DeleteServicoRepository com os valores corretos', async () => {
@@ -22,6 +23,7 @@ describe('DbDeleteServico Use Case', () => {
 type SutTypes = {
     sut: DbDeleteServico;
     deleteServicoRepositoryStub: DeleteServicoRepository;
+    deleteBillingIntegrationStub: DeleteBillingIntegration;
 };
 
 const makeDeleteServicoRepositoryStub = (): DeleteServicoRepository => {
@@ -33,11 +35,22 @@ const makeDeleteServicoRepositoryStub = (): DeleteServicoRepository => {
     return new DeleteServicoRepositorySpy();
 };
 
+const makeDeleteBillingIntegration = (): DeleteBillingIntegration => {
+    class DeleteBillingIntegrationStub implements DeleteBillingIntegration {
+        delete(id: number): Promise<void> {
+            return Promise.resolve();
+        }
+    }
+    return new DeleteBillingIntegrationStub();
+};
+
 const makeSut = (): SutTypes => {
     const deleteServicoRepositoryStub = makeDeleteServicoRepositoryStub();
-    const sut = new DbDeleteServico(deleteServicoRepositoryStub);
+    const deleteBillingIntegrationStub = makeDeleteBillingIntegration();
+    const sut = new DbDeleteServico(deleteServicoRepositoryStub, deleteBillingIntegrationStub);
     return {
         sut,
-        deleteServicoRepositoryStub
+        deleteServicoRepositoryStub,
+        deleteBillingIntegrationStub
     };
 };
