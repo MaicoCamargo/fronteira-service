@@ -16,7 +16,8 @@ attachPaginate();
 const baseKnex = knex({
     client: 'pg',
     connection,
-    debug: ENV.DB_POSTGRES.DEBUG
+    debug: ENV.DB_POSTGRES.DEBUG,
+    pool: { min: Number(ENV.DB_POSTGRES.POOL_MIN), max: Number(ENV.DB_POSTGRES.POOL_MAX) }
 });
 
 function loadSchema(clientId: string): string {

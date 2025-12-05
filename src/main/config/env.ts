@@ -11,7 +11,9 @@ export const ENV = {
         USER: process.env.DB_POSTGRES_USER || 'postgres',
         PASSWORD: process.env.DB_POSTGRES_PASSWORD,
         DATABASE: process.env.DB_POSTGRES_DATABASE || 'new_fronteira_test',
-        DEBUG: process.env.DB_POSTGRES_DEBUG !== 'false' || false
+        DEBUG: process.env.DB_POSTGRES_DEBUG !== 'false' || false,
+        POOL_MIN: process.env.DB_POSTGRES_POOL_MIN || 1,
+        POOL_MAX: process.env.DB_POSTGRES_POOL_MAX || 10
     },
     AUTH_SERVICE_HOST: process.env.AUTH_SERVICE_HOST || 'http://127.0.0.1:8005',
     BILLING_SERVICE_HOST: process.env.BILLING_SERVICE_HOST || 'http://127.0.0.1:8080',
