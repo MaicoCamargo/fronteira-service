@@ -16,7 +16,7 @@ export const RedisHelper = {
     },
 
     async disconnect(): Promise<void> {
-        if (this.client && this.isConnected) {
+        if (this.client) {
             await this.client.quit();
             this.client = null;
         }
