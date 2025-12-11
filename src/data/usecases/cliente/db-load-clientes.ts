@@ -8,12 +8,16 @@ import { EnderecoModel } from '@/domain/models/endereco-model';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 import { Filter } from '@/main/protocols/filter';
+import { GetCacheRepository } from '@/data/protocols/cache/get-cache-repository';
+import { SetCacheRepository } from '@/data/protocols/cache/set-cache-repository';
 
 export class DbLoadClientes implements LoadClientes {
     constructor(
         private readonly loadClientesRepository: LoadClientesRepository,
         private readonly loadCarroByClienteIdRepository: LoadCarroByClienteIdRepository,
-        private readonly loadEnderecoByIdRepository: LoadEnderecoByIdRepository
+        private readonly loadEnderecoByIdRepository: LoadEnderecoByIdRepository,
+        private readonly getCacheRepository: GetCacheRepository,
+        private readonly setCacheRepository: SetCacheRepository
     ) {}
 
     async load(params?: LoadClientesParams): Promise<Wrapper<ClienteModel[]>> {
@@ -25,6 +29,13 @@ export class DbLoadClientes implements LoadClientes {
                 filters.pageFilter = { page, size };
             }
         }
+
+        const cacheKey = this.generateCacheKey(params);
+        const cached = await this.getCacheRepository.get<Wrapper<ClienteModel[]>>(cacheKey);
+        if (cached) {
+            return cached;
+        }
+
         const model = await this.loadClientesRepository.load(filters);
         const clientes: Array<Promise<ClienteModel>> = model.content.map(async (row: DbClienteModel) => ({
             id: row.id_cliente,
@@ -35,6 +46,10 @@ export class DbLoadClientes implements LoadClientes {
             carros: await this.getCarros(row.id_cliente),
             endereco: await this.getEndereco(row.endereco_id)
         }));
+        await this.setCacheRepository.set(cacheKey, {
+            content: await Promise.all(clientes),
+            pagination: model.pagination
+        });
         return { content: await Promise.all(clientes), pagination: model.pagination };
     }
 
@@ -62,5 +77,10 @@ export class DbLoadClientes implements LoadClientes {
             cidade: model.cidade,
             rua: model.rua
         };
+    }
+
+    private generateCacheKey(params?: LoadClientesParams): string {
+        const paramString = params ? JSON.stringify(params) : 'no-params';
+        return `client::list:${paramString}`;
     }
 }
