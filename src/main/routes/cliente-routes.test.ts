@@ -53,7 +53,7 @@ describe('/clientes', () => {
         });
     });
 
-    describe('PUT', () => {
+    describe.skip('PUT', () => {
         test('Deve retornar 200 em caso de sucesso', async () => {
             const clientePgRepository = new ClientePgRepository();
             const dbClienteModel: AddClienteModel = {

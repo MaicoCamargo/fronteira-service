@@ -23,14 +23,21 @@ import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechani
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbLoadServicos Use Case', () => {
     beforeAll(() => {
         mockDateAdapter.set(new Date());
     });
 
-    afterAll(() => {
+    beforeEach(async () => {
+        await RedisHelper.cleanAll();
+    });
+
+    afterAll(async () => {
         mockDateAdapter.reset();
+        await RedisHelper.disconnect();
     });
 
     test('Deve chamar LoadServicosRepository', async () => {
@@ -169,6 +176,7 @@ interface SutTypes {
     loadNotaFiscalByIdServicoRepositoryStub: LoadNotaFiscalByIdServicoRepository;
     loadMechanicsByIdServicoRepositoryStub: LoadMechanicsByIdServicoRepository;
     loadBillingByOrderIdIntegrationStub: LoadBillingByOrderIdIntegration;
+    redisCacheRepository: RedisCacheRepository;
 }
 
 const makeSut = (): SutTypes => {
@@ -179,6 +187,7 @@ const makeSut = (): SutTypes => {
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const loadMechanicsByIdServicoRepositoryStub = makeLoadMechanicsByIdServicoRepository();
     const loadBillingByOrderIdIntegrationStub = makeLoadBillingByOrderIdIntegration();
+    const redisCacheRepository = makeRedisCacheRepository();
     const sut = new DbLoadServicos(
         loadServicosRepositoryStub,
         loadCarroByIdRepositoryStub,
@@ -186,7 +195,9 @@ const makeSut = (): SutTypes => {
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         loadMechanicsByIdServicoRepositoryStub,
-        loadBillingByOrderIdIntegrationStub
+        loadBillingByOrderIdIntegrationStub,
+        redisCacheRepository,
+        redisCacheRepository
     );
     return {
         sut,
@@ -196,7 +207,8 @@ const makeSut = (): SutTypes => {
         loadClienteByIdServicoRepositoryStub,
         loadNotaFiscalByIdServicoRepositoryStub,
         loadMechanicsByIdServicoRepositoryStub,
-        loadBillingByOrderIdIntegrationStub
+        loadBillingByOrderIdIntegrationStub,
+        redisCacheRepository
     };
 };
 
@@ -271,4 +283,8 @@ const makeLoadBillingByOrderIdIntegration = (): LoadBillingByOrderIdIntegration 
     }
 
     return new LoadBillingByOrderIdIntegrationStub();
+};
+
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
 };
