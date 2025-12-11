@@ -8,11 +8,12 @@ import { DbCarroModel } from '../../models/db-carro-model';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
-import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
-import { PageFilter } from '../../../main/protocols/page-filter';
-import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
+import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
+import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { Filter } from '@/main/protocols/filter';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
     class LoadClienteRepositoryStub implements LoadClientesRepository {
@@ -52,14 +53,30 @@ const makeSut = (): SutTypes => {
     const loadClientesRepositoryStub = makeLoadClienteRepository();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepository();
     const loadEnderecoByIdRepositoryStub = makeLoadEnderecoRepository();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbLoadClientes(
         loadClientesRepositoryStub,
         loadCarroByClienteIdRepositoryStub,
-        loadEnderecoByIdRepositoryStub
+        loadEnderecoByIdRepositoryStub,
+        redisCacheRepositoryStub,
+        redisCacheRepositoryStub
     );
     return { sut, loadClientesRepositoryStub, loadCarroByClienteIdRepositoryStub, loadEnderecoByIdRepositoryStub };
 };
+
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 describe('DbLoadClientes Use Case', () => {
+    beforeEach(async () => {
+        await RedisHelper.cleanAll();
+    });
+
+    afterAll(async () => {
+        await RedisHelper.disconnect();
+    });
+
     test('Deve retornar todos os clientes em caso de sucesso', async () => {
         const { sut, loadCarroByClienteIdRepositoryStub, loadEnderecoByIdRepositoryStub, loadClientesRepositoryStub } =
             makeSut();
