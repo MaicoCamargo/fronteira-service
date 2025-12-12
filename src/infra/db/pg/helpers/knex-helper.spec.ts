@@ -1,4 +1,4 @@
-import { ENV } from '../../../../main/config/env';
+import { ENV } from '@/main/config/env';
 
 describe('Knex Helper', () => {
     test('Deve conectar no ambiente diferente de "test"', async () => {

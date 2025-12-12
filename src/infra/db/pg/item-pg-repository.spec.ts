@@ -1,11 +1,11 @@
-import { ItemPgRepository } from './item-pg-repository';
-import { DbItemModel } from '../../../data/models/db-item-model';
-import { KnexHelper } from './helpers/knex-helper';
+import { ItemPgRepository } from '@/infra/db/pg/item-pg-repository';
+import { DbItemModel } from '@/data/models/db-item-model';
 import { mockFakeSaveItemModel } from '../../../../tests/mock/mock-item';
-import { PageFilter } from '../../../main/protocols/page-filter';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { PageFilter } from '@/main/protocols/page-filter';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
-import { DbUpdateItemModel } from '../../../data/protocols/db/item/update-item-repository';
-import { DbServicoModel } from '../../../data/models/db-servico-model';
+import { DbUpdateItemModel } from '@/data/protocols/db/item/update-item-repository';
+import { DbServicoModel } from '@/data/models/db-servico-model';
 import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
 import { makePgItemCreate } from '../../../../tests/mock/mock-db-item';
 

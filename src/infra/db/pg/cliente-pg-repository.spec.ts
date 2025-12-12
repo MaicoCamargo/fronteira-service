@@ -1,6 +1,6 @@
-import { KnexHelper } from './helpers/knex-helper';
-import { DbClienteModel } from '../../../data/models/db-cliente-model';
-import { ClientePgRepository } from './cliente-pg-repository';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { DbClienteModel } from '@/data/models/db-cliente-model';
+import { ClientePgRepository } from '@/infra/db/pg/cliente-pg-repository';
 import { PageFilter } from '@/main/protocols/page-filter';
 import { makePgClienteCreate } from '../../../../tests/mock/mock-db-cliente';
 import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';

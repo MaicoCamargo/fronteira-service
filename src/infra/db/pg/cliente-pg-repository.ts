@@ -1,13 +1,13 @@
 import { LoadClientesDbFilter, LoadClientesRepository } from '@/data/protocols/db/cliente/load-clientes-repository';
 import { DbClienteModel } from '@/data/models/db-cliente-model';
-import { KnexHelper } from './helpers/knex-helper';
-import { mapper } from './helpers/mapper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { mapper } from '@/infra/db/pg/helpers/mapper';
 import { LoadClienteByIdRepository } from '@/data/protocols/db/cliente/load-cliente-by-id-repository';
 import { UpdateClienteModel, UpdateClienteRepository } from '@/data/protocols/db/cliente/update-cliente-repository';
 import { DeleteClienteRepository } from '@/data/protocols/db/cliente/delete-cliente-repository';
 import { AddClienteModel, SaveClienteRepository } from '@/data/protocols/db/cliente/save-cliente-repository';
-import { knexPaginateAdapter } from '../../../main/adapters/knex-paginate-adapter';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { LoadClienteByIdServicoRepository } from '@/data/protocols/db/cliente/load-cliente-by-id-servico-repository';
 import { Filter } from '@/main/protocols/filter';
 

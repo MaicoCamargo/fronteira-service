@@ -2,8 +2,8 @@ import { LoadItensRepository } from '../../protocols/db/item/load-itens-reposito
 import { DbLoadItens } from './db-load-itens';
 import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../tests/mock/mock-item';
-import { PageFilter } from '../../../main/protocols/page-filter';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '@/main/protocols/page-filter';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
