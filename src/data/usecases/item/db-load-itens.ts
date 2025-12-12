@@ -1,8 +1,8 @@
-import { LoadItens } from '../../../domain/usecases/item/load-itens';
-import { ItemModel } from '../../../domain/models/item-model';
+import { LoadItens } from '@/domain/usecases/item/load-itens';
+import { ItemModel } from '@/domain/models/item-model';
 import { LoadItensRepository } from '../../protocols/db/item/load-itens-repository';
-import { PageFilter } from '../../../main/protocols/page-filter';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '@/main/protocols/page-filter';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { GetCacheRepository } from '@/data/protocols/cache/get-cache-repository';
 import { SetCacheRepository } from '@/data/protocols/cache/set-cache-repository';
 
