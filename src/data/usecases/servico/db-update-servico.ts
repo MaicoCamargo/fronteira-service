@@ -26,8 +26,10 @@ import { ProfileModel } from '@/domain/models/profile-model';
 import { httpRequestScope } from '@/infra/http/http-request-scope';
 import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
 
 export class DbUpdateServico implements UpdateServico {
+    private readonly LIST_CACHE_KEY: string = 'orders::list';
     constructor(
         private readonly updateServicoRepository: UpdateServicoRepository,
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
@@ -42,7 +44,8 @@ export class DbUpdateServico implements UpdateServico {
         private readonly cancelBillingIntegration: CancelBillingIntegration,
         private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration,
         private readonly loadAuthDetailIntegration: LoadAuthDetailIntegration,
-        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository
+        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository,
+        private readonly scanAndDeleteCacheRepository: ScanAndDeleteCacheRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -61,6 +64,7 @@ export class DbUpdateServico implements UpdateServico {
         if (params.billing) {
             await this.cancelBillingIntegration.cancel(params.billing.code);
         }
+        await this.scanAndDeleteCacheRepository.scanAndDelete(this.LIST_CACHE_KEY);
         return {
             id: updated.id_servico,
             valor: updated.valor,
