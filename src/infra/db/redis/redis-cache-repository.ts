@@ -1,9 +1,12 @@
 import { GetCacheRepository } from '@/data/protocols/cache/get-cache-repository';
 import { SetCacheRepository } from '@/data/protocols/cache/set-cache-repository';
 import { DeleteCacheRepository } from '@/data/protocols/cache/delete-cache-repository';
+import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
 import { RedisHelper } from './helpers/redis-helper';
 
-export class RedisCacheRepository implements GetCacheRepository, SetCacheRepository, DeleteCacheRepository {
+export class RedisCacheRepository
+    implements GetCacheRepository, SetCacheRepository, DeleteCacheRepository, ScanAndDeleteCacheRepository
+{
     async set(key: string, value: any, ttl?: number): Promise<void> {
         const client = RedisHelper.getClient();
         const serialized = JSON.stringify(value);
@@ -34,5 +37,13 @@ export class RedisCacheRepository implements GetCacheRepository, SetCacheReposit
     async delete(key: string): Promise<void> {
         const client = RedisHelper.getClient();
         await client.del(key);
+    }
+
+    async scanAndDelete(key: string): Promise<void> {
+        const client = RedisHelper.getClient();
+        const found = await client.scan(0, { MATCH: `${key}*` });
+        for (const key of found.keys) {
+            await this.delete(key);
+        }
     }
 }
