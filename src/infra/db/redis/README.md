@@ -92,9 +92,8 @@ export class DbLoadServicosWithCache implements LoadServicos {
     constructor(
         private readonly loadServicosRepository: LoadServicosRepository,
         private readonly getCacheRepository: GetCacheRepository,
-        private readonly setCacheRepository: SetCacheRepository
-    ) // ... other dependencies
-    {}
+        private readonly setCacheRepository: SetCacheRepository // ... other dependencies
+    ) {}
 
     async load(params?: LoadServicosParams): Promise<Wrapper<ServicoModel[]>> {
         const cacheKey = `servicos:${JSON.stringify(params)}`;
@@ -144,7 +143,7 @@ Use hierarchical keys with colons:
 
 ```typescript
 // Good
-`servicos:list:${filters}``user:${userId}:profile``billing:order:${orderId}`// Avoid
+`servicos:list:${filters}``user:${userId}:profile``billing:order:${orderId}` // Avoid
 `servicos_list_${filters}``userProfile${userId}`;
 ```
 

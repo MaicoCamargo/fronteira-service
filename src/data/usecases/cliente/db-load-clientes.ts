@@ -81,6 +81,6 @@ export class DbLoadClientes implements LoadClientes {
 
     private generateCacheKey(params?: LoadClientesParams): string {
         const paramString = params ? JSON.stringify(params) : 'no-params';
-        return `client::list:${paramString}`;
+        return `customers::list:${paramString}`;
     }
 }
