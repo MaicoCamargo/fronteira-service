@@ -33,6 +33,6 @@ export class DbLoadItens implements LoadItens {
 
     private generateCacheKey(filter: PageFilter): string {
         const paramString = filter ? JSON.stringify(filter) : 'no-params';
-        return `itens::list:${paramString}`;
+        return `items::list:${paramString}`;
     }
 }

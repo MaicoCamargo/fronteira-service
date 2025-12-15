@@ -1,10 +1,15 @@
-import { UpdateItem } from '../../../domain/usecases/item/update-item';
-import { ItemModel } from '../../../domain/models/item-model';
+import { UpdateItem } from '@/domain/usecases/item/update-item';
+import { ItemModel } from '@/domain/models/item-model';
 import { UpdateItemRepository } from '../../protocols/db/item/update-item-repository';
 import { DbItemModel } from '../../models/db-item-model';
+import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
 
 export class DbUpdateItem implements UpdateItem {
-    constructor(private readonly updateItemRepository: UpdateItemRepository) {}
+    private readonly LIST_CACHE_KEY: string = 'items::list';
+    constructor(
+        private readonly updateItemRepository: UpdateItemRepository,
+        private readonly scanAndDeleteCacheRepository: ScanAndDeleteCacheRepository
+    ) {}
 
     async update(item: ItemModel): Promise<ItemModel> {
         const model: DbItemModel = {
@@ -14,6 +19,7 @@ export class DbUpdateItem implements UpdateItem {
             id_peca: item.id
         };
         const resut = await this.updateItemRepository.update(model);
+        await this.scanAndDeleteCacheRepository.scanAndDelete(this.LIST_CACHE_KEY);
         return {
             id: resut.id_peca,
             nome: resut.nome,
