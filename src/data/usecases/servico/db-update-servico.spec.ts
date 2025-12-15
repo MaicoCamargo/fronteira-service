@@ -49,15 +49,19 @@ import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbUpdateServico Use Case', () => {
     beforeAll(async () => {
         mockDateAdapter.set(new Date());
         mockSpyHttpRequestScopeAuthorization();
+        await RedisHelper.connect();
     });
 
     afterAll(async () => {
         mockDateAdapter.reset();
+        await RedisHelper.disconnect();
     });
 
     test('Deve editar um servico em caso de sucesso', async () => {
@@ -67,7 +71,9 @@ describe('DbUpdateServico Use Case', () => {
             ...servico,
             carro: { ...servico.carro, quilometragem: servico.quilometragem }
         };
+        const cached = await RedisHelper.getClient().scan(0, { MATCH: `orders::list*` });
         expect(servico).toEqual(servicoQuilometragemCarroUpdated);
+        expect(cached.keys).toHaveLength(0);
     });
 
     test('Deve chamar UpdateNotaFiscalRepository com valores corretos', async () => {
@@ -104,6 +110,7 @@ interface SutTypes {
     saveSimpleBillingIntegrationStub: SaveSimpleBillingIntegration;
     loadAuthDetailIntegrationStub: LoadAuthDetailIntegration;
     loadProfileByUsernameRepositoryStub: LoadProfileByUsernameRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
     sut: DbUpdateServico;
 }
 
@@ -245,6 +252,10 @@ const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository 
     return new LoadProfileByUsernameRepositoryStub();
 };
 
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 const makeSut = (): SutTypes => {
     const updateServicoRepositoryStub = makeUpdateServicoRepository();
     const loadClienteByIdServicoRepositoryStub = makeLoadClienteByIdServicoRepository();
@@ -260,6 +271,7 @@ const makeSut = (): SutTypes => {
     const saveSimpleBillingIntegrationStub = makeSaveSimpleBillingIntegration();
     const loadAuthDetailIntegrationStub = makeLoadAuthDetailIntegration();
     const loadProfileByUsernameRepositoryStub = makeLoadProfileByUsernameRepository();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
 
     const sut = new DbUpdateServico(
         updateServicoRepositoryStub,
@@ -275,7 +287,8 @@ const makeSut = (): SutTypes => {
         cancelBillingIntegrationStub,
         saveSimpleBillingIntegrationStub,
         loadAuthDetailIntegrationStub,
-        loadProfileByUsernameRepositoryStub
+        loadProfileByUsernameRepositoryStub,
+        redisCacheRepositoryStub
     );
     return {
         updateServicoRepositoryStub,
@@ -291,6 +304,7 @@ const makeSut = (): SutTypes => {
         saveSimpleBillingIntegrationStub,
         loadAuthDetailIntegrationStub,
         loadProfileByUsernameRepositoryStub,
+        redisCacheRepositoryStub,
         sut
     };
 };
