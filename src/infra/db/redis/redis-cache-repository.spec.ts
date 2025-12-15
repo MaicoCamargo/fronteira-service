@@ -85,4 +85,21 @@ describe('RedisCacheRepository', () => {
             expect(result).toBeNull();
         });
     });
+
+    describe('scanAndDelete()', () => {
+        test('Should remove filter by contains from Redis', async () => {
+            const sut = new RedisCacheRepository();
+            const prefix = 'order';
+            const first = `${prefix}::list`;
+            const second = `${prefix}::list::{page:1, size:10}`;
+
+            await Promise.all([sut.set(first, { name: 'first save' }), sut.set(second, { name: 'second save' })]);
+            await sut.scanAndDelete(prefix);
+
+            const firstResult = await sut.get(first);
+            const secondResult = await sut.get(second);
+            expect(firstResult).toBeNull();
+            expect(secondResult).toBeNull();
+        });
+    });
 });
