@@ -8,6 +8,8 @@ import {
 } from '../../../../tests/mock/mock-item';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbUpateItem Use Case', () => {
     beforeAll(async () => {
@@ -16,6 +18,7 @@ describe('DbUpateItem Use Case', () => {
 
     afterAll(async () => {
         mockDateAdapter.reset();
+        await RedisHelper.disconnect();
     });
 
     test('Deve chamar UpdateItemRepository com valores corretos', async () => {
@@ -42,13 +45,16 @@ describe('DbUpateItem Use Case', () => {
 interface SutTypes {
     sut: DbUpdateItem;
     updateItemRepositoryStub: UpdateItemRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
 }
 const makeSut = (): SutTypes => {
     const updateItemRepositoryStub = makeUpdateItemRepository();
-    const sut = new DbUpdateItem(updateItemRepositoryStub);
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
+    const sut = new DbUpdateItem(updateItemRepositoryStub, redisCacheRepositoryStub);
     return {
         sut,
-        updateItemRepositoryStub
+        updateItemRepositoryStub,
+        redisCacheRepositoryStub
     };
 };
 
@@ -59,4 +65,8 @@ const makeUpdateItemRepository = (): UpdateItemRepository => {
         }
     }
     return new UpdateItemRepositoryStub();
+};
+
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
 };

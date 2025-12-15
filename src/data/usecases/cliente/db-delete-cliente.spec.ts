@@ -5,8 +5,14 @@ import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-ca
 import { mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
 import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbDeleteCliente Use Case', () => {
+    afterAll(async () => {
+        await RedisHelper.disconnect();
+    });
+
     test('Deve chamar DeleteClienteRepository com valores corretos', async () => {
         const { sut, deleteClienteRepositoryStub } = makeSut();
         const deleteSpy = jest.spyOn(deleteClienteRepositoryStub, 'delete');
@@ -32,6 +38,8 @@ describe('DbDeleteCliente Use Case', () => {
         expect(deleteSpy).toHaveBeenCalledWith(mockFakeDbCarroModelList()[0].id_carro);
         expect(deleteSpy).toHaveBeenCalledWith(mockFakeDbCarroModelList()[1].id_carro);
         expect(cliente).toBeUndefined();
+        const cached = await RedisHelper.getClient().scan(0, { MATCH: `customers::list*` });
+        expect(cached.keys).toHaveLength(0);
     });
 });
 
@@ -53,27 +61,35 @@ const makeDeleteCarroRepository = (): DeleteCarroRepository => {
     return new DeleteCarroRepositoryStub();
 };
 
+const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 interface SutTypes {
     sut: DbDeleteCliente;
     deleteClienteRepositoryStub: DeleteClienteRepository;
     loadCarroByClienteRepositoryStub: LoadCarroByClienteIdRepository;
     deleteCarroRepositoryStub: DeleteCarroRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
 }
 
 const makeSut = (): SutTypes => {
     const deleteClienteRepositoryStub = makeDeleteClienteRepository();
     const loadCarroByClienteRepositoryStub = makeLoadCarroByClienteIdRepository();
     const deleteCarroRepositoryStub = makeDeleteCarroRepository();
+    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
     const sut = new DbDeleteCliente(
         deleteClienteRepositoryStub,
         loadCarroByClienteRepositoryStub,
-        deleteCarroRepositoryStub
+        deleteCarroRepositoryStub,
+        redisCacheRepositoryStub
     );
     return {
         sut,
         deleteClienteRepositoryStub,
         loadCarroByClienteRepositoryStub,
-        deleteCarroRepositoryStub
+        deleteCarroRepositoryStub,
+        redisCacheRepositoryStub
     };
 };
 
