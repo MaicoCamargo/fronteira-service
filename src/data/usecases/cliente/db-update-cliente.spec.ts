@@ -8,20 +8,21 @@ import {
 } from '../../../../tests/mock/mock-cliente';
 import { UpdateCarroModel, UpdateCarroRepository } from '../../protocols/db/carro/update-carro-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
-import {
-    mockFakeCarroModelList,
-    mockFakeDbCarroModel,
-    mockFakeDbCarroModelList
-} from '../../../../tests/mock/mock-carro';
+import { mockFakeDbCarroModel, mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
 import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
-import { UpdateClienteParams } from '../../../domain/usecases/cliente/update-cliente';
-import { ClienteModel } from '../../../domain/models/cliente-model';
-import { CarroModel } from '../../../domain/models/carro-model';
-import { LoadCarroByClienteId } from '../../../domain/usecases/carro/load-carro-by-cliente-id';
+import { UpdateClienteParams } from '@/domain/usecases/cliente/update-cliente';
+import { ClienteModel } from '@/domain/models/cliente-model';
+import { CarroModel } from '@/domain/models/carro-model';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbUpdateCliente Use Case', () => {
+    afterAll(async () => {
+        await RedisHelper.disconnect();
+    });
+
     test('Deve chamar UpdateClienteRepository com valores corretos', async () => {
         const { sut, updateClienteRepositoryStub } = makeSut();
         const updateSpy = jest.spyOn(updateClienteRepositoryStub, 'update');
@@ -52,6 +53,8 @@ describe('DbUpdateCliente Use Case', () => {
             carros: mockFakeClienteModel().carros,
             nome: mockFakeClienteModel().nome
         });
+        const cached = await RedisHelper.getClient().scan(0, { MATCH: `customers::list*` });
+        expect(cached.keys).toHaveLength(0);
     });
 
     test('Deve criar um novo carro se um novo carro for fornecido', async () => {
@@ -143,6 +146,10 @@ const makeDeleteCarroRepositoryStub = (): DeleteCarroRepository => {
     return new DeleteCarroRepositoryStub();
 };
 
+const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 interface SutTypes {
     sut: DbUpdateCliente;
     updateClienteRepositoryStub: UpdateClienteRepository;
@@ -150,6 +157,7 @@ interface SutTypes {
     saveCarroRepositoryStub: SaveCarroRepository;
     loadCarroByClienteIdRepositoryStub: LoadCarroByClienteIdRepository;
     deleteCarroRepositoryStub: DeleteCarroRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
 }
 
 const makeSut = (): SutTypes => {
@@ -158,12 +166,14 @@ const makeSut = (): SutTypes => {
     const saveCarroRepositoryStub = makeSaveCarroRepositoryStub();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStubStub();
     const deleteCarroRepositoryStub = makeDeleteCarroRepositoryStub();
+    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
     const sut = new DbUpdateCliente(
         updateClienteRepositoryStub,
         updateCarroRepositoryStub,
         saveCarroRepositoryStub,
         loadCarroByClienteIdRepositoryStub,
-        deleteCarroRepositoryStub
+        deleteCarroRepositoryStub,
+        redisCacheRepositoryStub
     );
     return {
         sut,
@@ -171,7 +181,8 @@ const makeSut = (): SutTypes => {
         updateCarroRepositoryStub,
         saveCarroRepositoryStub,
         loadCarroByClienteIdRepositoryStub,
-        deleteCarroRepositoryStub
+        deleteCarroRepositoryStub,
+        redisCacheRepositoryStub
     };
 };
 
