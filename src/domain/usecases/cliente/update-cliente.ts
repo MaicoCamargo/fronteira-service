@@ -1,5 +1,5 @@
 import { ClienteModel } from '../../models/cliente-model';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { UpdateCarroParams } from '../carro/update-carro';
 
 export interface UpdateClienteParams {

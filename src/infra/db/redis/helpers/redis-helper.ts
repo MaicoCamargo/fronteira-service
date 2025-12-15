@@ -28,5 +28,12 @@ export const RedisHelper = {
             this.connect();
         }
         return this.client;
+    },
+
+    async cleanAll(): Promise<void> {
+        if (!this.client) {
+            await this.connect();
+        }
+        await this.client.flushDb();
     }
 };

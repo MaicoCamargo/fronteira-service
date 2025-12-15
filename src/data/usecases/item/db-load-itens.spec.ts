@@ -2,11 +2,21 @@ import { LoadItensRepository } from '../../protocols/db/item/load-itens-reposito
 import { DbLoadItens } from './db-load-itens';
 import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../tests/mock/mock-item';
-import { PageFilter } from '../../../main/protocols/page-filter';
-import { Wrapper } from '../../../main/protocols/http-wrapper';
+import { PageFilter } from '@/main/protocols/page-filter';
+import { Wrapper } from '@/main/protocols/http-wrapper';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbLoadItens Use Case', () => {
+    beforeEach(async () => {
+        await RedisHelper.cleanAll();
+    });
+
+    afterAll(async () => {
+        await RedisHelper.disconnect();
+    });
+
     test('Deve chamar LoadItensRepository', async () => {
         const { sut, loadItensRepositoryStub } = makeSut();
         const loadSpy = jest.spyOn(loadItensRepositoryStub, 'load');
@@ -35,7 +45,8 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
     const loadItensRepositoryStub = makeLoadItensRepository();
-    const sut = new DbLoadItens(loadItensRepositoryStub);
+    const makeRedisCacheRepositoryStub = makeRedisCacheRepository();
+    const sut = new DbLoadItens(loadItensRepositoryStub, makeRedisCacheRepositoryStub, makeRedisCacheRepositoryStub);
     return {
         loadItensRepositoryStub,
         sut
@@ -49,4 +60,8 @@ const makeLoadItensRepository = (): LoadItensRepository => {
         }
     }
     return new LoadItensRepositoryStub();
+};
+
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
 };

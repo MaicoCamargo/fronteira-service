@@ -1,6 +1,6 @@
-import { ServicoPgRepository } from './servico-pg-repository';
+import { ServicoPgRepository } from '@/infra/db/pg/servico-pg-repository';
 import { DbServicoModel } from '@/data/models/db-servico-model';
-import { KnexHelper } from './helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { PageFilter } from '@/main/protocols/page-filter';
 import { Filter } from '@/main/protocols/filter';

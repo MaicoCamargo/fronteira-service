@@ -12,6 +12,8 @@ import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic
 import { MechanicModel } from '@/domain/models/mechanic-model';
 import { BillingModel } from '@/domain/models/billing-model';
 import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
+import { GetCacheRepository } from '@/data/protocols/cache/get-cache-repository';
+import { SetCacheRepository } from '@/data/protocols/cache/set-cache-repository';
 
 export class DbLoadServicos implements LoadServicos {
     constructor(
@@ -21,7 +23,9 @@ export class DbLoadServicos implements LoadServicos {
         private readonly loadClienteByIdServicoRepository: LoadClienteByIdServicoRepository,
         private readonly loadNotaFiscalByIdServicoRepository: LoadNotaFiscalByIdServicoRepository,
         private readonly loadMechanicsByIdServicoRepository: LoadMechanicsByIdServicoRepository,
-        private readonly loadBillingByOrderIdIntegration: LoadBillingByOrderIdIntegration
+        private readonly loadBillingByOrderIdIntegration: LoadBillingByOrderIdIntegration,
+        private readonly getCacheRepository: GetCacheRepository,
+        private readonly setCacheRepository: SetCacheRepository
     ) {}
 
     async load(params?: LoadServicosParams): Promise<Wrapper<ServicoModel[]>> {
@@ -32,6 +36,11 @@ export class DbLoadServicos implements LoadServicos {
             if (page && size) {
                 filters.pageFilter = { page, size };
             }
+        }
+        const cacheKey = this.generateCacheKey(params);
+        const cached = await this.getCacheRepository.get<Wrapper<ServicoModel[]>>(cacheKey);
+        if (cached) {
+            return cached;
         }
 
         const loaded = await this.loadServicosRepository.load(filters);
@@ -50,6 +59,10 @@ export class DbLoadServicos implements LoadServicos {
             billing: await this.loadBillingByOrderId(item.id_servico),
             code: item.codigo
         }));
+        await this.setCacheRepository.set(cacheKey, {
+            content: await Promise.all(servicos),
+            pagination: loaded.pagination
+        });
         return { content: await Promise.all(servicos), pagination: loaded.pagination };
     }
 
@@ -110,5 +123,10 @@ export class DbLoadServicos implements LoadServicos {
             status: billing.status,
             code: billing.code
         };
+    }
+
+    private generateCacheKey(params?: LoadServicosParams): string {
+        const paramString = params ? JSON.stringify(params) : 'no-params';
+        return `orders::list:${paramString}`;
     }
 }

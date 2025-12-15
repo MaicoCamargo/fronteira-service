@@ -1,7 +1,7 @@
 import { AddCarroModel, SaveCarroRepository } from '@/data/protocols/db/carro/save-carro-repository';
 import { DbCarroModel } from '@/data/models/db-carro-model';
-import { KnexHelper } from './helpers/knex-helper';
-import { mapper } from './helpers/mapper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { mapper } from '@/infra/db/pg/helpers/mapper';
 import { LoadCarroByIdParams, LoadCarroByIdRepository } from '@/data/protocols/db/carro/load-carro-by-id-repository';
 import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';

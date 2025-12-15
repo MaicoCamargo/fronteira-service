@@ -1,11 +1,8 @@
-import {
-    SaveEnderecoRepository,
-    DbAddEnderecoModel
-} from '../../../data/protocols/db/endereco/save-endereco-repository';
-import { DbEnderecoModel } from '../../../data/models/db-endereco-model';
-import { KnexHelper } from './helpers/knex-helper';
-import { mapper } from './helpers/mapper';
-import { LoadEnderecoByIdRepository } from '../../../data/protocols/db/endereco/load-endereco-by-id-repository';
+import { SaveEnderecoRepository, DbAddEnderecoModel } from '@/data/protocols/db/endereco/save-endereco-repository';
+import { DbEnderecoModel } from '@/data/models/db-endereco-model';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { mapper } from '@/infra/db/pg/helpers/mapper';
+import { LoadEnderecoByIdRepository } from '@/data/protocols/db/endereco/load-endereco-by-id-repository';
 
 export class EnderecoPgRepository implements SaveEnderecoRepository, LoadEnderecoByIdRepository {
     async save(endereco: DbAddEnderecoModel): Promise<DbEnderecoModel> {

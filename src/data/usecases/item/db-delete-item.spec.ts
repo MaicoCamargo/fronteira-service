@@ -1,8 +1,14 @@
 import { DeleteItemRepository } from '../../protocols/db/item/delete-item-repository';
 import { DbDeleteItem } from './db-delete-item';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbDeleteItem Use Case', () => {
+    afterAll(async () => {
+        await RedisHelper.disconnect();
+    });
+
     test('Deve chamar DeleteItemRepository com valor correto', async () => {
         const { sut, deleteItemRepositoryStub } = makeSut();
         const deleteSpy = jest.spyOn(deleteItemRepositoryStub, 'delete');
@@ -22,6 +28,7 @@ describe('DbDeleteItem Use Case', () => {
 interface SutTypes {
     sut: DbDeleteItem;
     deleteItemRepositoryStub: DeleteItemRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
 }
 
 const makeDeleteItemRepository = (): DeleteItemRepository => {
@@ -33,11 +40,17 @@ const makeDeleteItemRepository = (): DeleteItemRepository => {
     return new DeleteItemRepositoryStub();
 };
 
+const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 const makeSut = (): SutTypes => {
     const deleteItemRepositoryStub = makeDeleteItemRepository();
-    const sut = new DbDeleteItem(deleteItemRepositoryStub);
+    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const sut = new DbDeleteItem(deleteItemRepositoryStub, redisCacheRepositoryStub);
     return {
         sut,
-        deleteItemRepositoryStub
+        deleteItemRepositoryStub,
+        redisCacheRepositoryStub
     };
 };

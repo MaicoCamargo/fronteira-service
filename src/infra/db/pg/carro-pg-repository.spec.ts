@@ -1,4 +1,4 @@
-import { KnexHelper } from './helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { CarroPgRepository } from './carro-pg-repository';
 import { mockFakeAddCarroModel, mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbClienteModel } from '@/data/models/db-cliente-model';

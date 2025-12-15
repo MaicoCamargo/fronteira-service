@@ -1,10 +1,10 @@
 import { LoadServicosDbFilter, LoadServicosRepository } from '@/data/protocols/db/servico/load-servicos-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { DbServicoModel } from '@/data/models/db-servico-model';
-import { KnexHelper } from './helpers/knex-helper';
+import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 import { SaveServicoModel, SaveServicoRepository } from '@/data/protocols/db/servico/save-servico-repository';
-import { mapper } from './helpers/mapper';
+import { mapper } from '@/infra/db/pg/helpers/mapper';
 import { UpdateServicoModel, UpdateServicoRepository } from '@/data/protocols/db/servico/update-servico-repository';
 import { DeleteServicoRepository } from '@/data/protocols/db/servico/delete-servico-repository';
 import { Filter } from '@/main/protocols/filter';
