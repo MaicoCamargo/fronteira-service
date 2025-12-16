@@ -2,6 +2,7 @@ import { RedisCacheRepository } from './redis-cache-repository';
 import { RedisHelper } from './helpers/redis-helper';
 
 describe('RedisCacheRepository', () => {
+    const PREFIX_TENANT_KEY = 'public::';
     beforeAll(async () => {
         await RedisHelper.connect();
         const client = RedisHelper.getClient();
@@ -21,7 +22,7 @@ describe('RedisCacheRepository', () => {
             await sut.set(key, value);
 
             const client = RedisHelper.getClient();
-            const stored = await client.get(key);
+            const stored = await client.get('public::' + key);
             expect(stored).toBe(JSON.stringify(value));
         });
 
@@ -34,7 +35,7 @@ describe('RedisCacheRepository', () => {
             await sut.set(key, value, ttl);
 
             const client = RedisHelper.getClient();
-            const storedTtl = await client.ttl(key);
+            const storedTtl = await client.ttl(PREFIX_TENANT_KEY + key);
             expect(storedTtl).toBeGreaterThan(0);
             expect(storedTtl).toBeLessThanOrEqual(ttl);
         });
@@ -65,9 +66,9 @@ describe('RedisCacheRepository', () => {
             const value = 'simple string';
 
             const client = RedisHelper.getClient();
-            await client.set(key, value);
+            await client.set(PREFIX_TENANT_KEY + key, value);
 
-            const result = await sut.get(key);
+            const result = await sut.get<string>(key);
             expect(result).toBe(value);
         });
     });
@@ -89,9 +90,9 @@ describe('RedisCacheRepository', () => {
     describe('scanAndDelete()', () => {
         test('Should remove filter by contains from Redis', async () => {
             const sut = new RedisCacheRepository();
-            const prefix = 'order';
+            const prefix = 'orders';
             const first = `${prefix}::list`;
-            const second = `${prefix}::list::{page:1, size:10}`;
+            const second = `${prefix}::list:{page:1, size:10}`;
 
             await Promise.all([sut.set(first, { name: 'first save' }), sut.set(second, { name: 'second save' })]);
             await sut.scanAndDelete(prefix);
