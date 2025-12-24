@@ -1,5 +1,5 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols';
-import { LoadServicos, LoadServicosParams } from '../../../domain/usecases/servico/load-servicos';
+import { LoadServicos, LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 import { ok } from '../../helpers/http';
 
 export class LoadServicosController implements Controller {
