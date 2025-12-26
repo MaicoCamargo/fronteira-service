@@ -8,6 +8,7 @@ import { BillingServiceIntegration } from '@/infra/integration/billing-service-i
 import { makeBillingServiceClient } from '@/main/factories/infra/integration/billing-service-client-factory';
 import { makeIntegrationLoadAuthDetail } from '@/main/factories/usescase/auth/integration-load-auth-detail-factory';
 import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 
 export const makeDbAddServico = (): DbAddServico => {
     const servicoPgRepository = new ServicoPgRepository();
@@ -18,6 +19,7 @@ export const makeDbAddServico = (): DbAddServico => {
     const billingServiceIntegration = new BillingServiceIntegration(makeBillingServiceClient());
     const loadAuthDetailIntegration = makeIntegrationLoadAuthDetail();
     const profilePgRepository = new ProfilePgRepository();
+    const redisCacheRepository = new RedisCacheRepository();
 
     return new DbAddServico(
         servicoPgRepository,
@@ -28,6 +30,7 @@ export const makeDbAddServico = (): DbAddServico => {
         carroPgRepository,
         billingServiceIntegration,
         loadAuthDetailIntegration,
-        profilePgRepository
+        profilePgRepository,
+        redisCacheRepository
     );
 };

@@ -46,22 +46,28 @@ import { makeLoadAuthDetailIntegrationModel } from '../../../../tests/mock/mock-
 import { DbProfileModel } from '@/data/models/db-profile-model';
 import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
         mockDateAdapter.set(new Date());
         mockOrderCodeStub();
         mockSpyHttpRequestScopeAuthorization();
+        await RedisHelper.connect();
     });
 
     afterAll(async () => {
         mockDateAdapter.reset();
+        await RedisHelper.disconnect();
     });
 
-    test('Deve criar um serviço em caso de sucesso', async () => {
+    test('Deve criar um serviço em caso de sucesso, e limpar do cache as orders', async () => {
         const { sut } = makeSut();
         const model = await sut.add(mockFakeAddServicoParams());
         expect(model).toEqual({ content: mockFakeServicoModel() });
+        const cached = await RedisHelper.getClient().scan(0, { MATCH: `orders::list*` });
+        expect(cached.keys).toHaveLength(0);
     });
 
     test('Deve criar um serviço em caso de sucesso se "billing" não for enviado', async () => {
@@ -128,6 +134,7 @@ interface SutTypes {
     saveSimpleBillingIntegrationStub: SaveSimpleBillingIntegration;
     loadAuthDetailIntegrationStub: LoadAuthDetailIntegration;
     loadProfileByUsernameRepositoryStub: LoadProfileByUsernameRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
 }
 
 const makeSaveServicoRepository = (): SaveServicoRepository => {
@@ -217,6 +224,10 @@ const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository 
     return new LoadProfileByUsernameRepositoryStub();
 };
 
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 const makeSut = (): SutTypes => {
     const saveServicoRepositoryStub = makeSaveServicoRepository();
     const saveIncludedItensRepositoryStub = makeSaveIncludedItensRepository();
@@ -227,6 +238,7 @@ const makeSut = (): SutTypes => {
     const saveSimpleBillingIntegrationStub = makeSaveSimpleBillingIntegration();
     const loadAuthDetailIntegrationStub = makeLoadAuthDetailIntegration();
     const loadProfileByUsernameRepositoryStub = makeLoadProfileByUsernameRepository();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
 
     const sut = new DbAddServico(
         saveServicoRepositoryStub,
@@ -237,7 +249,8 @@ const makeSut = (): SutTypes => {
         updateCarroRepositoryStub,
         saveSimpleBillingIntegrationStub,
         loadAuthDetailIntegrationStub,
-        loadProfileByUsernameRepositoryStub
+        loadProfileByUsernameRepositoryStub,
+        redisCacheRepositoryStub
     );
     return {
         sut,
@@ -249,7 +262,8 @@ const makeSut = (): SutTypes => {
         updateCarroRepositoryStub,
         saveSimpleBillingIntegrationStub,
         loadAuthDetailIntegrationStub,
-        loadProfileByUsernameRepositoryStub
+        loadProfileByUsernameRepositoryStub,
+        redisCacheRepositoryStub
     };
 };
 

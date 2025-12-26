@@ -25,8 +25,10 @@ import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/
 import { httpRequestScope } from '@/infra/http/http-request-scope';
 import { ProfileModel } from '@/domain/models/profile-model';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
 
 export class DbAddServico implements AddServico {
+    private readonly LIST_CACHE_KEY: string = 'orders::list';
     constructor(
         private readonly saveServicoRepository: SaveServicoRepository,
         private readonly saveIncludedItensRepository: SaveIncludedItensRepository,
@@ -36,7 +38,8 @@ export class DbAddServico implements AddServico {
         private readonly updateCarroRepository: UpdateCarroRepository,
         private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration,
         private readonly loadAuthDetailIntegration: LoadAuthDetailIntegration,
-        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository
+        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository,
+        private readonly scanAndDeleteCacheRepository: ScanAndDeleteCacheRepository
     ) {}
 
     async add(params: AddServicoParams): Promise<Wrapper<ServicoModel>> {
@@ -52,6 +55,7 @@ export class DbAddServico implements AddServico {
 
         const itens = await this.saveIncludedItens(params.itens, result.id_servico);
         const billing = await this.saveBilling(params, result.id_servico);
+        await this.scanAndDeleteCacheRepository.scanAndDelete(this.LIST_CACHE_KEY);
         return {
             content: {
                 itens,
