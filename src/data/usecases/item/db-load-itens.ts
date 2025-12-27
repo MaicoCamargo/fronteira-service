@@ -1,10 +1,10 @@
-import { LoadItens } from '@/domain/usecases/item/load-itens';
+import { LoadItemsParams, LoadItens } from '@/domain/usecases/item/load-itens';
 import { ItemModel } from '@/domain/models/item-model';
-import { LoadItensRepository } from '../../protocols/db/item/load-itens-repository';
-import { PageFilter } from '@/main/protocols/page-filter';
+import { DbItemsDbFilter, LoadItensRepository } from '../../protocols/db/item/load-itens-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { GetCacheRepository } from '@/data/protocols/cache/get-cache-repository';
 import { SetCacheRepository } from '@/data/protocols/cache/set-cache-repository';
+import { Filter } from '@/main/protocols/filter';
 
 export class DbLoadItens implements LoadItens {
     constructor(
@@ -13,13 +13,21 @@ export class DbLoadItens implements LoadItens {
         private readonly setCacheRepository: SetCacheRepository
     ) {}
 
-    async load(pageFilter?: PageFilter): Promise<Wrapper<ItemModel[]>> {
-        const cacheKey = this.generateCacheKey(pageFilter);
+    async load(params?: LoadItemsParams): Promise<Wrapper<ItemModel[]>> {
+        const cacheKey = this.generateCacheKey(params);
         const cached = await this.getCacheRepository.get<Wrapper<ItemModel[]>>(cacheKey);
         if (cached) {
             return cached;
         }
-        const model = await this.loadItensRepository.load(pageFilter);
+        const filters: Filter<DbItemsDbFilter> = {};
+        if (params) {
+            const { page, size, ...paramsWithoutPageFilter } = params;
+            filters.params = paramsWithoutPageFilter;
+            if (page && size) {
+                filters.pageFilter = { page, size };
+            }
+        }
+        const model = await this.loadItensRepository.load(filters);
         const itens: ItemModel[] = model.content.map((item) => ({
             nome: item.nome,
             marca: item.marca,
@@ -31,7 +39,7 @@ export class DbLoadItens implements LoadItens {
         return wrapper;
     }
 
-    private generateCacheKey(filter: PageFilter): string {
+    private generateCacheKey(filter: LoadItemsParams): string {
         const paramString = filter ? JSON.stringify(filter) : 'no-params';
         return `items::list:${paramString}`;
     }

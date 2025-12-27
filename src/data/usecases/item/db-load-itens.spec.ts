@@ -1,4 +1,4 @@
-import { LoadItensRepository } from '../../protocols/db/item/load-itens-repository';
+import { DbItemsDbFilter, LoadItensRepository } from '../../protocols/db/item/load-itens-repository';
 import { DbLoadItens } from './db-load-itens';
 import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../tests/mock/mock-item';
@@ -7,6 +7,7 @@ import { Wrapper } from '@/main/protocols/http-wrapper';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { Filter } from '@/main/protocols/filter';
 
 describe('DbLoadItens Use Case', () => {
     beforeEach(async () => {
@@ -55,7 +56,7 @@ const makeSut = (): SutTypes => {
 
 const makeLoadItensRepository = (): LoadItensRepository => {
     class LoadItensRepositoryStub implements LoadItensRepository {
-        load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
+        load(filters?: Filter<DbItemsDbFilter>): Promise<Wrapper<DbItemModel[]>> {
             return Promise.resolve({ content: mockFakeDbItemModelList() });
         }
     }

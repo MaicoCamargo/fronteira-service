@@ -8,6 +8,9 @@ import { DbUpdateItemModel } from '@/data/protocols/db/item/update-item-reposito
 import { DbServicoModel } from '@/data/models/db-servico-model';
 import { makePgServicoCreate } from '../../../../tests/mock/mock-db-servico';
 import { makePgItemCreate } from '../../../../tests/mock/mock-db-item';
+import { Filter } from '@/main/protocols/filter';
+import { LoadServicosDbFilter } from '@/data/protocols/db/servico/load-servicos-repository';
+import { DbItemsDbFilter } from '@/data/protocols/db/item/load-itens-repository';
 
 describe('ItemPgRepository', () => {
     beforeAll(async () => {
@@ -40,16 +43,37 @@ describe('ItemPgRepository', () => {
 
         test('Deve retornar uma lista de item paginada em caso de sucesso', async () => {
             const sut = makeSut();
-            const filter: PageFilter = {
-                page: 1,
-                size: 2
+            const filter: Filter<DbItemsDbFilter> = {
+                pageFilter: {
+                    page: 1,
+                    size: 2
+                }
             };
             const wrapper = await sut.load(filter);
             expect(wrapper.content).toBeTruthy();
-            expect(wrapper.content.length).toEqual(filter.size);
+            expect(wrapper.content.length).toEqual(filter.pageFilter.size);
             expect(wrapper.content).toEqual(createdItens);
             expect(wrapper.pagination).toBeTruthy();
             expect(wrapper.pagination.total).toEqual(createdItens.length);
+        });
+
+        test('Deve retornar uma lista de item paginada e filtrado pelo nome em caso de sucesso', async () => {
+            const sut = makeSut();
+            const filter: Filter<DbItemsDbFilter> = {
+                pageFilter: {
+                    page: 1,
+                    size: 2
+                },
+                params: {
+                    label: createdItens[0].nome
+                }
+            };
+            const wrapper = await sut.load(filter);
+            expect(wrapper.content).toBeTruthy();
+            expect(wrapper.content.length).toEqual(1);
+            expect(wrapper.content).toEqual([createdItens[0]]);
+            expect(wrapper.pagination).toBeTruthy();
+            expect(wrapper.pagination.total).toEqual(1);
         });
     });
 

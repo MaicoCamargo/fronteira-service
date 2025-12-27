@@ -1,5 +1,4 @@
-import { LoadItensRepository } from '@/data/protocols/db/item/load-itens-repository';
-import { PageFilter } from '@/main/protocols/page-filter';
+import { DbItemsDbFilter, LoadItensRepository } from '@/data/protocols/db/item/load-itens-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { DbItemModel } from '@/data/models/db-item-model';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
@@ -9,6 +8,7 @@ import { mapper } from '@/infra/db/pg/helpers/mapper';
 import { DbUpdateItemModel, UpdateItemRepository } from '@/data/protocols/db/item/update-item-repository';
 import { LoadItensByServicoRepository } from '@/data/protocols/db/item/load-itens-by-servico-repository';
 import { DeleteItemRepository } from '@/data/protocols/db/item/delete-item-repository';
+import { Filter } from '@/main/protocols/filter';
 
 export class ItemPgRepository
     implements
@@ -18,12 +18,18 @@ export class ItemPgRepository
         LoadItensByServicoRepository,
         DeleteItemRepository
 {
-    async load(pageFilter?: PageFilter): Promise<Wrapper<DbItemModel[]>> {
-        const query = KnexHelper.forTenant()
-            .table('item')
-            .returning(['id_peca', 'marca', 'valor', 'nome'])
-            .orderBy('nome');
-        return await knexPaginateAdapter(query, pageFilter);
+    async load(filters?: Filter<DbItemsDbFilter>): Promise<Wrapper<DbItemModel[]>> {
+        let query: any;
+        if (filters?.params) {
+            query = KnexHelper.forTenant().table('item').returning(['id_peca', 'marca', 'valor', 'nome']);
+            if (filters.params.label) {
+                query.andWhereILike('nome', `%${filters.params.label}%`);
+            }
+        } else {
+            query = KnexHelper.forTenant().table('item').returning(['id_peca', 'marca', 'valor', 'nome']);
+        }
+        query.orderBy('nome');
+        return await knexPaginateAdapter(query, filters?.pageFilter);
     }
 
     async save(item: SaveItemModel): Promise<DbItemModel> {
