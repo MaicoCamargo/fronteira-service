@@ -79,7 +79,7 @@ export const mockFakeServicoModelList = (): ServicoModel[] => [
         mecanicos: mockFakeMechanicModelList(),
         billing: {
             amount: mockFakeAddServicoParams().billing.amount,
-            order: mockFakeDbServicoModelList()[0].id_servico,
+            order: String(mockFakeDbServicoModelList()[0].id_servico),
             name: `Fronteira service:${mockFakeAddServicoParams().cliente.id}:${mockFakeAddServicoParams().carro.id}:${
                 mockFakeAddServicoParams().valor
             }`,
