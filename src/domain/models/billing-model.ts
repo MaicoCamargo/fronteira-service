@@ -23,7 +23,7 @@ export interface BillingModel {
     name: string;
     description: string;
     amount: number;
-    order: number;
+    order: string;
     createdAt: Date;
     user?: number;
     payments: Payment[];

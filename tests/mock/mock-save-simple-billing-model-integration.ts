@@ -8,7 +8,7 @@ export const makeSaveSimpleBillingIntegrationModel = (): SaveSimpleBillingIntegr
     name: `Fronteira service ${mockFakeAddServicoParams().cliente.id}:${mockFakeAddServicoParams().carro.id}:${
         mockFakeAddServicoParams().valor
     }`,
-    order: mockFakeDbServicoModel().id_servico,
+    order: mockFakeDbServicoModel().id_servico.toString(),
     description: mockFakeAddServicoParams().billing.description,
     amount: mockFakeAddServicoParams().billing.amount,
     payments: [

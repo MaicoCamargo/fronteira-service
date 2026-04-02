@@ -153,7 +153,7 @@ export class DbUpdateServico implements UpdateServico {
             service: Number(ENV.SERVICE.ID),
             user: profile.id,
             name: `Fronteira service:${order.cliente.id}:${order.carro.id}:${order.valor}`,
-            order: order.id,
+            order: String(order.id),
             amount: order.valor,
             payments: []
         };
@@ -162,7 +162,7 @@ export class DbUpdateServico implements UpdateServico {
         return {
             id: saved.id,
             name: saved.name,
-            order: saved.order,
+            order: String(order.id),
             description: saved.description,
             amount: saved.amount,
             createdAt: saved.createdAt,
