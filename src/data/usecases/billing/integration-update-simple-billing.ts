@@ -25,7 +25,7 @@ export class IntegrationUpdateSimpleBilling implements UpdateSimpleBilling {
             name: params.name ? params.name : `Fronteira service->order${params.order}`,
             description: params.description,
             amount: params.amount,
-            order: params.order,
+            order: String(params.order),
             payments: params.payments
         };
         return await this.updateSimpleBillingIntegration.update(id, billing);

@@ -27,7 +27,7 @@ export class IntegrationSaveSimpleBilling implements SaveSimpleBilling {
             name: params.name ? params.name : `Fronteira service->order${params.order}`,
             description: params.description,
             amount: params.amount,
-            order: params.order,
+            order: String(params.order),
             payments: params.payments
         };
         return await this.saveBillingIntegration.save(billing);
