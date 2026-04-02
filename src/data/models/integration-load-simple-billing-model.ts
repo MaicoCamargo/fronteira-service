@@ -3,7 +3,7 @@ export interface IntegrationLoadSimpleBillingModel {
     name: string;
     description: string;
     amount: number;
-    order: number;
+    order: string;
     user: number;
     createdAt: Date;
     payments: [

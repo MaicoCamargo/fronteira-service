@@ -126,7 +126,7 @@ export class DbAddServico implements AddServico {
             service: Number(ENV.SERVICE.ID),
             user: profile.id,
             name: `Fronteira service:${servico.cliente.id}:${servico.carro.id}:${servico.valor}`,
-            order: servicoId,
+            order: String(servicoId),
             description: servico?.billing?.description,
             amount: servico.valor,
             payments
