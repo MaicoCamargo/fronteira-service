@@ -12,6 +12,9 @@ export class RedisCacheRepository
         const client = RedisHelper.getClient();
         const serialized = JSON.stringify(value);
         const keyWithTenant = this.generateKey(key);
+        if (httpRequestScope.getStore()?.clientId === 'client-id') {
+            return;
+        }
         if (ttl) {
             await client.setEx(keyWithTenant, ttl, serialized);
         } else {
