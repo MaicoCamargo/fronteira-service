@@ -6,8 +6,8 @@
     "scripts": {
         "start": "sucrase-node src/main/server.ts",
         "start:prod": "node dist/main/server.js",
-        "test": "jest --passWithNoTests --noStackTrace --runInBand",
-        "test:verbose": "jest --runInBand --passWithNoTests",
+        "test": "jest --passWithNoTests --runInBand",
+        "test:verbose": "jest --runInBand --passWithNoTests --forceExit --verbose",
         "test:unit": "npm run test -- --watch -c jest-unit-config.js",
         "test:integration": "npm test -- --watch -c jest-integration-config.js",
         "test:staged": "npm test --findRelatedTests",
