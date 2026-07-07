@@ -4,6 +4,7 @@ import { DbItemModel } from '../../models/db-item-model';
 import { mockFakeAddItemParams, mockFakeDbItemModel, mockFakeItemModel } from '../../../../tests/mock/mock-item';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 
 describe('DbAddItem Use Case', () => {
     beforeAll(async () => {
@@ -54,9 +55,14 @@ interface SutTypes {
 }
 const makeSut = (): SutTypes => {
     const saveItemRepositoryStub = makeAddItemRepository();
-    const sut = new DbAddItem(saveItemRepositoryStub);
+    const makeRedisCacheRepositoryStub = makeRedisCacheRepository();
+    const sut = new DbAddItem(saveItemRepositoryStub, makeRedisCacheRepositoryStub);
     return {
         sut,
         saveItemRepositoryStub
     };
+};
+
+const makeRedisCacheRepository = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
 };
