@@ -78,10 +78,11 @@ export class AxiosHelper {
     }
 
     async destroy(): Promise<void> {
+        const host = this.host; // salva antes de nullar
         this.host = null;
         this.axiosInstance = null;
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete AxiosHelper.instances[this.host]; // Remove a instância do host
+        delete AxiosHelper.instances[host];
     }
 
     /**

@@ -7,8 +7,8 @@ export class UpdateSimpleBillingController implements Controller {
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
         try {
-            const id = httpRequest.params.id;
-            const billing = await this.updateSimpleBilling.update(id, httpRequest.body);
+            const code = httpRequest.params.code;
+            const billing = await this.updateSimpleBilling.update(code, httpRequest.body);
             return created(billing);
         } catch (err) {
             return serverError(err);

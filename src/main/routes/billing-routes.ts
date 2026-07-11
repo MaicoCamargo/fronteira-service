@@ -9,5 +9,5 @@ export default (router: Router): void => {
     router.post('/billings', expressRouterAdapter(makeSaveSimpleBillingController()));
     router.get('/billings', expressRouterAdapter(makeLoadBillingsController()));
     router.patch('/billings/payment', expressRouterAdapter(makeUpdateBillingPaymentController()));
-    router.put('/billings/:id', expressRouterAdapter(makeUpdateSimpleBillingController()));
+    router.put('/billings/:code', expressRouterAdapter(makeUpdateSimpleBillingController()));
 };

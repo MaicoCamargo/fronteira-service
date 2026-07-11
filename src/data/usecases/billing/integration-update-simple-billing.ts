@@ -17,7 +17,7 @@ export class IntegrationUpdateSimpleBilling implements UpdateSimpleBilling {
         private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository
     ) {}
 
-    async update(id: number, params: SaveSimpleBillingParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
+    async update(code: string, params: SaveSimpleBillingParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
         const profile = await this.loadAuthDetail();
         const billing: SaveSimpleBillingIntegrationModel = {
             service: Number(ENV.SERVICE.ID),
@@ -28,7 +28,7 @@ export class IntegrationUpdateSimpleBilling implements UpdateSimpleBilling {
             order: String(params.order),
             payments: params.payments
         };
-        return await this.updateSimpleBillingIntegration.update(id, billing);
+        return await this.updateSimpleBillingIntegration.update(code, billing);
     }
 
     private async loadAuthDetail(): Promise<ProfileModel> {

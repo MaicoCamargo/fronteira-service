@@ -62,11 +62,11 @@ export class BillingServiceIntegration
     }
 
     async update(
-        id: number,
+        code: string,
         billing: SaveSimpleBillingIntegrationModel
     ): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
         this.headers();
-        return await this.axios.put(`/billings/${id}`, billing);
+        return await this.axios.put(`/billings/code/${code}`, billing);
     }
 
     async cancel(code: string): Promise<void> {

@@ -4,7 +4,7 @@ import { SaveSimpleBillingIntegrationModel } from '@/data/protocols/client/billi
 
 export interface UpdateSimpleBillingIntegration {
     update: (
-        id: number,
+        code: string,
         billing: SaveSimpleBillingIntegrationModel
     ) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
 }

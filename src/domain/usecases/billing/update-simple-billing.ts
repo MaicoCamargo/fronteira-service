@@ -3,5 +3,5 @@ import { Wrapper } from '@/main/protocols/http-wrapper';
 import { SaveSimpleBillingParams } from '@/domain/usecases/billing/save-simple-billing';
 
 export interface UpdateSimpleBilling {
-    update: (id: number, billing: SaveSimpleBillingParams) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
+    update: (code: string, billing: SaveSimpleBillingParams) => Promise<Wrapper<IntegrationLoadSimpleBillingModel>>;
 }
