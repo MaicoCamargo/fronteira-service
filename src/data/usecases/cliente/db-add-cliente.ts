@@ -7,12 +7,15 @@ import { CarroModel } from '../../../domain/models/carro-model';
 import { SaveEnderecoRepository } from '../../protocols/db/endereco/save-endereco-repository';
 import { AddEnderecoParams } from '../../../domain/usecases/endereco/add-endereco';
 import { EnderecoModel } from '../../../domain/models/endereco-model';
+import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
 
 export class DbAddCliente implements AddCliente {
+    private readonly LIST_CACHE_KEY: string = 'customers::list';
     constructor(
         private readonly addClienteRepository: SaveClienteRepository,
         private readonly saveCarroRepository: SaveCarroRepository,
-        private readonly saveEnderecoRepository: SaveEnderecoRepository
+        private readonly saveEnderecoRepository: SaveEnderecoRepository,
+        private readonly scanAndDeleteCacheRepository: ScanAndDeleteCacheRepository
     ) {}
 
     async add(params: AddClienteParams): Promise<ClienteModel> {
@@ -44,7 +47,7 @@ export class DbAddCliente implements AddCliente {
             placa: carro.placa,
             quilometragem: carro.quilometragem
         }));
-
+        await this.scanAndDeleteCacheRepository.scanAndDelete(this.LIST_CACHE_KEY);
         return {
             id: cliente.id_cliente,
             lastUpdated: cliente.last_updated,
