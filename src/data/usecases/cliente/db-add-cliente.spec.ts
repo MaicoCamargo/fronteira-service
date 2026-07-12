@@ -15,6 +15,8 @@ import { DbCarroModel } from '../../models/db-carro-model';
 import { DbAddEnderecoModel, SaveEnderecoRepository } from '../../protocols/db/endereco/save-endereco-repository';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
+import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 const makeSaveClienteRepository = (): SaveClienteRepository => {
     class SaveClienteRepositoryStub implements SaveClienteRepository {
@@ -44,23 +46,35 @@ const makeSaveEnderecoRepository = (): SaveEnderecoRepository => {
     return new SaveEnderecoRepositoryStub();
 };
 
+const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
+    return new RedisCacheRepository();
+};
+
 interface SutTypes {
     sut: DbAddCliente;
     saveClienteRepositoryStub: SaveClienteRepository;
     saveCarroRepositoryStub: SaveCarroRepository;
     saveEnderecoRepositoryStub: SaveEnderecoRepository;
+    redisCacheRepositoryStub: RedisCacheRepository;
 }
 
 const makeSut = (): SutTypes => {
     const saveClienteRepositoryStub = makeSaveClienteRepository();
     const saveCarroRepositoryStub = makeSaveCarroRepository();
     const saveEnderecoRepositoryStub = makeSaveEnderecoRepository();
-    const sut = new DbAddCliente(saveClienteRepositoryStub, saveCarroRepositoryStub, saveEnderecoRepositoryStub);
+    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const sut = new DbAddCliente(
+        saveClienteRepositoryStub,
+        saveCarroRepositoryStub,
+        saveEnderecoRepositoryStub,
+        redisCacheRepositoryStub
+    );
     return {
         sut,
         saveClienteRepositoryStub,
         saveCarroRepositoryStub,
-        saveEnderecoRepositoryStub
+        saveEnderecoRepositoryStub,
+        redisCacheRepositoryStub
     };
 };
 
@@ -69,7 +83,8 @@ describe('DbAddCliente Use Case', () => {
         mockDateAdapter.set(new Date());
     });
 
-    afterAll(() => {
+    afterAll(async () => {
+        await RedisHelper.disconnect();
         mockDateAdapter.reset();
     });
 
