@@ -16,6 +16,7 @@ import { DbAddEnderecoModel, SaveEnderecoRepository } from '../../protocols/db/e
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 const makeSaveClienteRepository = (): SaveClienteRepository => {
@@ -46,10 +47,6 @@ const makeSaveEnderecoRepository = (): SaveEnderecoRepository => {
     return new SaveEnderecoRepositoryStub();
 };
 
-const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
-};
-
 interface SutTypes {
     sut: DbAddCliente;
     saveClienteRepositoryStub: SaveClienteRepository;
@@ -62,7 +59,7 @@ const makeSut = (): SutTypes => {
     const saveClienteRepositoryStub = makeSaveClienteRepository();
     const saveCarroRepositoryStub = makeSaveCarroRepository();
     const saveEnderecoRepositoryStub = makeSaveEnderecoRepository();
-    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbAddCliente(
         saveClienteRepositoryStub,
         saveCarroRepositoryStub,

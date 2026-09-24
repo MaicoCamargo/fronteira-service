@@ -22,18 +22,13 @@ export const RedisHelper = {
         }
     },
 
-    getClient(): RedisClientType {
-        if (!this.client) {
-            console.warn('Redis Client Client Not Found, trying to get client');
-            this.connect();
-        }
+    async getClient(): Promise<RedisClientType> {
+        await this.connect();
         return this.client;
     },
 
     async cleanAll(): Promise<void> {
-        if (!this.client) {
-            await this.connect();
-        }
+        await this.connect();
         await this.client.flushDb();
     }
 };

@@ -32,26 +32,30 @@ describe('Auth Service Integration', () => {
         await expect(promise).rejects.toThrow();
     });
 
-    describe.skip('Header X-Client-ID', () => {
+    describe('Header X-Client-ID', () => {
         let mockAxiosHelper: jest.Mocked<AxiosHelper>;
         let authService: AuthServiceIntegration;
 
         beforeEach(() => {
-            // instância mockada do AxiosHelper
             mockAxiosHelper = {
                 setHeader: jest.fn(),
                 get: jest.fn(),
                 post: jest.fn()
             } as unknown as jest.Mocked<AxiosHelper>;
 
-            // Instanciamos a nossa classe de serviço, injetando o mock da dependência.
-            // O construtor da AuthServiceIntegration será executado aqui.
             authService = new AuthServiceIntegration(mockAxiosHelper);
         });
 
-        test('Deve setar o X-Client-ID header corretamente no construtor', () => {
-            expect(mockAxiosHelper.setHeader).toHaveBeenCalledTimes(1);
-            expect(mockAxiosHelper.setHeader).toHaveBeenCalledWith('X-Client-ID', '');
+        test('Deve passar X-Client-ID no header da requisicao', async () => {
+            const payload = { content: makeLoadAuthDetailIntegrationModel() };
+            mockAxiosHelper.get.mockResolvedValueOnce(payload);
+            await authService.load('valid_token');
+            expect(mockAxiosHelper.get).toHaveBeenCalledWith('/auth', null, {
+                headers: {
+                    Authorization: 'valid_token',
+                    'X-Client-ID': null
+                }
+            });
         });
     });
 });

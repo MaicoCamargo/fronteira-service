@@ -19,6 +19,7 @@ import {
     mockFakeSaveIncludedItemModelList
 } from '../../../../tests/mock/mock-included-itens';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { makeLoadNotaFiscalByIdServicoRepository } from '../../../../tests/mock/mock-load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
@@ -26,9 +27,8 @@ import {
     AddMechanicsModel,
     SaveServiceMechanicsRepository
 } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
-import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
-import { DbCarroModel } from '@/data/models/db-carro-model';
-import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { makeUpdateCarroRepository } from '../../../../tests/mock/mock-update-carro-repository';
 import {
     SaveSimpleBillingIntegration,
     SaveSimpleBillingIntegrationModel
@@ -42,12 +42,13 @@ import {
     LoadAuthDetailIntegrationModel
 } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { makeLoadProfileByUsernameRepository } from '../../../../tests/mock/mock-load-profile-by-username-repository';
 import { makeLoadAuthDetailIntegrationModel } from '../../../../tests/mock/mock-load-auth-detail-integration';
-import { DbProfileModel } from '@/data/models/db-profile-model';
-import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -66,7 +67,7 @@ describe('DbAddServico Use Case', () => {
         const { sut } = makeSut();
         const model = await sut.add(mockFakeAddServicoParams());
         expect(model).toEqual({ content: mockFakeServicoModel() });
-        const cached = await RedisHelper.getClient().scan(0, { MATCH: `orders::list*` });
+        const cached = await (await RedisHelper.getClient()).scan(0, { MATCH: `orders::list*` });
         expect(cached.keys).toHaveLength(0);
     });
 
@@ -157,16 +158,6 @@ const makeSaveIncludedItensRepository = (): SaveIncludedItensRepository => {
     return new SaveIncludedItensRepositoryStub();
 };
 
-const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
-    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
-        load(idServico: number): Promise<boolean> {
-            return Promise.resolve(false);
-        }
-    }
-
-    return new LoadNotaFiscalByIdServicoRepositoryStub();
-};
-
 const makeSaveNotaFiscalByIdServicoRepository = (): SaveNotaFiscalRepository => {
     class SaveNotaFiscalRepositoryStub implements SaveNotaFiscalRepository {
         save(idServico: number): Promise<void> {
@@ -187,16 +178,6 @@ const makeSaveServiceMechanicsRepository = (): SaveServiceMechanicsRepository =>
     return new SaveServiceMechanicsRepositoryStub();
 };
 
-const makeUpdateCarroRepository = (): UpdateCarroRepository => {
-    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
-        async update(model: UpdateCarroModel): Promise<DbCarroModel> {
-            return Promise.resolve(mockFakeDbCarroModel());
-        }
-    }
-
-    return new UpdateCarroRepositoryStub();
-};
-
 const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {
     class SaveSimpleBillingIntegrationStub implements SaveSimpleBillingIntegration {
         save(billing: SaveSimpleBillingIntegrationModel): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
@@ -213,19 +194,6 @@ const makeLoadAuthDetailIntegration = (): LoadAuthDetailIntegration => {
         }
     }
     return new LoadAuthDetailIntegrationStub();
-};
-
-const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository => {
-    class LoadProfileByUsernameRepositoryStub implements LoadProfileByUsernameRepository {
-        async loadByUsername(username: string): Promise<DbProfileModel> {
-            return Promise.resolve(mockFakeDbProfileModel());
-        }
-    }
-    return new LoadProfileByUsernameRepositoryStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };
 
 const makeSut = (): SutTypes => {
@@ -250,7 +218,8 @@ const makeSut = (): SutTypes => {
         saveSimpleBillingIntegrationStub,
         loadAuthDetailIntegrationStub,
         loadProfileByUsernameRepositoryStub,
-        redisCacheRepositoryStub
+        redisCacheRepositoryStub,
+        new HttpRequestScopeRepository()
     );
     return {
         sut,

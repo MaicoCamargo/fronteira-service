@@ -44,9 +44,7 @@ export class BillingServiceIntegration
             loadBillingsIntegrationParams.page = loadBillingsIntegrationParams.page - 1;
         }
         this.headers();
-        return (await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, loadBillingsIntegrationParams)) as Wrapper<
-            IntegrationLoadSimpleBillingModel[]
-        >;
+        return await this.axios.get(`/billings/service/${ENV.SERVICE.ID}`, loadBillingsIntegrationParams);
     }
 
     async updatePayment(
@@ -58,7 +56,7 @@ export class BillingServiceIntegration
 
     async loadByOrderId(order: number): Promise<Wrapper<IntegrationLoadSimpleBillingModel[]>> {
         this.headers();
-        return (await this.axios.get(`/billings/order/${order}`)) as Wrapper<IntegrationLoadSimpleBillingModel[]>;
+        return await this.axios.get(`/billings/order/${order}`);
     }
 
     async update(

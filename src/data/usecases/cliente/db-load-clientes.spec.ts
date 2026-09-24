@@ -3,8 +3,7 @@ import { LoadClientesDbFilter, LoadClientesRepository } from '../../protocols/db
 import { DbClienteModel } from '../../models/db-cliente-model';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
-import { mockFakeDbCarroModel, mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
-import { DbCarroModel } from '../../models/db-carro-model';
+import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { makeFakeDbClienteModelList, makeFakeLoadClienteModelList } from '../../../../tests/mock/mock-cliente';
@@ -12,7 +11,9 @@ import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { Filter } from '@/main/protocols/filter';
-import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
+import { makeLoadEnderecoByIdRepository } from '../../../../tests/mock/mock-load-endereco-by-id-repository';
+import { makeLoadCarroByClienteIdRepository } from '../../../../tests/mock/mock-load-carro-by-cliente-id-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
@@ -25,24 +26,6 @@ const makeLoadClienteRepository = (): LoadClientesRepository => {
     return new LoadClienteRepositoryStub();
 };
 
-const makeLoadCarroByClienteIdRepository = (): LoadCarroByClienteIdRepository => {
-    class LoadCarroByClienteIdRepositoryStub implements LoadCarroByClienteIdRepository {
-        loadByClienteId(id: number): Promise<DbCarroModel[]> {
-            return Promise.resolve(mockFakeDbCarroModelList());
-        }
-    }
-    return new LoadCarroByClienteIdRepositoryStub();
-};
-
-const makeLoadEnderecoRepository = (): LoadEnderecoByIdRepository => {
-    class LoadEnderecoRepositoryStub implements LoadEnderecoByIdRepository {
-        loadById(id: number): Promise<DbEnderecoModel> {
-            return Promise.resolve(mockFakeDbEnderecoModel());
-        }
-    }
-    return new LoadEnderecoRepositoryStub();
-};
-
 interface SutTypes {
     sut: DbLoadClientes;
     loadClientesRepositoryStub: LoadClientesRepository;
@@ -52,7 +35,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
     const loadClientesRepositoryStub = makeLoadClienteRepository();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepository();
-    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoRepository();
+    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoByIdRepository();
     const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbLoadClientes(
         loadClientesRepositoryStub,
@@ -62,10 +45,6 @@ const makeSut = (): SutTypes => {
         redisCacheRepositoryStub
     );
     return { sut, loadClientesRepositoryStub, loadCarroByClienteIdRepositoryStub, loadEnderecoByIdRepositoryStub };
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };
 
 describe('DbLoadClientes Use Case', () => {

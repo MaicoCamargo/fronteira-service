@@ -17,6 +17,7 @@ import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { Filter } from '@/main/protocols/filter';
 import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { makeLoadNotaFiscalByIdServicoRepository } from '../../../../tests/mock/mock-load-nota-fiscal-by-id-servico-repository';
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
@@ -24,6 +25,7 @@ import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-loa
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbLoadServicos Use Case', () => {
@@ -253,16 +255,6 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
     return new LoadClienteByIdServicoRepositoryStub();
 };
 
-const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
-    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
-        load(idServico: number): Promise<boolean> {
-            return Promise.resolve(false);
-        }
-    }
-
-    return new LoadNotaFiscalByIdServicoRepositoryStub();
-};
-
 const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepository => {
     class LoadMechanicsByIdServicoRepositoryStub implements LoadMechanicsByIdServicoRepository {
         async loadByIdServico(servico: number): Promise<Wrapper<DbMechanicModel[]>> {
@@ -283,8 +275,4 @@ const makeLoadBillingByOrderIdIntegration = (): LoadBillingByOrderIdIntegration 
     }
 
     return new LoadBillingByOrderIdIntegrationStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };

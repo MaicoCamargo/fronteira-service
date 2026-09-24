@@ -1,8 +1,8 @@
 import { DbLoadEnderecoById } from './db-load-endereco-by-id';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
-import { DbEnderecoModel } from '../../models/db-endereco-model';
 import { mockFakeDbEnderecoModel, makeFakeEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { makeLoadEnderecoByIdRepository } from '../../../../tests/mock/mock-load-endereco-by-id-repository';
 
 describe('DbLoadEnderecoById Use Case', () => {
     test('Deve chamar LoadEnderecoByIdRepository com valores corretos', () => {
@@ -26,15 +26,6 @@ describe('DbLoadEnderecoById Use Case', () => {
         expect(endereco).toEqual(makeFakeEnderecoModel());
     });
 });
-
-const makeLoadEnderecoByIdRepository = (): any => {
-    class LoadEnderecoByIdRepositoryStub implements LoadEnderecoByIdRepository {
-        loadById(id: number): Promise<DbEnderecoModel> {
-            return Promise.resolve(mockFakeDbEnderecoModel());
-        }
-    }
-    return new LoadEnderecoByIdRepositoryStub();
-};
 
 interface SutTypes {
     sut: DbLoadEnderecoById;

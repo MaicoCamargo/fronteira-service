@@ -4,6 +4,7 @@ import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 import { AuthServiceIntegration } from '@/infra/integration/auth-service-integration';
 import { makeAuthServiceClient } from '@/main/factories/infra/integration/auth-service-client-factory';
 import { EnderecoPgRepository } from '@/infra/db/pg/endereco-pg-repository';
+import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
 
 export const makeDbLoadMechanicShopByOwnerId = (): DbLoadMechanicShopByOwnerId => {
     const mechanicShopPgRepository = new MechanicShopPgRepository();
@@ -14,6 +15,7 @@ export const makeDbLoadMechanicShopByOwnerId = (): DbLoadMechanicShopByOwnerId =
         mechanicShopPgRepository,
         authServiceIntegration,
         profilePgRepository,
-        enderecoPgRepository
+        enderecoPgRepository,
+        new HttpRequestScopeRepository()
     );
 };

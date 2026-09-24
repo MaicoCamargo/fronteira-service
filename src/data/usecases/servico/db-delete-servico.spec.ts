@@ -3,6 +3,7 @@ import { DeleteServicoRepository } from '../../protocols/db/servico/delete-servi
 import { DeleteBillingIntegration } from '@/data/protocols/client/billing-service/delete-billing-integration';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 
 describe('DbDeleteServico Use Case', () => {
     afterAll(async () => {
@@ -15,7 +16,7 @@ describe('DbDeleteServico Use Case', () => {
         const deleteSpy = jest.spyOn(deleteServicoRepositoryStub, 'delete');
         await sut.delete(id);
         expect(deleteSpy).lastCalledWith(id);
-        const cached = await RedisHelper.getClient().scan(0, { MATCH: `orders::list*` });
+        const cached = await (await RedisHelper.getClient()).scan(0, { MATCH: `orders::list*` });
         expect(cached.keys).toHaveLength(0);
     });
 
@@ -53,14 +54,10 @@ const makeDeleteBillingIntegration = (): DeleteBillingIntegration => {
     return new DeleteBillingIntegrationStub();
 };
 
-const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
-};
-
 const makeSut = (): SutTypes => {
     const deleteServicoRepositoryStub = makeDeleteServicoRepositoryStub();
     const deleteBillingIntegrationStub = makeDeleteBillingIntegration();
-    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbDeleteServico(
         deleteServicoRepositoryStub,
         deleteBillingIntegrationStub,

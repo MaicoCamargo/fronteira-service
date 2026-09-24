@@ -2,14 +2,17 @@ import { AuthHelper } from '../../../tests/helper/auth-helper';
 import request from 'supertest';
 import app from '@/main/config/app';
 import { HttpRequest } from '@/presentation/protocols';
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 
 describe('/auth', () => {
     const AUTHORIZATION_HEADER = 'authorization';
     beforeAll(async () => {
+        await MongoHelper.connect(process.env.MONGO_URL);
         await AuthHelper.init();
     });
 
     afterAll(async () => {
+        await MongoHelper.disconnect();
         await AuthHelper.destroy();
     });
 

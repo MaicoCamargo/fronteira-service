@@ -3,6 +3,7 @@ import { DbDeleteItem } from './db-delete-item';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 
 describe('DbDeleteItem Use Case', () => {
     afterAll(async () => {
@@ -40,13 +41,9 @@ const makeDeleteItemRepository = (): DeleteItemRepository => {
     return new DeleteItemRepositoryStub();
 };
 
-const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
-};
-
 const makeSut = (): SutTypes => {
     const deleteItemRepositoryStub = makeDeleteItemRepository();
-    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbDeleteItem(deleteItemRepositoryStub, redisCacheRepositoryStub);
     return {
         sut,

@@ -4,17 +4,18 @@ import { DeleteCacheRepository } from '@/data/protocols/cache/delete-cache-repos
 import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
 import { RedisHelper } from './helpers/redis-helper';
 import { httpRequestScope } from '@/infra/http/http-request-scope';
+import { GUEST_CLIENT_ID } from '@/main/config/env';
 
 export class RedisCacheRepository
     implements GetCacheRepository, SetCacheRepository, DeleteCacheRepository, ScanAndDeleteCacheRepository
 {
-    async set(key: string, value: any, ttl?: number): Promise<void> {
-        const client = RedisHelper.getClient();
-        const serialized = JSON.stringify(value);
-        const keyWithTenant = this.generateKey(key);
-        if (httpRequestScope.getStore()?.clientId === 'client-id') {
+    async set<T = any>(key: string, value: T, ttl?: number): Promise<void> {
+        if (httpRequestScope.getStore()?.clientId === GUEST_CLIENT_ID) {
             return;
         }
+        const client = await RedisHelper.getClient();
+        const serialized = JSON.stringify(value);
+        const keyWithTenant = this.generateKey(key);
         if (ttl) {
             await client.setEx(keyWithTenant, ttl, serialized);
         } else {
@@ -23,7 +24,7 @@ export class RedisCacheRepository
     }
 
     async get<T = any>(key: string): Promise<T | null> {
-        const client = RedisHelper.getClient();
+        const client = await RedisHelper.getClient();
         const value = await client.get(this.generateKey(key));
 
         if (!value) {
@@ -31,7 +32,6 @@ export class RedisCacheRepository
         }
 
         try {
-            /* @fixme remover try catch */
             return JSON.parse(value) as T;
         } catch {
             return value as T;
@@ -39,16 +39,21 @@ export class RedisCacheRepository
     }
 
     async delete(key: string): Promise<void> {
-        const client = RedisHelper.getClient();
+        const client = await RedisHelper.getClient();
         await client.del(this.generateKey(key));
     }
 
     async scanAndDelete(key: string): Promise<void> {
-        const client = RedisHelper.getClient();
-        const found = await client.scan(0, { MATCH: `${this.generateKey(key)}*` });
-        for (const key of found.keys) {
-            await client.del(key);
-        }
+        const client = await RedisHelper.getClient();
+        const pattern = `${this.generateKey(key)}*`;
+        let cursor = 0;
+        do {
+            const found = await client.scan(cursor, { MATCH: pattern });
+            cursor = found.cursor;
+            for (const foundKey of found.keys) {
+                await client.del(foundKey);
+            }
+        } while (cursor !== 0);
     }
 
     private generateKey(key: string): string {

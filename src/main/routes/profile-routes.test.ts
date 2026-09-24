@@ -3,24 +3,32 @@ import app from '../config/app';
 import { AuthHelper } from '../../../tests/helper/auth-helper';
 import { HttpRequest } from '@/presentation/protocols';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import { makeProfileCreate } from '../../../tests/mock/mock-db-profile';
 import { DbProfileModel } from '@/data/models/db-profile-model';
+import { ENV } from '@/main/config/env';
+import { httpRequestScope } from '@/infra/http/http-request-scope';
 
 describe('/profiles', () => {
     const AUTHORIZATION_HEADER = 'authorization';
     beforeAll(async () => {
+        await MongoHelper.connect(process.env.MONGO_URL);
         await KnexHelper.forTenant().table('profile_position').del();
         await KnexHelper.forTenant().table('position').del();
         await KnexHelper.forTenant().table('profile').del();
+        await KnexHelper.forTenant()
+            .table('position')
+            .insert({ id_position: Number(ENV.MECHANIC_POSITION_ID), name: 'Mechanic' });
         await AuthHelper.init();
     });
 
     afterAll(async () => {
         await AuthHelper.destroy();
+        await MongoHelper.disconnect();
         await KnexHelper.destroy();
     });
 
-    describe.skip('POST', () => {
+    describe('POST', () => {
         test('Deve retornar 200 em caso de sucesso', async () => {
             await request(app)
                 .post('/service/profiles')
@@ -30,11 +38,14 @@ describe('/profiles', () => {
         });
     });
 
-    describe.skip('GET', () => {
+    describe('GET', () => {
         let profiles: DbProfileModel[];
 
         beforeAll(async () => {
-            profiles = await makeProfileCreate();
+            await httpRequestScope.run({}, async () => {
+                await KnexHelper.forTenant().table('profile_position').del();
+                profiles = await makeProfileCreate();
+            });
         });
         test('Deve retornar 200 em caso de sucesso', async () => {
             const nickname = profiles[0].nickname;
