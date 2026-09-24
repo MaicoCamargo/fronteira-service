@@ -5,7 +5,7 @@ import { mockFakeDbItemModelList, mockFakeItemModelList } from '../../../../test
 import { PageFilter } from '@/main/protocols/page-filter';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { throwError } from '../../../../tests/helper/test-helper';
-import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 import { Filter } from '@/main/protocols/filter';
 
@@ -46,8 +46,8 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
     const loadItensRepositoryStub = makeLoadItensRepository();
-    const makeRedisCacheRepositoryStub = makeRedisCacheRepository();
-    const sut = new DbLoadItens(loadItensRepositoryStub, makeRedisCacheRepositoryStub, makeRedisCacheRepositoryStub);
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
+    const sut = new DbLoadItens(loadItensRepositoryStub, redisCacheRepositoryStub, redisCacheRepositoryStub);
     return {
         loadItensRepositoryStub,
         sut
@@ -61,8 +61,4 @@ const makeLoadItensRepository = (): LoadItensRepository => {
         }
     }
     return new LoadItensRepositoryStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };

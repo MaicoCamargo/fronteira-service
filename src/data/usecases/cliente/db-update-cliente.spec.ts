@@ -16,6 +16,7 @@ import { CarroModel } from '@/domain/models/carro-model';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbUpdateCliente Use Case', () => {
@@ -146,10 +147,6 @@ const makeDeleteCarroRepositoryStub = (): DeleteCarroRepository => {
     return new DeleteCarroRepositoryStub();
 };
 
-const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
-};
-
 interface SutTypes {
     sut: DbUpdateCliente;
     updateClienteRepositoryStub: UpdateClienteRepository;
@@ -166,7 +163,7 @@ const makeSut = (): SutTypes => {
     const saveCarroRepositoryStub = makeSaveCarroRepositoryStub();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStubStub();
     const deleteCarroRepositoryStub = makeDeleteCarroRepositoryStub();
-    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbUpdateCliente(
         updateClienteRepositoryStub,
         updateCarroRepositoryStub,

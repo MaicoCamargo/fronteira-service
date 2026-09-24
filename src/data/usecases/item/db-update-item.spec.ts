@@ -10,6 +10,7 @@ import { mockDateAdapter } from '../../../../tests/helper/mock-date-adapter';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 
 describe('DbUpateItem Use Case', () => {
     beforeAll(async () => {
@@ -65,8 +66,4 @@ const makeUpdateItemRepository = (): UpdateItemRepository => {
         }
     }
     return new UpdateItemRepositoryStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };

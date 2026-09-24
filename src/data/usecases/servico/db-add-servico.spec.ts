@@ -49,6 +49,7 @@ import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/moc
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -223,10 +224,6 @@ const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository 
         }
     }
     return new LoadProfileByUsernameRepositoryStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };
 
 const makeSut = (): SutTypes => {

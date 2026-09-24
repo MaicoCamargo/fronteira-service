@@ -50,6 +50,7 @@ import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-loa
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
 
@@ -251,10 +252,6 @@ const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository 
         }
     }
     return new LoadProfileByUsernameRepositoryStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };
 
 const makeSut = (): SutTypes => {

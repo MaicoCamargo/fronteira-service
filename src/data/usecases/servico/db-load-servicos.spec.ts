@@ -24,6 +24,7 @@ import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-loa
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { LoadBillingByOrderIdIntegration } from '@/data/protocols/client/billing-service/load-billing-by-order-id-integration';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbLoadServicos Use Case', () => {
@@ -283,8 +284,4 @@ const makeLoadBillingByOrderIdIntegration = (): LoadBillingByOrderIdIntegration 
     }
 
     return new LoadBillingByOrderIdIntegrationStub();
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };

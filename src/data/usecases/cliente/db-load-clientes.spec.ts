@@ -12,7 +12,7 @@ import { knexPaginateAdapter } from '@/main/adapters/knex-paginate-adapter';
 import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-carro-by-cliente-id-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { Filter } from '@/main/protocols/filter';
-import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
@@ -62,10 +62,6 @@ const makeSut = (): SutTypes => {
         redisCacheRepositoryStub
     );
     return { sut, loadClientesRepositoryStub, loadCarroByClienteIdRepositoryStub, loadEnderecoByIdRepositoryStub };
-};
-
-const makeRedisCacheRepository = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
 };
 
 describe('DbLoadClientes Use Case', () => {

@@ -7,6 +7,7 @@ import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-rep
 import { DbCarroModel } from '../../models/db-carro-model';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
 
 describe('DbDeleteCliente Use Case', () => {
     afterAll(async () => {
@@ -61,10 +62,6 @@ const makeDeleteCarroRepository = (): DeleteCarroRepository => {
     return new DeleteCarroRepositoryStub();
 };
 
-const makeRedisCacheRepositoryStub = (): RedisCacheRepository => {
-    return new RedisCacheRepository();
-};
-
 interface SutTypes {
     sut: DbDeleteCliente;
     deleteClienteRepositoryStub: DeleteClienteRepository;
@@ -77,7 +74,7 @@ const makeSut = (): SutTypes => {
     const deleteClienteRepositoryStub = makeDeleteClienteRepository();
     const loadCarroByClienteRepositoryStub = makeLoadCarroByClienteIdRepository();
     const deleteCarroRepositoryStub = makeDeleteCarroRepository();
-    const redisCacheRepositoryStub = makeRedisCacheRepositoryStub();
+    const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbDeleteCliente(
         deleteClienteRepositoryStub,
         loadCarroByClienteRepositoryStub,
