@@ -3,6 +3,7 @@ import app from '../../../src/main/config/app';
 import { HttpRequest } from '../../presentation/protocols';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { AuthHelper } from '../../../tests/helper/auth-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 
 const makeFakeRequest = (): HttpRequest => ({
     body: {
@@ -16,6 +17,7 @@ const makeFakeRequest = (): HttpRequest => ({
 describe('POST /endereco', () => {
     const AUTHORIZATION_HEADER = 'authorization';
     beforeAll(async () => {
+        await MongoHelper.connect(process.env.MONGO_URL);
         await KnexHelper.forTenant().table('cliente_carro').del();
         await KnexHelper.forTenant().table('cliente').del();
         await KnexHelper.forTenant().table('endereco').del();
@@ -23,6 +25,7 @@ describe('POST /endereco', () => {
     });
 
     afterAll(async () => {
+        await MongoHelper.disconnect();
         await KnexHelper.destroy();
         await AuthHelper.destroy();
     });

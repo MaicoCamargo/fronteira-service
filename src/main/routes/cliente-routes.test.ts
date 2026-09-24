@@ -8,10 +8,13 @@ import { AddEnderecoParams } from '@/domain/usecases/endereco/add-endereco';
 import { DbEnderecoModel } from '@/data/models/db-endereco-model';
 import { AddClienteModel } from '@/data/protocols/db/cliente/save-cliente-repository';
 import { AuthHelper } from '../../../tests/helper/auth-helper';
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
+import { httpRequestScope } from '@/infra/http/http-request-scope';
 
 describe('/clientes', () => {
     const AUTHORIZATION_HEADER = 'authorization';
     beforeAll(async () => {
+        await MongoHelper.connect(process.env.MONGO_URL);
         await KnexHelper.forTenant().table('cliente_carro').del();
         await KnexHelper.forTenant().table('servico_mecanico').del();
         await KnexHelper.forTenant().table('servico_peca').del();
@@ -23,6 +26,7 @@ describe('/clientes', () => {
     });
 
     afterAll(async () => {
+        await MongoHelper.disconnect();
         await KnexHelper.destroy();
         await AuthHelper.destroy();
     });
@@ -53,25 +57,30 @@ describe('/clientes', () => {
         });
     });
 
-    describe.skip('PUT', () => {
+    describe('PUT', () => {
         test('Deve retornar 200 em caso de sucesso', async () => {
-            const clientePgRepository = new ClientePgRepository();
-            const dbClienteModel: AddClienteModel = {
-                nome: 'any_nome',
-                cpf: 'any_cpf',
-                last_updated: new Date(),
-                endereco_id: (await makeCreateEndereco()).id_endereco,
-                telefone: 'any_telefone'
-            };
-            const created = await clientePgRepository.save(dbClienteModel);
-            const httpRequest: HttpRequest = {
-                body: {
-                    id: created.id_cliente,
-                    nome: 'outher_nome',
-                    telefone: 'outher_telefone',
-                    cpf: 'any_cpf'
-                }
-            };
+            const { created, httpRequest } = await httpRequestScope.run({}, async () => {
+                const clientePgRepository = new ClientePgRepository();
+                const dbClienteModel: AddClienteModel = {
+                    nome: 'any_nome',
+                    cpf: 'any_cpf',
+                    last_updated: new Date(),
+                    endereco_id: (await makeCreateEndereco()).id_endereco,
+                    telefone: 'any_telefone'
+                };
+                const created = await clientePgRepository.save(dbClienteModel);
+                return {
+                    created,
+                    httpRequest: {
+                        body: {
+                            id: created.id_cliente,
+                            nome: 'outher_nome',
+                            telefone: 'outher_telefone',
+                            cpf: 'any_cpf'
+                        }
+                    }
+                };
+            });
             await request(app)
                 .put(`/service/clientes/${created.id_cliente}`)
                 .set(AUTHORIZATION_HEADER, await AuthHelper.authenticate())
@@ -82,15 +91,18 @@ describe('/clientes', () => {
 
     describe('DELETE', () => {
         test('Deve retornar 204 em caso de sucesso', async () => {
-            const clientePgRepository = new ClientePgRepository();
-            const dbClienteModel: AddClienteModel = {
-                nome: 'any_nome',
-                cpf: 'any_cpf',
-                last_updated: new Date(),
-                endereco_id: (await makeCreateEndereco()).id_endereco,
-                telefone: 'any_telefone'
-            };
-            const created = await clientePgRepository.save(dbClienteModel);
+            const { created } = await httpRequestScope.run({}, async () => {
+                const clientePgRepository = new ClientePgRepository();
+                const dbClienteModel: AddClienteModel = {
+                    nome: 'any_nome',
+                    cpf: 'any_cpf',
+                    last_updated: new Date(),
+                    endereco_id: (await makeCreateEndereco()).id_endereco,
+                    telefone: 'any_telefone'
+                };
+                const created = await clientePgRepository.save(dbClienteModel);
+                return { created };
+            });
             const httpRequest: HttpRequest = { params: { id: created.id_cliente } };
             await request(app)
                 .delete(`/service/clientes/${created.id_cliente}`)

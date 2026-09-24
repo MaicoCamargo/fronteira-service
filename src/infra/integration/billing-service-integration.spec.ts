@@ -11,7 +11,9 @@ describe('Billing Service Integration', () => {
     describe('save()', () => {
         test('Should call AxiosHelper with the correct values', async () => {
             const { sut, axiosHelperStub } = makeSut();
-            const spyOn = jest.spyOn(axiosHelperStub, 'post');
+            const spyOn = jest
+                .spyOn(axiosHelperStub, 'post')
+                .mockResolvedValue(makeIntegrationLoadSimpleBillingModel());
             await sut.save(makeSaveSimpleBillingIntegrationModel());
             expect(spyOn).toBeCalledWith('/billings/simple', makeSaveSimpleBillingIntegrationModel());
         });
@@ -37,7 +39,9 @@ describe('Billing Service Integration', () => {
         });
         test('Should call AxiosHelper with the correct values', async () => {
             const { sut, axiosHelperStub } = makeSut();
-            const spy = jest.spyOn(axiosHelperStub, 'get');
+            const spy = jest
+                .spyOn(axiosHelperStub, 'get')
+                .mockResolvedValue({ content: [makeIntegrationLoadSimpleBillingModel()] });
             const params: LoadBillingsIntegrationParams = {
                 startDate: MomentAdapter.format(new Date()),
                 endDate: MomentAdapter.format(new Date())
