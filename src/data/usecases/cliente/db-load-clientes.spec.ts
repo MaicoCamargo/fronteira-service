@@ -13,6 +13,7 @@ import { LoadCarroByClienteIdRepository } from '@/data/protocols/db/carro/load-c
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { Filter } from '@/main/protocols/filter';
 import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
+import { makeLoadEnderecoByIdRepository } from '../../../../tests/mock/mock-load-endereco-by-id-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 const makeLoadClienteRepository = (): LoadClientesRepository => {
@@ -34,15 +35,6 @@ const makeLoadCarroByClienteIdRepository = (): LoadCarroByClienteIdRepository =>
     return new LoadCarroByClienteIdRepositoryStub();
 };
 
-const makeLoadEnderecoRepository = (): LoadEnderecoByIdRepository => {
-    class LoadEnderecoRepositoryStub implements LoadEnderecoByIdRepository {
-        loadById(id: number): Promise<DbEnderecoModel> {
-            return Promise.resolve(mockFakeDbEnderecoModel());
-        }
-    }
-    return new LoadEnderecoRepositoryStub();
-};
-
 interface SutTypes {
     sut: DbLoadClientes;
     loadClientesRepositoryStub: LoadClientesRepository;
@@ -52,7 +44,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
     const loadClientesRepositoryStub = makeLoadClienteRepository();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepository();
-    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoRepository();
+    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoByIdRepository();
     const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbLoadClientes(
         loadClientesRepositoryStub,

@@ -6,9 +6,8 @@ import { LoadCarroByIdRepository } from '../../protocols/db/carro/load-carro-by-
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
 import { LoadEnderecoByIdRepository } from '../../protocols/db/endereco/load-endereco-by-id-repository';
-import { DbEnderecoModel } from '../../models/db-endereco-model';
-import { mockFakeDbEnderecoModel } from '../../../../tests/mock/mock-endereco';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
+import { makeLoadEnderecoByIdRepository } from '../../../../tests/mock/mock-load-endereco-by-id-repository';
 
 const makeLoadClienteByIdRepositoryStub = () => {
     class LoadClienteByIdRepositoryStub implements LoadClienteByIdRepository {
@@ -28,15 +27,6 @@ const makeLoadCarroByClienteIdRepositoryStub = (): LoadCarroByClienteIdRepositor
     return new LoadCarroByIdRepositoryStub();
 };
 
-const makeLoadEnderecoByIdRepositoryStub = () => {
-    class LoadEnderecoByIdRepositoryStub implements LoadEnderecoByIdRepository {
-        loadById(id: number): Promise<DbEnderecoModel> {
-            return Promise.resolve(mockFakeDbEnderecoModel());
-        }
-    }
-    return new LoadEnderecoByIdRepositoryStub();
-};
-
 interface SutTypes {
     sut: DbLoadClienteById;
     loadClienteByIdRepositoryStub: LoadClienteByIdRepository;
@@ -47,7 +37,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
     const loadClienteByIdRepositoryStub = makeLoadClienteByIdRepositoryStub();
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStub();
-    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoByIdRepositoryStub();
+    const loadEnderecoByIdRepositoryStub = makeLoadEnderecoByIdRepository();
     const sut = new DbLoadClienteById(
         loadClienteByIdRepositoryStub,
         loadCarroByClienteIdRepositoryStub,

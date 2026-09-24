@@ -1,7 +1,7 @@
 import { DbLoadProfileByUsername } from './db-load-profile-by-username';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { makeLoadProfileByUsernameRepository } from '../../../../tests/mock/mock-load-profile-by-username-repository';
 import { LoadPositionByProfileIdRepository } from '@/data/protocols/db/position/load-position-by-profile-id-repository';
-import { DbProfileModel } from '@/data/models/db-profile-model';
 import { DbPositionModel } from '@/data/models/db-position-model';
 import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { mockFakeDbPositionModelList } from '../../../../tests/mock/mock-profile-position';
@@ -37,16 +37,6 @@ const makeSut = (): SutTypes => {
     const loadPositionByProfileIdRepositoryStub = makeLoadPositionByProfileIdRepository();
     const sut = new DbLoadProfileByUsername(loadProfileByUsernameRepositoryStub, loadPositionByProfileIdRepositoryStub);
     return { sut, loadProfileByUsernameRepositoryStub, loadPositionByProfileIdRepositoryStub };
-};
-
-const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository => {
-    class LoadProfileByUsernameRepositoryStub implements LoadProfileByUsernameRepository {
-        async loadByUsername(username: string): Promise<DbProfileModel> {
-            return mockFakeDbProfileModel();
-        }
-    }
-
-    return new LoadProfileByUsernameRepositoryStub();
 };
 
 const makeLoadPositionByProfileIdRepository = (): LoadPositionByProfileIdRepository => {

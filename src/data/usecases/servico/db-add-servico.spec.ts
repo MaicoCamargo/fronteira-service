@@ -19,6 +19,7 @@ import {
     mockFakeSaveIncludedItemModelList
 } from '../../../../tests/mock/mock-included-itens';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { makeLoadNotaFiscalByIdServicoRepository } from '../../../../tests/mock/mock-load-nota-fiscal-by-id-servico-repository';
 import { SaveNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/save-nota-fiscal-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
@@ -42,9 +43,8 @@ import {
     LoadAuthDetailIntegrationModel
 } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { makeLoadProfileByUsernameRepository } from '../../../../tests/mock/mock-load-profile-by-username-repository';
 import { makeLoadAuthDetailIntegrationModel } from '../../../../tests/mock/mock-load-auth-detail-integration';
-import { DbProfileModel } from '@/data/models/db-profile-model';
-import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
@@ -159,16 +159,6 @@ const makeSaveIncludedItensRepository = (): SaveIncludedItensRepository => {
     return new SaveIncludedItensRepositoryStub();
 };
 
-const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
-    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
-        load(idServico: number): Promise<boolean> {
-            return Promise.resolve(false);
-        }
-    }
-
-    return new LoadNotaFiscalByIdServicoRepositoryStub();
-};
-
 const makeSaveNotaFiscalByIdServicoRepository = (): SaveNotaFiscalRepository => {
     class SaveNotaFiscalRepositoryStub implements SaveNotaFiscalRepository {
         save(idServico: number): Promise<void> {
@@ -215,15 +205,6 @@ const makeLoadAuthDetailIntegration = (): LoadAuthDetailIntegration => {
         }
     }
     return new LoadAuthDetailIntegrationStub();
-};
-
-const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository => {
-    class LoadProfileByUsernameRepositoryStub implements LoadProfileByUsernameRepository {
-        async loadByUsername(username: string): Promise<DbProfileModel> {
-            return Promise.resolve(mockFakeDbProfileModel());
-        }
-    }
-    return new LoadProfileByUsernameRepositoryStub();
 };
 
 const makeSut = (): SutTypes => {

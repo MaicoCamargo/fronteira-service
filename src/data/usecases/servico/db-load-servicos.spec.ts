@@ -17,6 +17,7 @@ import { mockFakeDbClienteModel } from '../../../../tests/mock/mock-cliente';
 import { Filter } from '@/main/protocols/filter';
 import { LoadServicosParams } from '@/domain/usecases/servico/load-servicos';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { makeLoadNotaFiscalByIdServicoRepository } from '../../../../tests/mock/mock-load-nota-fiscal-by-id-servico-repository';
 import { LoadMechanicsByIdServicoRepository } from '@/data/protocols/db/mechanic/load-mechanics-by-id-servico-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList } from '../../../../tests/mock/mock-mechanic';
@@ -252,16 +253,6 @@ const makeLoadClienteByIdServicoRepository = (): LoadClienteByIdServicoRepositor
     }
 
     return new LoadClienteByIdServicoRepositoryStub();
-};
-
-const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
-    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
-        load(idServico: number): Promise<boolean> {
-            return Promise.resolve(false);
-        }
-    }
-
-    return new LoadNotaFiscalByIdServicoRepositoryStub();
 };
 
 const makeLoadMechanicsByIdServicoRepository = (): LoadMechanicsByIdServicoRepository => {

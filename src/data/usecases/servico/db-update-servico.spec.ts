@@ -26,6 +26,7 @@ import {
 } from '../../protocols/db/servico/included-item/save-included-itens-repository';
 import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
+import { makeLoadNotaFiscalByIdServicoRepository } from '../../../../tests/mock/mock-load-nota-fiscal-by-id-servico-repository';
 import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/update-nota-fiscal-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList, mockFakeMechanicModelList } from '../../../../tests/mock/mock-mechanic';
@@ -42,10 +43,9 @@ import {
     LoadAuthDetailIntegrationModel
 } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { makeLoadProfileByUsernameRepository } from '../../../../tests/mock/mock-load-profile-by-username-repository';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { makeLoadAuthDetailIntegrationModel } from '../../../../tests/mock/mock-load-auth-detail-integration';
-import { DbProfileModel } from '@/data/models/db-profile-model';
-import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { IntegrationLoadSimpleBillingModel } from '@/data/models/integration-load-simple-billing-model';
 import { makeIntegrationLoadSimpleBillingModel } from '../../../../tests/mock/mock-integration-load-simple-billing-model';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
@@ -179,15 +179,6 @@ const makeDeleteIncludedItemRepository = (): DeleteIncludedItemRepository => {
     return new DeleteIncludedItemRepositoryStub();
 };
 
-const makeLoadNotaFiscalByIdServicoRepository = (): LoadNotaFiscalByIdServicoRepository => {
-    class LoadNotaFiscalByIdServicoRepositoryStub implements LoadNotaFiscalByIdServicoRepository {
-        load(idServico: number): Promise<boolean> {
-            return Promise.resolve(false);
-        }
-    }
-    return new LoadNotaFiscalByIdServicoRepositoryStub();
-};
-
 const makeUpdateNotaFiscalRepository = (): UpdateNotaFiscalRepository => {
     class UpdateNotaFiscalRepositoryStub implements UpdateNotaFiscalRepository {
         update(idServico: number, status: boolean): Promise<boolean> {
@@ -243,15 +234,6 @@ const makeLoadAuthDetailIntegration = (): LoadAuthDetailIntegration => {
         }
     }
     return new LoadAuthDetailIntegrationStub();
-};
-
-const makeLoadProfileByUsernameRepository = (): LoadProfileByUsernameRepository => {
-    class LoadProfileByUsernameRepositoryStub implements LoadProfileByUsernameRepository {
-        async loadByUsername(username: string): Promise<DbProfileModel> {
-            return Promise.resolve(mockFakeDbProfileModel());
-        }
-    }
-    return new LoadProfileByUsernameRepositoryStub();
 };
 
 const makeSut = (): SutTypes => {
