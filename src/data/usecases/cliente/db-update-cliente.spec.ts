@@ -53,7 +53,7 @@ describe('DbUpdateCliente Use Case', () => {
             carros: mockFakeClienteModel().carros,
             nome: mockFakeClienteModel().nome
         });
-        const cached = await RedisHelper.getClient().scan(0, { MATCH: `customers::list*` });
+        const cached = await (await RedisHelper.getClient()).scan(0, { MATCH: `customers::list*` });
         expect(cached.keys).toHaveLength(0);
     });
 

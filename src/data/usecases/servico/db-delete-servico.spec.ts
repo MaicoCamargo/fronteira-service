@@ -15,7 +15,7 @@ describe('DbDeleteServico Use Case', () => {
         const deleteSpy = jest.spyOn(deleteServicoRepositoryStub, 'delete');
         await sut.delete(id);
         expect(deleteSpy).lastCalledWith(id);
-        const cached = await RedisHelper.getClient().scan(0, { MATCH: `orders::list*` });
+        const cached = await (await RedisHelper.getClient()).scan(0, { MATCH: `orders::list*` });
         expect(cached.keys).toHaveLength(0);
     });
 

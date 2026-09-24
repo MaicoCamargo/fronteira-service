@@ -15,13 +15,11 @@ export class RoleMiddleware implements Middleware {
             }
             const wrapper = await this.loadAuthDetail.load(authorization);
             const user = wrapper.content;
-            if (user.roles) {
-                const found = user.roles.find((value) => value === this.role);
-                if (!found) {
-                    return forbidden('forbidden');
-                }
-                return ok(authorization);
+            const found = user.roles?.find((value) => value === this.role);
+            if (!found) {
+                return forbidden('forbidden');
             }
+            return ok(authorization);
         } catch (error) {
             if (error instanceof IntegrationError) {
                 return { statusCode: error.statusCode, body: { error: error.message } };

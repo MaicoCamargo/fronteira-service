@@ -11,7 +11,7 @@ export const ENV = {
         USER: process.env.DB_POSTGRES_USER || 'postgres',
         PASSWORD: process.env.DB_POSTGRES_PASSWORD,
         DATABASE: process.env.DB_POSTGRES_DATABASE || 'new_fronteira_test',
-        DEBUG: process.env.DB_POSTGRES_DEBUG !== 'false' || false,
+        DEBUG: process.env.DB_POSTGRES_DEBUG === 'true',
         POOL_MIN: process.env.DB_POSTGRES_POOL_MIN || 1,
         POOL_MAX: process.env.DB_POSTGRES_POOL_MAX || 10
     },
@@ -31,3 +31,6 @@ export const ENV = {
         { CLIENT_ID: process.env.CLIENT_ID_CONVENCAO, SCHEMA: process.env.SCHEMA_CONVENCAO }
     ]
 };
+
+/** Pseudo tenant used by the guest/try-out flow (public schema, no cache). */
+export const GUEST_CLIENT_ID = 'client-id';

@@ -5,7 +5,7 @@ describe('RedisCacheRepository', () => {
     const PREFIX_TENANT_KEY = 'public::';
     beforeAll(async () => {
         await RedisHelper.connect();
-        const client = RedisHelper.getClient();
+        const client = await RedisHelper.getClient();
         await client.flushDb();
     });
 
@@ -21,7 +21,7 @@ describe('RedisCacheRepository', () => {
 
             await sut.set(key, value);
 
-            const client = RedisHelper.getClient();
+            const client = await RedisHelper.getClient();
             const stored = await client.get('public::' + key);
             expect(stored).toBe(JSON.stringify(value));
         });
@@ -34,7 +34,7 @@ describe('RedisCacheRepository', () => {
 
             await sut.set(key, value, ttl);
 
-            const client = RedisHelper.getClient();
+            const client = await RedisHelper.getClient();
             const storedTtl = await client.ttl(PREFIX_TENANT_KEY + key);
             expect(storedTtl).toBeGreaterThan(0);
             expect(storedTtl).toBeLessThanOrEqual(ttl);
@@ -65,7 +65,7 @@ describe('RedisCacheRepository', () => {
             const key = 'test:string';
             const value = 'simple string';
 
-            const client = RedisHelper.getClient();
+            const client = await RedisHelper.getClient();
             await client.set(PREFIX_TENANT_KEY + key, value);
 
             const result = await sut.get<string>(key);

@@ -48,6 +48,7 @@ import { mockFakeDbProfileModel } from '../../../../tests/mock/mock-profile';
 import { mockSpyHttpRequestScopeAuthorization } from '../../../../tests/mock/mock-http-request-scope';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
+import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
 
 describe('DbAddServico Use Case', () => {
     beforeAll(async () => {
@@ -66,7 +67,7 @@ describe('DbAddServico Use Case', () => {
         const { sut } = makeSut();
         const model = await sut.add(mockFakeAddServicoParams());
         expect(model).toEqual({ content: mockFakeServicoModel() });
-        const cached = await RedisHelper.getClient().scan(0, { MATCH: `orders::list*` });
+        const cached = await (await RedisHelper.getClient()).scan(0, { MATCH: `orders::list*` });
         expect(cached.keys).toHaveLength(0);
     });
 
@@ -250,7 +251,8 @@ const makeSut = (): SutTypes => {
         saveSimpleBillingIntegrationStub,
         loadAuthDetailIntegrationStub,
         loadProfileByUsernameRepositoryStub,
-        redisCacheRepositoryStub
+        redisCacheRepositoryStub,
+        new HttpRequestScopeRepository()
     );
     return {
         sut,

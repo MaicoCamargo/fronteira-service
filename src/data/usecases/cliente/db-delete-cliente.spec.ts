@@ -38,7 +38,7 @@ describe('DbDeleteCliente Use Case', () => {
         expect(deleteSpy).toHaveBeenCalledWith(mockFakeDbCarroModelList()[0].id_carro);
         expect(deleteSpy).toHaveBeenCalledWith(mockFakeDbCarroModelList()[1].id_carro);
         expect(cliente).toBeUndefined();
-        const cached = await RedisHelper.getClient().scan(0, { MATCH: `customers::list*` });
+        const cached = await (await RedisHelper.getClient()).scan(0, { MATCH: `customers::list*` });
         expect(cached.keys).toHaveLength(0);
     });
 });
