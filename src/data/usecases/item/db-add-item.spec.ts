@@ -5,6 +5,7 @@ import { mockFakeAddItemParams, mockFakeDbItemModel, mockFakeItemModel } from '.
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { throwError } from '../../../../tests/helper/test-helper';
 import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbAddItem Use Case', () => {
     beforeAll(async () => {
@@ -14,6 +15,7 @@ describe('DbAddItem Use Case', () => {
 
     afterAll(async () => {
         await KnexHelper.destroy();
+        await RedisHelper.disconnect();
     });
 
     test('Deve chamar AddItemRepository com valores corretos', () => {

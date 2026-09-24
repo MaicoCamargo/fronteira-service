@@ -10,6 +10,7 @@ import { AddClienteModel } from '@/data/protocols/db/cliente/save-cliente-reposi
 import { AuthHelper } from '../../../tests/helper/auth-helper';
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper';
 import { httpRequestScope } from '@/infra/http/http-request-scope';
+import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('/clientes', () => {
     const AUTHORIZATION_HEADER = 'authorization';
@@ -29,6 +30,7 @@ describe('/clientes', () => {
         await MongoHelper.disconnect();
         await KnexHelper.destroy();
         await AuthHelper.destroy();
+        await RedisHelper.disconnect();
     });
 
     describe('GET', () => {
