@@ -27,9 +27,8 @@ import {
     AddMechanicsModel,
     SaveServiceMechanicsRepository
 } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
-import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
-import { DbCarroModel } from '@/data/models/db-carro-model';
-import { mockFakeDbCarroModel } from '../../../../tests/mock/mock-carro';
+import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { makeUpdateCarroRepository } from '../../../../tests/mock/mock-update-carro-repository';
 import {
     SaveSimpleBillingIntegration,
     SaveSimpleBillingIntegrationModel
@@ -177,16 +176,6 @@ const makeSaveServiceMechanicsRepository = (): SaveServiceMechanicsRepository =>
     }
 
     return new SaveServiceMechanicsRepositoryStub();
-};
-
-const makeUpdateCarroRepository = (): UpdateCarroRepository => {
-    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
-        async update(model: UpdateCarroModel): Promise<DbCarroModel> {
-            return Promise.resolve(mockFakeDbCarroModel());
-        }
-    }
-
-    return new UpdateCarroRepositoryStub();
 };
 
 const makeSaveSimpleBillingIntegration = (): SaveSimpleBillingIntegration => {

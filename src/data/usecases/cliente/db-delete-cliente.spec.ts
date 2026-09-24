@@ -4,10 +4,10 @@ import { throwError } from '../../../../tests/helper/test-helper';
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 import { mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
 import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
-import { DbCarroModel } from '../../models/db-carro-model';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
+import { makeLoadCarroByClienteIdRepository } from '../../../../tests/mock/mock-load-carro-by-cliente-id-repository';
 
 describe('DbDeleteCliente Use Case', () => {
     afterAll(async () => {
@@ -43,15 +43,6 @@ describe('DbDeleteCliente Use Case', () => {
         expect(cached.keys).toHaveLength(0);
     });
 });
-
-const makeLoadCarroByClienteIdRepository = (): LoadCarroByClienteIdRepository => {
-    class LoadCarroByClienteIdRepositoryStub implements LoadCarroByClienteIdRepository {
-        async loadByClienteId(id: number): Promise<DbCarroModel[]> {
-            return mockFakeDbCarroModelList();
-        }
-    }
-    return new LoadCarroByClienteIdRepositoryStub();
-};
 
 const makeDeleteCarroRepository = (): DeleteCarroRepository => {
     class DeleteCarroRepositoryStub implements DeleteCarroRepository {

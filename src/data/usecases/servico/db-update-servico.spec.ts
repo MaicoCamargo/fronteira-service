@@ -27,12 +27,13 @@ import {
 import { DeleteIncludedItemRepository } from '../../protocols/db/servico/included-item/delete-included-item-repository';
 import { LoadNotaFiscalByIdServicoRepository } from '@/data/protocols/db/servico/nota-fiscal/load-nota-fiscal-by-id-servico-repository';
 import { makeLoadNotaFiscalByIdServicoRepository } from '../../../../tests/mock/mock-load-nota-fiscal-by-id-servico-repository';
+import { makeUpdateCarroRepository } from '../../../../tests/mock/mock-update-carro-repository';
 import { UpdateNotaFiscalRepository } from '@/data/protocols/db/servico/nota-fiscal/update-nota-fiscal-repository';
 import { DbMechanicModel } from '@/data/models/db-mechanic-model';
 import { mockFakeDbMechanicModelList, mockFakeMechanicModelList } from '../../../../tests/mock/mock-mechanic';
 import { UpdateServiceMechanicsRepository } from '@/data/protocols/db/mechanic/update-service-mechanics-repository';
 import { AddMechanicsModel } from '@/data/protocols/db/mechanic/save-service-mechanics-repository';
-import { UpdateCarroModel, UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
+import { UpdateCarroRepository } from '@/data/protocols/db/carro/update-carro-repository';
 import { CancelBillingIntegration } from '@/data/protocols/client/billing-service/cancel-billing-integration';
 import {
     SaveSimpleBillingIntegration,
@@ -197,18 +198,6 @@ const makeUpdateServiceMechanicsRepository = (): UpdateServiceMechanicsRepositor
     return new UpdateServiceMechanicsRepositoryStub();
 };
 
-const makeUpdateCarroRepository = (): UpdateCarroRepository => {
-    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
-        async update(model: UpdateCarroModel): Promise<DbCarroModel> {
-            return Promise.resolve({
-                ...mockFakeDbCarroModel(),
-                quilometragem: makeFakeUpdatedServicoModel().quilometragem
-            });
-        }
-    }
-    return new UpdateCarroRepositoryStub();
-};
-
 const makeCancelBillingIntegration = (): CancelBillingIntegration => {
     class CancelBillingIntegrationStub implements CancelBillingIntegration {
         async cancel(code: string): Promise<void> {
@@ -246,7 +235,10 @@ const makeSut = (): SutTypes => {
     const loadNotaFiscalByIdServicoRepositoryStub = makeLoadNotaFiscalByIdServicoRepository();
     const updateNotaFiscalRepositoryStub = makeUpdateNotaFiscalRepository();
     const updateServiceMechanicsRepositoryStub = makeUpdateServiceMechanicsRepository();
-    const updateCarroRepositoryStub = makeUpdateCarroRepository();
+    const updateCarroRepositoryStub = makeUpdateCarroRepository({
+        ...mockFakeDbCarroModel(),
+        quilometragem: makeFakeUpdatedServicoModel().quilometragem
+    });
     const cancelBillingIntegrationStub = makeCancelBillingIntegration();
     const saveSimpleBillingIntegrationStub = makeSaveSimpleBillingIntegration();
     const loadAuthDetailIntegrationStub = makeLoadAuthDetailIntegration();

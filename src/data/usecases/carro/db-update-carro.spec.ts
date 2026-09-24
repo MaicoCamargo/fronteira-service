@@ -1,11 +1,7 @@
-import { UpdateCarroModel, UpdateCarroRepository } from '../../protocols/db/carro/update-carro-repository';
-import { DbCarroModel } from '../../models/db-carro-model';
-import {
-    mockFakeDbCarroModel,
-    mockFakeUpdateCarroModel,
-    mockFakeUpdateCarroParams
-} from '../../../../tests/mock/mock-carro';
+import { UpdateCarroRepository } from '../../protocols/db/carro/update-carro-repository';
+import { mockFakeUpdateCarroModel, mockFakeUpdateCarroParams } from '../../../../tests/mock/mock-carro';
 import { DbUpdateCarro } from './db-update-carro';
+import { makeUpdateCarroRepository } from '../../../../tests/mock/mock-update-carro-repository';
 
 describe('DbUpdateCarro Usecase', () => {
     test('Deve chamar UpdateCarroRepository com valores corretos', async () => {
@@ -15,15 +11,6 @@ describe('DbUpdateCarro Usecase', () => {
         expect(updateSpy).toHaveBeenCalledWith(mockFakeUpdateCarroModel());
     });
 });
-
-const makeUpdateCarroRepository = (): UpdateCarroRepository => {
-    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
-        async update(model: UpdateCarroModel): Promise<DbCarroModel> {
-            return Promise.resolve(mockFakeDbCarroModel());
-        }
-    }
-    return new UpdateCarroRepositoryStub();
-};
 
 interface SutTypes {
     sut: DbUpdateCarro;

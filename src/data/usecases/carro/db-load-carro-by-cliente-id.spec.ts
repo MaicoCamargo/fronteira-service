@@ -1,8 +1,8 @@
 import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-carro-by-cliente-id-repository';
 import { DbLoadCarroByClienteId } from './db-load-carro-by-cliente-id';
-import { DbCarroModel } from '../../models/db-carro-model';
-import { mockFakeCarroModelList, mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
+import { mockFakeCarroModelList } from '../../../../tests/mock/mock-carro';
 import { throwError } from '../../../../tests/helper/test-helper';
+import { makeLoadCarroByClienteIdRepository } from '../../../../tests/mock/mock-load-carro-by-cliente-id-repository';
 
 describe('DbLoadCarroByClienteId Use Case', () => {
     test('Deve chamar o LoadCarroByClienteIdRepository com o id correto', async () => {
@@ -46,13 +46,4 @@ const makeSut = (): SutTypes => {
     const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepository();
     const sut = new DbLoadCarroByClienteId(loadCarroByClienteIdRepositoryStub);
     return { sut, loadCarroByClienteIdRepositoryStub };
-};
-
-const makeLoadCarroByClienteIdRepository = (): LoadCarroByClienteIdRepository => {
-    class LoadCarroByClienteIdRepositoryStub implements LoadCarroByClienteIdRepository {
-        loadByClienteId(id: number): Promise<DbCarroModel[]> {
-            return Promise.resolve(mockFakeDbCarroModelList());
-        }
-    }
-    return new LoadCarroByClienteIdRepositoryStub();
 };

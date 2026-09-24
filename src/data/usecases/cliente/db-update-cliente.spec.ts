@@ -6,7 +6,7 @@ import {
     mockFakeDbClienteModel,
     mockFakeUpdateClienteParams
 } from '../../../../tests/mock/mock-cliente';
-import { UpdateCarroModel, UpdateCarroRepository } from '../../protocols/db/carro/update-carro-repository';
+import { UpdateCarroRepository } from '../../protocols/db/carro/update-carro-repository';
 import { DbCarroModel } from '../../models/db-carro-model';
 import { mockFakeDbCarroModel, mockFakeDbCarroModelList } from '../../../../tests/mock/mock-carro';
 import { AddCarroModel, SaveCarroRepository } from '../../protocols/db/carro/save-carro-repository';
@@ -17,6 +17,8 @@ import { LoadCarroByClienteIdRepository } from '../../protocols/db/carro/load-ca
 import { DeleteCarroRepository } from '../../protocols/db/carro/delete-carro-repository';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
 import { makeRedisCacheRepository } from '../../../../tests/mock/mock-redis-cache-repository';
+import { makeLoadCarroByClienteIdRepository } from '../../../../tests/mock/mock-load-carro-by-cliente-id-repository';
+import { makeUpdateCarroRepository } from '../../../../tests/mock/mock-update-carro-repository';
 import { RedisHelper } from '@/infra/db/redis/helpers/redis-helper';
 
 describe('DbUpdateCliente Use Case', () => {
@@ -111,15 +113,6 @@ const makeUpdateClienteRepository = (): UpdateClienteRepository => {
     return new UpdateClienteRepositoryStub();
 };
 
-const makeUpdateCarroRepositoryStub = (): UpdateCarroRepository => {
-    class UpdateCarroRepositoryStub implements UpdateCarroRepository {
-        update(model: UpdateCarroModel): Promise<DbCarroModel> {
-            return Promise.resolve(mockFakeDbCarroModel());
-        }
-    }
-    return new UpdateCarroRepositoryStub();
-};
-
 const makeSaveCarroRepositoryStub = (): SaveCarroRepository => {
     class SaveCarroRepositoryStub implements SaveCarroRepository {
         save(model: AddCarroModel, clienteId: number): Promise<DbCarroModel> {
@@ -127,15 +120,6 @@ const makeSaveCarroRepositoryStub = (): SaveCarroRepository => {
         }
     }
     return new SaveCarroRepositoryStub();
-};
-
-const makeLoadCarroByClienteIdRepositoryStubStub = (): LoadCarroByClienteIdRepository => {
-    class LoadCarroByClienteIdStub implements LoadCarroByClienteIdRepository {
-        loadByClienteId(id: number): Promise<DbCarroModel[]> {
-            return Promise.resolve(mockFakeDbCarroModelList());
-        }
-    }
-    return new LoadCarroByClienteIdStub();
 };
 
 const makeDeleteCarroRepositoryStub = (): DeleteCarroRepository => {
@@ -159,9 +143,9 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
     const updateClienteRepositoryStub = makeUpdateClienteRepository();
-    const updateCarroRepositoryStub = makeUpdateCarroRepositoryStub();
+    const updateCarroRepositoryStub = makeUpdateCarroRepository();
     const saveCarroRepositoryStub = makeSaveCarroRepositoryStub();
-    const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepositoryStubStub();
+    const loadCarroByClienteIdRepositoryStub = makeLoadCarroByClienteIdRepository();
     const deleteCarroRepositoryStub = makeDeleteCarroRepositoryStub();
     const redisCacheRepositoryStub = makeRedisCacheRepository();
     const sut = new DbUpdateCliente(
