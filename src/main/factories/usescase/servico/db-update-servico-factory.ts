@@ -11,6 +11,7 @@ import { makeIntegrationCancelBilling } from '@/main/factories/usescase/billing/
 import { makeIntegrationLoadAuthDetail } from '@/main/factories/usescase/auth/integration-load-auth-detail-factory';
 import { ProfilePgRepository } from '@/infra/db/pg/profile-pg-repository';
 import { RedisCacheRepository } from '@/infra/db/redis/redis-cache-repository';
+import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
 
 export const makeDbUpdateServico = (): DbUpdateServico => {
     const servicoPgRepository = new ServicoPgRepository();
@@ -39,6 +40,7 @@ export const makeDbUpdateServico = (): DbUpdateServico => {
         billingServiceIntegration,
         loadAuthDetailIntegration,
         profilePgRepository,
-        redisCacheRepository
+        redisCacheRepository,
+        new HttpRequestScopeRepository()
     );
 };

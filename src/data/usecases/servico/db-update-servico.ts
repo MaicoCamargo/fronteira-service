@@ -23,10 +23,10 @@ import {
 } from '@/data/protocols/client/billing-service/save-simple-billing-integration';
 import { ENV } from '@/main/config/env';
 import { ProfileModel } from '@/domain/models/profile-model';
-import { httpRequestScope } from '@/infra/http/http-request-scope';
 import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
 import { ScanAndDeleteCacheRepository } from '@/data/protocols/cache/scan-and-delete-cache-repository';
+import { RequestScopeRepository } from '@/data/protocols/scope/request-scope-repository';
 
 export class DbUpdateServico implements UpdateServico {
     private readonly LIST_CACHE_KEY: string = 'orders::list';
@@ -45,7 +45,8 @@ export class DbUpdateServico implements UpdateServico {
         private readonly saveSimpleBillingIntegration: SaveSimpleBillingIntegration,
         private readonly loadAuthDetailIntegration: LoadAuthDetailIntegration,
         private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository,
-        private readonly scanAndDeleteCacheRepository: ScanAndDeleteCacheRepository
+        private readonly scanAndDeleteCacheRepository: ScanAndDeleteCacheRepository,
+        private readonly requestScopeRepository: RequestScopeRepository
     ) {}
 
     async update(params: UpdateServicoParams): Promise<ServicoModel> {
@@ -180,7 +181,7 @@ export class DbUpdateServico implements UpdateServico {
     }
 
     private async loadAuthDetail(): Promise<ProfileModel> {
-        const jwt = httpRequestScope.getStore().authorization;
+        const jwt = this.requestScopeRepository.getStore().authorization;
         const authDetailWrapper = await this.loadAuthDetailIntegration.load(jwt);
         const dbProfileModel = await this.loadProfileByUsernameRepository.loadByUsername(
             authDetailWrapper.content.username

@@ -3,12 +3,14 @@ import { AuthModel } from '@/domain/models/auth-model';
 import { Wrapper } from '@/main/protocols/http-wrapper';
 import { SaveProfileModel, SaveProfileRepository } from '@/data/protocols/db/profile/save-profile-repository';
 import { LoadAuthIntegration } from '@/data/protocols/client/auth-service/load-auth-integration';
-import { httpRequestScope } from '@/infra/http/http-request-scope';
+import { RequestScopeRepository } from '@/data/protocols/scope/request-scope-repository';
+import { GUEST_CLIENT_ID } from '@/main/config/env';
 
 export class DbSaveTryOut implements TryOut {
     constructor(
         private readonly saveProfileRepository: SaveProfileRepository,
-        private readonly loadAuthIntegration: LoadAuthIntegration
+        private readonly loadAuthIntegration: LoadAuthIntegration,
+        private readonly requestScopeRepository: RequestScopeRepository
     ) {}
 
     async try(tryOutParams: TryOutParams): Promise<Wrapper<AuthModel>> {
@@ -21,8 +23,8 @@ export class DbSaveTryOut implements TryOut {
             mail: unique + '@guest.com'
         };
         // todo create guest with mechanic position
-        const clientId = 'client-id';
-        httpRequestScope.enterWith({ clientId });
+        const clientId = GUEST_CLIENT_ID;
+        this.requestScopeRepository.enterWith({ clientId });
         await this.saveProfileRepository.save(guest);
         const wrapper = await this.loadAuthIntegration.auth({ login: 'guest', password: 'acesso#guest' });
         return { content: { jwt: wrapper.content, clientId } };

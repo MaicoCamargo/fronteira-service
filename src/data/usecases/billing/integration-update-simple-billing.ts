@@ -6,15 +6,16 @@ import { Wrapper } from '@/main/protocols/http-wrapper';
 import { UpdateSimpleBilling } from '@/domain/usecases/billing/update-simple-billing';
 import { UpdateSimpleBillingIntegration } from '@/data/protocols/client/billing-service/update-simple-billing-integration';
 import { ProfileModel } from '@/domain/models/profile-model';
-import { httpRequestScope } from '@/infra/http/http-request-scope';
 import { LoadAuthDetailIntegration } from '@/data/protocols/client/auth-service/load-auth-detail-integration';
 import { LoadProfileByUsernameRepository } from '@/data/protocols/db/profile/load-profile-by-username-repository';
+import { RequestScopeRepository } from '@/data/protocols/scope/request-scope-repository';
 
 export class IntegrationUpdateSimpleBilling implements UpdateSimpleBilling {
     constructor(
         private readonly updateSimpleBillingIntegration: UpdateSimpleBillingIntegration,
         private readonly loadAuthDetailIntegration: LoadAuthDetailIntegration,
-        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository
+        private readonly loadProfileByUsernameRepository: LoadProfileByUsernameRepository,
+        private readonly requestScopeRepository: RequestScopeRepository
     ) {}
 
     async update(code: string, params: SaveSimpleBillingParams): Promise<Wrapper<IntegrationLoadSimpleBillingModel>> {
@@ -32,7 +33,7 @@ export class IntegrationUpdateSimpleBilling implements UpdateSimpleBilling {
     }
 
     private async loadAuthDetail(): Promise<ProfileModel> {
-        const jwt = httpRequestScope.getStore().authorization;
+        const jwt = this.requestScopeRepository.getStore().authorization;
         const authDetailWrapper = await this.loadAuthDetailIntegration.load(jwt);
         const dbProfileModel = await this.loadProfileByUsernameRepository.loadByUsername(
             authDetailWrapper.content.username

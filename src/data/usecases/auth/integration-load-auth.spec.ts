@@ -7,6 +7,7 @@ import { ProfileModel } from '@/domain/models/profile-model';
 import { mockFakeProfileModel } from '../../../../tests/mock/mock-profile';
 import { KnexHelper } from '@/infra/db/pg/helpers/knex-helper';
 import { httpRequestScope } from '@/infra/http/http-request-scope';
+import { HttpRequestScopeRepository } from '@/infra/http/request-scope-repository';
 
 describe('IntegrationLoadAuth', () => {
     beforeAll(async () => {
@@ -72,7 +73,12 @@ const makeSut = (): SutTypes => {
     const loadAuthIntegrationStub = makeLoadAuthIntegration();
     const loadProfileByUsernameStub = makeLoadProfileByUsername();
     const loadProfileByMailStub = makeLoadProfileByMail();
-    const sut = new IntegrationLoadAuth(loadAuthIntegrationStub, loadProfileByUsernameStub, loadProfileByMailStub);
+    const sut = new IntegrationLoadAuth(
+        loadAuthIntegrationStub,
+        loadProfileByUsernameStub,
+        loadProfileByMailStub,
+        new HttpRequestScopeRepository()
+    );
     return { sut, loadAuthIntegrationStub, loadProfileByUsernameStub, loadProfileByMailStub };
 };
 

@@ -1,8 +1,6 @@
 import { AsyncLocalStorage } from 'async_hooks';
+import { RequestScopeData } from '@/data/protocols/scope/request-scope-repository';
 
-export interface RequestScopeData {
-    authorization?: string;
-    clientId?: string;
-}
+export { RequestScopeData };
 
 export const httpRequestScope = new AsyncLocalStorage<RequestScopeData>();
